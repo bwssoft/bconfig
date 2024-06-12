@@ -2,10 +2,15 @@ import { useEffect, useState } from "react";
 import { INavigator, ISerialPort } from "../definitions/serial";
 
 export const useSerial = () => {
+  /*
+    Esse state serve para armazenar as portas disponiveis para utilização.
+  */
   const [ports, setPorts] = useState<ISerialPort[]>([]);
+  /*
+    Essa const serve para armazenar os readers das portas para posteriormente poder fechar mesmo que o reader esteja aberto.
+  */
   const portReaders = new Map<ISerialPort, ReadableStreamDefaultReader<Uint8Array>>()
-  const messageBuffers = new Map<ISerialPort, string>(); // Buffer para armazenar mensagens parciais
-  const [portData, setPortData] = useState<{ [key: number]: string[] }>()
+
 
   useEffect(() => {
     if (typeof window !== "undefined" && "serial" in navigator) {
@@ -27,24 +32,12 @@ export const useSerial = () => {
         setPorts((prevPorts) => prevPorts.filter((port) => port !== target));
       };
 
-      _navigator.serial.addEventListener(
-        "connect",
-        handleConnect
-      );
-      _navigator.serial.addEventListener(
-        "disconnect",
-        handleDisconnect
-      );
+      _navigator.serial.addEventListener("connect", handleConnect);
+      _navigator.serial.addEventListener("disconnect", handleDisconnect);
 
       return () => {
-        _navigator.serial.removeEventListener(
-          "connect",
-          handleConnect
-        );
-        _navigator.serial.removeEventListener(
-          "disconnect",
-          handleDisconnect
-        );
+        _navigator.serial.removeEventListener("connect", handleConnect);
+        _navigator.serial.removeEventListener("disconnect", handleDisconnect);
       };
     }
   }, []);
@@ -58,7 +51,6 @@ export const useSerial = () => {
       console.error("Error requesting port:", err);
     }
   };
-
 
   //SerialPort
   const openPort = async (port: ISerialPort) => {
@@ -109,7 +101,7 @@ export const useSerial = () => {
   const getSignals = async (port: ISerialPort) => {
     console.log(await port.getSignals())
   };
-  const readFromPort = async (port: ISerialPort) => {
+  const readFromPort = async (port: ISerialPort, callback: (arg: string, port: ISerialPort) => void) => {
     if (!port.readable) {
       console.error("Readable stream not available");
       return;
@@ -125,23 +117,15 @@ export const useSerial = () => {
         throw new Error("Reader not available");
       }
       portReaders.set(port, reader)
+      const decoder = new TextDecoder();
       while (true) {
         const { value, done } = await reader.read();
         if (done) {
           break;
         }
-        const decoded = new TextDecoder().decode(value)
-        setPortData((prevData) => {
-          const portKey = port.getInfo().usbProductId;
-          if (!portKey) return prevData
-          const existingData = prevData?.[portKey] || [];
-          return {
-            ...prevData,
-            [portKey]: [...existingData, decoded],
-          };
-        });
+        const decoded = decoder.decode(value);
+        callback(decoded, port)
       }
-
     } catch (error) {
       console.error("Error reading from port", error);
     } finally {
@@ -155,11 +139,6 @@ export const useSerial = () => {
       return;
     }
 
-    // if (!port.writable.locked) {
-    //   console.error("Writable stream is already locked");
-    //   return;
-    // }
-
     try {
       const writer = port.writable?.getWriter();
       if (!writer) {
@@ -167,7 +146,6 @@ export const useSerial = () => {
       }
       const encoder = new TextEncoder();
       const message = `${data}`;
-      console.log("message", message)
       await writer.write(encoder.encode(message));
       writer.releaseLock();
     } catch (error) {
@@ -175,25 +153,8 @@ export const useSerial = () => {
     }
   };
 
-  //actions
-  const openPortAndRequestConfig = async (port: ISerialPort) => {
-    await port.open({ baudRate: 115200 /* pick your baud rate */ })
-    readFromPort(port)
-    // await new Promise(resolve => setTimeout(resolve, 100));
-    // await writeToPort(port, "IMEI")
-    // await new Promise(resolve => setTimeout(resolve, 100));
-    // await writeToPort(port, "ICCID")
-    await new Promise(resolve => setTimeout(resolve, 100));
-    await writeToPort(port, "CHECK")
-    // await new Promise(resolve => setTimeout(resolve, 100));
-    // await writeToPort(port, "STATUS")
-    // await new Promise(resolve => setTimeout(resolve, 100));
-    // await writeToPort(port, "ET")
-  };
-
   return {
     ports,
-    portData,
     requestPort,
     closePort,
     forgetPort,
@@ -201,7 +162,6 @@ export const useSerial = () => {
     getSignals,
     openPort,
     readFromPort,
-    writeToPort,
-    openPortAndRequestConfig
+    writeToPort
   }
 }
