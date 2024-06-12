@@ -1,7 +1,7 @@
 "use client";
+import { useSerial } from "@/app/hook/useSerial";
+import { ISerialPort } from "@/app/lib/definitions/serial";
 import { useState } from "react";
-import { ISerialPort } from "../definitions/serial";
-import { useSerial } from "./useSerial";
 
 export function SerialConfigurator() {
   const {

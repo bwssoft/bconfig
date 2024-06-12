@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { INavigator, ISerialPort } from "../definitions/serial";
+import { INavigator, ISerialPort } from "../lib/definitions/serial";
 
 export const useSerial = () => {
   /*
@@ -83,23 +83,22 @@ export const useSerial = () => {
   };
   const forgetPort = async (port: ISerialPort) => {
     try {
-      if (port.readable || port.writable) {
-        await port.forget();
-      }
+      await port.forget();
       setPorts((prevPorts) => prevPorts.filter((p) => p !== port));
-
     } catch (err) {
       console.error("Error when forget port")
-      setPorts((prevPorts) => prevPorts.filter((p) => p !== port)); // Remove port from state even if it's already closed
       console.error(err)
     }
   };
   const getInfo = (port: ISerialPort) => {
-    console.log(port.getInfo())
-    return port.getInfo()
+    const info = port.getInfo()
+    console.log('info', info)
+    return info
   };
   const getSignals = async (port: ISerialPort) => {
-    console.log(await port.getSignals())
+    const signals = await port.getSignals()
+    console.log('signals', signals)
+    return signals
   };
   const readFromPort = async (port: ISerialPort, callback: (arg: string, port: ISerialPort) => void) => {
     if (!port.readable) {

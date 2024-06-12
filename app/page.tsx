@@ -1,4 +1,4 @@
-import { SerialConfigurator } from "./lib/serial-configurator";
+import { SerialConfigurator } from "./ui/components/serial-configurator";
 
 export default function Home() {
   return (
