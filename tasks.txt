@@ -1,0 +1,1 @@
+após a troca de abas a porta nao fecha. parece que a porta nao fecha por que na função 'closePort', a gente precisa fechar um reader para que a porta seja fechada com sucesso, e esse valor fica  em um Map, mas sem useState. esse  valor do Map para resetar entre a troca de abas e por isso a porta nao fecha

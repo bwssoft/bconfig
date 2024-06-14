@@ -5,11 +5,15 @@ export const useSerial = () => {
   /*
     Esse state serve para armazenar as portas disponiveis para utilização.
   */
-  const [ports, setPorts] = useState<{ port: ISerialPort, open: boolean }[]>([]);
-  /*
-    Essa const serve para armazenar os readers das portas para posteriormente poder fechar mesmo que o reader esteja aberto.
-  */
-  const portReaders = new Map<ISerialPort, ReadableStreamDefaultReader<Uint8Array>>()
+  const [ports, setPorts] = useState<{
+    port: ISerialPort,
+    open: boolean,
+    reader: ReadableStreamDefaultReader<Uint8Array> | undefined
+  }[]>([]);
+
+  const portIsOpen = (port: ISerialPort) => {
+    return (port.readable && port.writable) ? true : false
+  }
 
 
   useEffect(() => {
@@ -19,7 +23,8 @@ export const useSerial = () => {
       _navigator.serial.getPorts().then((ports) => {
         setPorts(ports.map(port => ({
           port,
-          open: (port.readable && port.writable) ? true : false
+          open: portIsOpen(port),
+          reader: undefined
         })));
       });
 
@@ -28,7 +33,8 @@ export const useSerial = () => {
         if (!target) return
         const data = {
           port: target,
-          open: (target.readable && target.writable) ? true : false
+          open: portIsOpen(target),
+          reader: undefined
         }
         setPorts((prevPorts) => [...prevPorts, data]);
       };
@@ -53,7 +59,7 @@ export const useSerial = () => {
   const requestPort = async () => {
     try {
       const port = await (navigator as INavigator).serial.requestPort();
-      const data = { port, open: (port.readable && port.writable) ? true : false }
+      const data = { port, open: portIsOpen(port), reader: undefined }
       setPorts((prevPorts) => [...prevPorts, data]);
     } catch (err) {
       console.error("Error requesting port:", err);
@@ -66,7 +72,7 @@ export const useSerial = () => {
     setPorts((prevPorts) => {
       return prevPorts.map(p => {
         if (p.port === port) {
-          const data = { port: p.port, open: (port.readable && port.writable) ? true : false }
+          const data = { port: p.port, open: portIsOpen(port), reader: undefined }
           return data
         }
         return p
@@ -75,14 +81,11 @@ export const useSerial = () => {
   };
   const closePort = async (port: ISerialPort) => {
     try {
-      if (port.readable && port.readable.locked) {
-        const reader = portReaders.get(port);
-        if (reader) {
-          console.log("Releasing reader");
-          await reader.cancel(); // Cancela a leitura e libera o leitor
-          reader.releaseLock();
-          portReaders.delete(port);
-        }
+      const portData = ports.find(p => p.port === port);
+      if (portData?.reader) {
+        console.log("Releasing reader");
+        await portData.reader.cancel();
+        portData.reader.releaseLock();
       }
 
       if (port.writable && port.writable.locked) {
@@ -95,7 +98,7 @@ export const useSerial = () => {
         setPorts((prevPorts) => {
           return prevPorts.map(p => {
             if (p.port === port) {
-              const data = { port: p.port, open: (port.readable && port.writable) ? true : false }
+              const data = { port: p.port, open: portIsOpen(port), reader: undefined }
               return data
             }
             return p
@@ -141,7 +144,14 @@ export const useSerial = () => {
       if (!reader) {
         throw new Error("Reader not available");
       }
-      portReaders.set(port, reader)
+      setPorts((prevPorts) => {
+        return prevPorts.map(p => {
+          if (p.port === port) {
+            return { ...p, reader };
+          }
+          return p;
+        });
+      });
       const decoder = new TextDecoder();
       while (true) {
         const { value, done } = await reader.read();
@@ -155,7 +165,6 @@ export const useSerial = () => {
       console.error("Error reading from port", error);
     } finally {
       reader?.releaseLock();
-      portReaders.delete(port)
     }
   };
   const writeToPort = async (port: ISerialPort, data: string) => {
