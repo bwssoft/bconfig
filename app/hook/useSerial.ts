@@ -191,6 +191,70 @@ export const useSerial = () => {
     }
   };
 
+  const readSingleResponseFromPort = async (
+    port: ISerialPort,
+    command: string,
+    callback: (arg: string, port: ISerialPort) => void,
+    timeout = 500
+  ) => {
+    if (!port.readable || !port.writable) {
+      console.error("Readable or writable stream not available");
+      return;
+    }
+
+    if (port.readable.locked || port.writable.locked) {
+      console.error("Readable or writable stream is already locked");
+      return;
+    }
+
+    const reader = port.readable.getReader();
+    const writer = port.writable.getWriter();
+
+    try {
+      // Send the command
+      const encoder = new TextEncoder();
+      await writer.write(encoder.encode(command));
+      writer.releaseLock();
+
+      // Read the response
+      const decoder = new TextDecoder();
+      let buffer = '';
+      let timedOut = false
+
+      const timeoutPromise = new Promise<void>((resolve, _) => {
+        setTimeout(() => {
+          timedOut = true;
+          resolve();
+        }, timeout);
+      });
+
+      const readPromise = (async () => {
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) {
+            break;
+          }
+          buffer += decoder.decode(value);
+          if (buffer.includes('\n')) {
+            return buffer.replace(/[\n\r]/g, '');;
+          }
+        }
+      })();
+
+      const response = await Promise.race([readPromise, timeoutPromise]);
+
+      if (!timedOut) {
+        callback(response as string, port);
+      } else {
+        console.info("Operation timed out");
+      }
+      reader.releaseLock();
+    } catch (error) {
+      console.error("Error during communication with the port", error);
+    }
+  }
+
+
   return {
     ports,
     requestPort,
@@ -200,6 +264,7 @@ export const useSerial = () => {
     getSignals,
     openPort,
     readFromPort,
-    writeToPort
+    writeToPort,
+    readSingleResponseFromPort
   }
 }
