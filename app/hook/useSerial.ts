@@ -68,16 +68,20 @@ export const useSerial = () => {
 
   //SerialPort
   const openPort = async (port: ISerialPort) => {
-    await port.open({ baudRate: 115200 /* pick your baud rate */ })
-    setPorts((prevPorts) => {
-      return prevPorts.map(p => {
-        if (p.port === port) {
-          const data = { port: p.port, open: portIsOpen(port), reader: undefined }
-          return data
-        }
-        return p
-      })
-    });
+    try {
+      await port.open({ baudRate: 115200 })
+      setPorts((prevPorts) => {
+        return prevPorts.map(p => {
+          if (p.port === port) {
+            const data = { port: p.port, open: portIsOpen(port), reader: undefined }
+            return data
+          }
+          return p
+        })
+      });
+    } catch (e) {
+      console.error("on open port", e)
+    }
   };
   const closePort = async (port: ISerialPort) => {
     try {
