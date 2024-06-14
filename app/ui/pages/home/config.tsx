@@ -116,7 +116,7 @@ export function Config(props: {
                 <button
                   type="button"
                   className="inline-flex items-center justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-                  onClick={() => writeToPort(ports[0].port, "CHECK")}
+                  onClick={() => writeToPort(ports[1].port, "CHECK")}
                 >
                   Requisitar Configuração
                 </button>
