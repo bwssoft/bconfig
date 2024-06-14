@@ -30,7 +30,6 @@ export function SerialConfigurator() {
     const combined = buffer + decoded;
     const messages = combined.split("\r");
     const lastFragment = messages.pop();
-
     messages.forEach((message) => {
       if (message) {
         const portKey = port.getInfo().usbProductId;
@@ -75,8 +74,8 @@ export function SerialConfigurator() {
     // await writeToPort(port, "ICCID")
     await new Promise((resolve) => setTimeout(resolve, 100));
     await writeToPort(port, "CHECK");
-    await new Promise((resolve) => setTimeout(resolve, 100));
-    await writeToPort(port, "STATUS");
+    // await new Promise((resolve) => setTimeout(resolve, 100));
+    // await writeToPort(port, "STATUS");
     // await new Promise((resolve) => setTimeout(resolve, 100));
     // await writeToPort(port, "ET");
   };
@@ -90,34 +89,42 @@ export function SerialConfigurator() {
           <li key={index}>
             Port {index + 1}
             &nbsp; &nbsp;
-            <button onClick={() => openPortAndRequestConfig(port)}>
+            <button onClick={() => openPortAndRequestConfig(port.port)}>
               Abrir e configuração
             </button>
             &nbsp;
-            <button onClick={() => openPort(port)}>Abrir</button>
+            <button onClick={() => openPort(port.port)}>Abrir</button>
             &nbsp;
-            <button onClick={() => closePort(port)}>Fechar</button>
+            <button onClick={() => closePort(port.port)}>Fechar</button>
             &nbsp;
-            <button onClick={() => forgetPort(port)}>Esquecer</button>
+            <button onClick={() => forgetPort(port.port)}>Esquecer</button>
             &nbsp;
-            <button onClick={() => getInfo(port)}>Info</button>
+            <button onClick={() => getInfo(port.port)}>Info</button>
             &nbsp;
-            <button onClick={() => getSignals(port)}>Signals</button>
+            <button onClick={() => getSignals(port.port)}>Signals</button>
             &nbsp;
-            <button onClick={() => readFromPort(port, callback)}>
+            <button onClick={() => readFromPort(port.port, callback)}>
               Ler porta
             </button>
             &nbsp;
-            <button onClick={() => writeToPort(port, "IMEI")}>
-              Enviar Ping
+            <button onClick={() => writeToPort(port.port, "CHECK")}>
+              Enviar CHECK
+            </button>
+            &nbsp;
+            <button onClick={() => writeToPort(port.port, "STATUS")}>
+              Enviar STATUS
             </button>
             {Object.entries(portData ?? {})
-              .filter(([key]) => Number(key) === port.getInfo().usbProductId)
+              .filter(
+                ([key]) => Number(key) === port.port.getInfo().usbProductId
+              )
               .map(([_, data]) =>
                 data.map((d, index) => <p key={d + index}>{d}</p>)
               )}
             {Object.entries(portData ?? {})
-              .filter(([key]) => Number(key) === port.getInfo().usbProductId)
+              .filter(
+                ([key]) => Number(key) === port.port.getInfo().usbProductId
+              )
               .map(([_, data]) => data.length)}
           </li>
         ))}
