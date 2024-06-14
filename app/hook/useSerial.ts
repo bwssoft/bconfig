@@ -5,7 +5,7 @@ export const useSerial = () => {
   /*
     Esse state serve para armazenar as portas disponiveis para utilização.
   */
-  const [ports, setPorts] = useState<ISerialPort[]>([]);
+  const [ports, setPorts] = useState<{ port: ISerialPort, open: boolean }[]>([]);
   /*
     Essa const serve para armazenar os readers das portas para posteriormente poder fechar mesmo que o reader esteja aberto.
   */
@@ -16,20 +16,27 @@ export const useSerial = () => {
     if (typeof window !== "undefined" && "serial" in navigator) {
       const _navigator = navigator as INavigator
 
-      _navigator.serial.getPorts().then(async (ports) => {
-        setPorts(ports);
+      _navigator.serial.getPorts().then((ports) => {
+        setPorts(ports.map(port => ({
+          port,
+          open: (port.readable && port.writable) ? true : false
+        })));
       });
 
       const handleConnect = (e: Event) => {
         const target = e.target as ISerialPort | null
         if (!target) return
-        setPorts((prevPorts) => [...prevPorts, target]);
+        const data = {
+          port: target,
+          open: (target.readable && target.writable) ? true : false
+        }
+        setPorts((prevPorts) => [...prevPorts, data]);
       };
 
       const handleDisconnect = (e: Event) => {
         const target = e.target as ISerialPort | null
         if (!target) return
-        setPorts((prevPorts) => prevPorts.filter((port) => port !== target));
+        setPorts((prevPorts) => prevPorts.filter((p) => p.port !== target));
       };
 
       _navigator.serial.addEventListener("connect", handleConnect);
@@ -46,7 +53,8 @@ export const useSerial = () => {
   const requestPort = async () => {
     try {
       const port = await (navigator as INavigator).serial.requestPort();
-      setPorts((prevPorts) => [...prevPorts, port]);
+      const data = { port, open: (port.readable && port.writable) ? true : false }
+      setPorts((prevPorts) => [...prevPorts, data]);
     } catch (err) {
       console.error("Error requesting port:", err);
     }
@@ -55,6 +63,15 @@ export const useSerial = () => {
   //SerialPort
   const openPort = async (port: ISerialPort) => {
     await port.open({ baudRate: 115200 /* pick your baud rate */ })
+    setPorts((prevPorts) => {
+      return prevPorts.map(p => {
+        if (p.port === port) {
+          const data = { port: p.port, open: (port.readable && port.writable) ? true : false }
+          return data
+        }
+        return p
+      })
+    });
   };
   const closePort = async (port: ISerialPort) => {
     try {
@@ -75,6 +92,15 @@ export const useSerial = () => {
 
       if (port.readable || port.writable) {
         await port.close();
+        setPorts((prevPorts) => {
+          return prevPorts.map(p => {
+            if (p.port === port) {
+              const data = { port: p.port, open: (port.readable && port.writable) ? true : false }
+              return data
+            }
+            return p
+          })
+        });
       }
     } catch (err) {
       console.error("Error when close port")
@@ -84,7 +110,7 @@ export const useSerial = () => {
   const forgetPort = async (port: ISerialPort) => {
     try {
       await port.forget();
-      setPorts((prevPorts) => prevPorts.filter((p) => p !== port));
+      setPorts((prevPorts) => prevPorts.filter((p) => p.port !== port));
     } catch (err) {
       console.error("Error when forget port")
       console.error(err)
