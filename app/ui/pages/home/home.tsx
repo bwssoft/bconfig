@@ -27,6 +27,7 @@ import { useSerial } from "@/app/hook/useSerial";
 import PortsFeed from "./ports-feed";
 import { Tabs, TabHeader, TabContent, TabTrigger } from "@bwsoft/tabs";
 import { Config } from "./config";
+import { QuatroG } from "@/app/lib/parser/4G";
 
 const user = {
   name: "Whitney Francis",
@@ -114,15 +115,24 @@ export default function HomePage() {
     openPort,
     readFromPort,
     writeToPort,
+    readSingleResponseFromPort,
   } = useSerial();
 
+  //estados e funções para manipular as abas
   const [currentTab, setCurrentTab] = useState<string | number>("mass");
   const handleCurrentTab = (tab: string | number) => {
     setCurrentTab(tab);
   };
 
+  //estado e funções para manipular as repostas que são recebidas das portas seriais
   const messageBuffers = new Map<ISerialPort, string>();
-  const [portData, setPortData] = useState<{ [key: number]: string[] }>();
+  const [portData, setPortData] = useState<{
+    [key: number]: {
+      natural: string;
+      parsed?: Record<string, any>;
+      timestamp: number;
+    }[];
+  }>();
   const callback = (decoded: string, port: ISerialPort) => {
     const buffer = messageBuffers.get(port) || "";
     const combined = buffer + decoded;
@@ -135,7 +145,14 @@ export default function HomePage() {
         if (!portKey) return;
         setPortData((prevData) => ({
           ...prevData,
-          [portKey]: [...(prevData?.[portKey] || []), message],
+          [portKey]: [
+            ...(prevData?.[portKey] || []),
+            {
+              natural: message,
+              parsed: QuatroG.parse(message),
+              timestamp: Date.now(),
+            },
+          ],
         }));
       }
     });
