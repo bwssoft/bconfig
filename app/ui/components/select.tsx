@@ -15,12 +15,16 @@ export function Select<T>(props: {
   keyExtractor: (arg: T) => string | number;
   valueExtractor: (arg: T) => string | number;
   label?: string;
+  onChange?: (arg: T) => void;
 }) {
-  const { data, keyExtractor, valueExtractor, label } = props;
+  const { data, keyExtractor, valueExtractor, label, onChange } = props;
   const [selected, setSelected] = useState<T | null>(null);
-
+  const handleOnChange = (arg: T) => {
+    setSelected(arg);
+    onChange?.(arg);
+  };
   return (
-    <Listbox value={selected} onChange={setSelected}>
+    <Listbox value={selected} onChange={handleOnChange}>
       {({ open }) => (
         <>
           {label && (
