@@ -91,21 +91,24 @@ export default function PortsFeed(props: {
                           </a>
                         </p>
                         <div className="flex whitespace-nowrap text-right text-sm text-gray-500 gap-2">
-                          <Button
-                            type="button"
-                            variant="outlined"
-                            onClick={() => handleOpenPort(port)}
+                          <form
+                            id="handle-open-port"
+                            action={() => handleOpenPort(port)}
                           >
-                            {isOpen ? "Fechar" : "Abrir"}
-                          </Button>
-                          {!isOpen && (
-                            <Button
-                              type="button"
-                              variant="outlined"
-                              onClick={() => handleForgetPort(port)}
-                            >
-                              Esquecer
+                            <Button type="submit" variant="outlined">
+                              {isOpen ? "Fechar" : "Abrir"}
                             </Button>
+                          </form>
+
+                          {!isOpen && (
+                            <form
+                              id="handle-forget-port"
+                              action={() => handleForgetPort(port)}
+                            >
+                              <Button type="submit" variant="outlined">
+                                Esquecer
+                              </Button>
+                            </form>
                           )}
                         </div>
                       </div>
@@ -120,15 +123,29 @@ export default function PortsFeed(props: {
         )}
       </div>
       <div className="mt-6 flex flex-col justify-stretch gap-3">
-        <Button type="button" variant="primary" onClick={requestPort}>
-          Requisitar nova porta
-        </Button>
-        <Button type="button" variant="outlined" onClick={handleOpenAllPorts}>
-          Abrir todas as portas
-        </Button>
-        <Button type="button" variant="outlined" onClick={handleOpenAllPorts}>
-          Fechar todas as portas
-        </Button>
+        <form id="request-new-port" action={requestPort} className="w-full">
+          <Button type="submit" variant="primary" className="w-full">
+            Requisitar nova porta
+          </Button>
+        </form>
+        <form
+          id="open-all-ports"
+          action={handleOpenAllPorts}
+          className="w-full"
+        >
+          <Button type="submit" variant="outlined" className="w-full">
+            Abrir todas as portas
+          </Button>
+        </form>
+        <form
+          id="close-all-ports"
+          action={handleOpenAllPorts}
+          className="w-full"
+        >
+          <Button type="submit" variant="outlined" className="w-full">
+            Fechar todas as portas
+          </Button>
+        </form>
       </div>
     </>
   );
