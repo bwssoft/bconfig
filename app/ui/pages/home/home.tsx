@@ -160,13 +160,106 @@ export default function HomePage() {
     messageBuffers.set(port, lastFragment || "");
   };
 
+  //estado para manipular as portas com metadados (imei, iccid, et)
+  const [portsWithMetadata, setPortsWithMetadata] = useState<
+    {
+      port: ISerialPort;
+      imei?: string;
+      iccid?: string;
+      et?: string;
+    }[]
+  >([]);
+
+  //estado para unificar todos os dados de portas
+  const [portsUnified, setPortsUnified] = useState<
+    {
+      port: ISerialPort;
+      open: boolean;
+      reader?: ReadableStreamDefaultReader<Uint8Array>;
+      imei?: string;
+      iccid?: string;
+      et?: string;
+    }[]
+  >([]);
+
   useEffect(() => {
-    ports.forEach((p) => {
+    const unified = ports.map((p) => {
+      const item = portsWithMetadata.find((_p) => _p.port === p.port);
+      const info = p.port.getInfo();
+      if (item) {
+        return {
+          ...p,
+          ...item,
+          info,
+        };
+      }
+      return {
+        ...p,
+        info,
+      };
+    });
+    setPortsUnified(unified);
+    for (let p of unified) {
       if (p.port.readable && !p.port.readable.locked) {
         readFromPort(p.port, callback);
       }
+    }
+  }, [ports, portsWithMetadata]);
+
+  useEffect(() => {
+    console.log(portData);
+  }, [portData]);
+
+  const handleOpenPort = async (port: ISerialPort) => {
+    await openPort(port);
+    let imei: string;
+    let iccid: string;
+    let et: string;
+
+    await readSingleResponseFromPort(port, "REG000000#", (input) => {
+      console.log("REG", input);
     });
-  }, [ports]);
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    await readSingleResponseFromPort(port, "SMS1", (input) => {
+      console.log("SMS1", input);
+    });
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    await readSingleResponseFromPort(port, "EN", (input) => {
+      console.log("EN", input);
+    });
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    await readSingleResponseFromPort(port, "IMEI", (input) => {
+      const _imei = input.split("=");
+      imei = _imei[1];
+    });
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    await readSingleResponseFromPort(port, "ICCID", (input) => {
+      iccid = input;
+    });
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    await readSingleResponseFromPort(port, "ET", (input) => {
+      et = input;
+    });
+
+    setPortsWithMetadata((prev) => [
+      ...prev,
+      {
+        port,
+        imei,
+        iccid,
+        et,
+      },
+    ]);
+  };
+  const handleClosePort = async (port: ISerialPort) => {
+    await closePort(port);
+
+    setPortsWithMetadata((prev) => {
+      const filtered = prev.filter((el) => el.port !== port);
+      return filtered;
+    });
+  };
 
   const date = new Date();
   return (
