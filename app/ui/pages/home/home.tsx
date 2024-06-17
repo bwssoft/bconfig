@@ -606,9 +606,10 @@ export default function HomePage() {
                     >
                       Envio em massa
                     </TabTrigger>
-                    {ports.map((p) => {
+                    {portsUnified.map((p) => {
                       const info = p.port.getInfo();
                       const usbProductId = info.usbProductId;
+                      const imei = p?.imei;
                       return (
                         <TabTrigger
                           key={usbProductId}
@@ -621,7 +622,7 @@ export default function HomePage() {
                             currentTab === usbProductId && tab.current
                           )}
                         >
-                          {usbProductId}
+                          {imei ?? usbProductId}
                         </TabTrigger>
                       );
                     })}
@@ -633,7 +634,7 @@ export default function HomePage() {
                       readFromPort={readFromPort}
                     />
                   </TabContent>
-                  {ports.map((p) => {
+                  {portsUnified.map((p) => {
                     const info = p.port.getInfo();
                     return (
                       <TabContent
@@ -664,9 +665,9 @@ export default function HomePage() {
                   </h2>
 
                   <PortsFeed
-                    ports={ports}
-                    openPort={openPort}
-                    closePort={closePort}
+                    ports={portsUnified}
+                    openPort={handleOpenPort}
+                    closePort={handleClosePort}
                     requestPort={requestPort}
                     forgetPort={forgetPort}
                   />
