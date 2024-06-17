@@ -84,7 +84,7 @@ export default function PortsFeed(props: {
                       </span>
                       <div className="flex min-w-0 flex-1 justify-between space-x-4 pt-1.5 items-center">
                         <p className="text-sm text-gray-500">
-                          {info?.usbProductId}
+                          {info?.usbProductId}{" "}
                           <a href="#" className="font-medium text-gray-900">
                             {imei ?? info?.usbVendorId}
                           </a>
