@@ -1,4 +1,6 @@
+"use client";
 import { cn } from "@/app/util/cn";
+import { useFormStatus } from "react-dom";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   // Adicione quaisquer propriedades adicionais aqui, se necessário
@@ -13,8 +15,17 @@ const styles = {
 };
 
 export const Button: React.FC<ButtonProps> = (props) => {
+  const { pending, data, method, action } = useFormStatus();
   return (
-    <button {...props} className={cn(styles[props.variant], props.className)}>
+    <button
+      {...props}
+      className={cn(
+        styles[props.variant],
+        props.className,
+        pending && "opacity-30"
+      )}
+      disabled={pending}
+    >
       {props.children}
     </button>
   );
