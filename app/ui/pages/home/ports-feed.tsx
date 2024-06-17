@@ -3,6 +3,7 @@ import { ISerialPort } from "@/app/lib/definitions/serial";
 import { cn } from "@/app/util/cn";
 import { CheckIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import Alert from "../../components/alert";
+import { Button } from "../../components/button";
 
 const icons = {
   open: { icon: CheckIcon, bgColorClass: "bg-green-500" },
@@ -90,21 +91,21 @@ export default function PortsFeed(props: {
                           </a>
                         </p>
                         <div className="flex whitespace-nowrap text-right text-sm text-gray-500 gap-2">
-                          <button
+                          <Button
                             type="button"
-                            className="inline-flex items-center justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                            variant="outlined"
                             onClick={() => handleOpenPort(port)}
                           >
                             {isOpen ? "Fechar" : "Abrir"}
-                          </button>
+                          </Button>
                           {!isOpen && (
-                            <button
+                            <Button
                               type="button"
-                              className="inline-flex items-center justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                              variant="outlined"
                               onClick={() => handleForgetPort(port)}
                             >
                               Esquecer
-                            </button>
+                            </Button>
                           )}
                         </div>
                       </div>
@@ -119,27 +120,15 @@ export default function PortsFeed(props: {
         )}
       </div>
       <div className="mt-6 flex flex-col justify-stretch gap-3">
-        <button
-          type="button"
-          className="inline-flex items-center justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-          onClick={requestPort}
-        >
+        <Button type="button" variant="primary" onClick={requestPort}>
           Requisitar nova porta
-        </button>
-        <button
-          type="button"
-          className="inline-flex items-center justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-          onClick={handleOpenAllPorts}
-        >
+        </Button>
+        <Button type="button" variant="outlined" onClick={handleOpenAllPorts}>
           Abrir todas as portas
-        </button>
-        <button
-          type="button"
-          className="inline-flex items-center justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-          onClick={handleOpenAllPorts}
-        >
+        </Button>
+        <Button type="button" variant="outlined" onClick={handleOpenAllPorts}>
           Fechar todas as portas
-        </button>
+        </Button>
       </div>
     </>
   );
