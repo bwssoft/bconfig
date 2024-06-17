@@ -1,6 +1,8 @@
 import { ISerialPort } from "@/app/lib/definitions/serial";
 import { QuestionMarkCircleIcon } from "@heroicons/react/20/solid";
 import { Select } from "../../components/select";
+import { Button } from "../../components/button";
+import { useEffect, useState } from "react";
 
 const user = {
   name: "Whitney Francis",
@@ -72,7 +74,46 @@ const additionalFunctions = [
 type Port = {
   port: ISerialPort;
   open: boolean;
+  reader?: ReadableStreamDefaultReader<Uint8Array>;
+  imei?: string;
+  iccid?: string;
+  et?: string;
 };
+
+const extractModel = (et?: string): Model | null => {
+  if (!et) return null;
+  // const match = et.match(/(BWSiot_E3\+\w*4GW|BWSiot_E3\+\w*)/);
+  const match = et.match(/_(E3\+4GW|E3\+)_/);
+  console.log("match", match ? match[1] : null);
+  return match ? (match[1] as Model) : null;
+};
+const handleIdentifierDeviceModel = (ports: Port[]): Model | null => {
+  const modelCount = ports.reduce((acc: Record<string, number>, port: Port) => {
+    const model = extractModel(port?.et);
+    if (model) {
+      acc[model] = (acc[model] || 0) + 1;
+    }
+    return acc;
+  }, {});
+
+  let predominantModel: string | null = null;
+  let maxCount: number = 0;
+  let maxCountModels: number = 0;
+
+  for (const [model, count] of Object.entries(modelCount)) {
+    if (count > maxCount) {
+      predominantModel = model;
+      maxCount = count;
+      maxCountModels = 1;
+    } else if (count === maxCount) {
+      maxCountModels += 1;
+    }
+  }
+
+  return maxCountModels > 1 ? null : (predominantModel as Model);
+};
+
+type Model = "E3+" | "E3+Personal" | "E3+LongLife" | "E3+4GW";
 
 export function Config(props: {
   ports: Port[];
@@ -83,6 +124,14 @@ export function Config(props: {
   ) => void;
 }) {
   const { ports, writeToPort } = props;
+  const [currentPort, setCurrentPort] = useState<Port>();
+  const [model, setModel] = useState<Model | null>();
+  const isMultiple = ports.length > 0 && ports.length !== 1 ? true : false;
+
+  useEffect(() => {
+    const model = handleIdentifierDeviceModel(ports);
+    setModel(model);
+  }, [ports]);
 
   return (
     <div className="flex flex-col gap-6">
@@ -101,25 +150,84 @@ export function Config(props: {
               informações do equipamento.
             </p>
           </div>
+
           <div className="border-t border-gray-200 px-4 py-5 sm:px-6">
+            <div className="pb-5">
+              <p className="mt-1 max-w-2xl text-sm text-gray-500">
+                Configurações de um rastreador
+              </p>
+            </div>
             <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
-              <div className="sm:col-span-1">
-                <Select
-                  data={ports}
-                  keyExtractor={(p) => p.port.getInfo().usbProductId as number}
-                  valueExtractor={(p) =>
-                    p.port.getInfo().usbProductId as number
-                  }
-                />
-              </div>
+              {isMultiple && (
+                <div className="sm:col-span-1">
+                  <Select
+                    data={ports}
+                    keyExtractor={(p) =>
+                      p.port.getInfo().usbProductId as number
+                    }
+                    valueExtractor={(p) => {
+                      const usbProductId = p.port.getInfo().usbProductId;
+                      if (p.imei) {
+                        return `${usbProductId} - ${p.imei}`;
+                      }
+                      return usbProductId as number;
+                    }}
+                    onChange={(value) => setCurrentPort(value)}
+                  />
+                </div>
+              )}
               <div className="sm:col-span-1">
                 <button
                   type="button"
                   className="inline-flex items-center justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-                  onClick={() => writeToPort(ports[1].port, "CHECK")}
+                  onClick={() => {
+                    if (isMultiple) {
+                      currentPort?.port &&
+                        writeToPort(currentPort?.port, "CHECK");
+                      return;
+                    }
+                    ports[0]?.port && writeToPort(ports[0]?.port, "CHECK");
+                  }}
                 >
                   Requisitar Configuração
                 </button>
+              </div>
+            </dl>
+          </div>
+          <div className="px-4 sm:px-6">
+            <p className="mt-1 max-w-2xl text-sm text-gray-500">
+              Modelo a ser configurado
+            </p>
+          </div>
+          <div className="px-4 py-5 sm:px-6">
+            <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
+              <div className="sm:col-span-2">
+                <div className="mt-6 flex flex-col-reverse justify-stretch space-y-4 space-y-reverse sm:flex-row-reverse sm:space-x-3 sm:space-y-0 sm:space-x-reverse md:mt-0 md:flex-row md:space-x-3">
+                  <Button
+                    type="button"
+                    variant={model === "E3+" ? "primary" : "outlined"}
+                  >
+                    E3+
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={model === "E3+Personal" ? "primary" : "outlined"}
+                  >
+                    E3+ Personal
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={model === "E3+LongLife" ? "primary" : "outlined"}
+                  >
+                    E3+ Long Life
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={model === "E3+4GW" ? "primary" : "outlined"}
+                  >
+                    E3+ 4G
+                  </Button>
+                </div>
               </div>
             </dl>
           </div>

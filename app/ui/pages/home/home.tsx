@@ -212,6 +212,10 @@ export default function HomePage() {
     console.log(portData);
   }, [portData]);
 
+  useEffect(() => {
+    console.log(portsWithMetadata);
+  }, [portsWithMetadata]);
+
   const handleOpenPort = async (port: ISerialPort) => {
     await openPort(port);
     let imei: string;
@@ -565,33 +569,6 @@ export default function HomePage() {
                 </p>
               </div>
             </div>
-            <div className="mt-6 flex flex-col-reverse justify-stretch space-y-4 space-y-reverse sm:flex-row-reverse sm:justify-end sm:space-x-3 sm:space-y-0 sm:space-x-reverse md:mt-0 md:flex-row md:space-x-3">
-              <button
-                type="button"
-                className="inline-flex items-center justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-              >
-                E3+
-              </button>
-
-              <button
-                type="button"
-                className="inline-flex items-center justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-              >
-                E3+ Personal
-              </button>
-              <button
-                type="button"
-                className="inline-flex items-center justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-              >
-                E3+ Long Life
-              </button>
-              <button
-                type="button"
-                className="inline-flex items-center justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-              >
-                E3+ 4G
-              </button>
-            </div>
           </div>
           <div>
             <div className="mx-auto mt-8 grid max-w-3xl grid-cols-1 gap-6 sm:px-6 lg:max-w-7xl lg:grid-flow-col-dense lg:grid-cols-3">
@@ -631,7 +608,7 @@ export default function HomePage() {
                   </TabHeader>
                   <TabContent value="mass">
                     <Config
-                      ports={ports}
+                      ports={portsUnified}
                       writeToPort={writeToPort}
                       readFromPort={readFromPort}
                     />
