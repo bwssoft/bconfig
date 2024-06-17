@@ -28,6 +28,7 @@ import PortsFeed from "./ports-feed";
 import { Tabs, TabHeader, TabContent, TabTrigger } from "@bwsoft/tabs";
 import { Config } from "./config";
 import { QuatroG } from "@/app/lib/parser/4G";
+import { sleep } from "@/app/util/sleep";
 
 const user = {
   name: "Whitney Francis",
@@ -201,6 +202,7 @@ export default function HomePage() {
     setPortsUnified(unified);
     for (let p of unified) {
       if (p.port.readable && !p.port.readable.locked) {
+        console.log(p.port.getInfo().usbProductId);
         readFromPort(p.port, callback);
       }
     }
@@ -219,25 +221,25 @@ export default function HomePage() {
     await readSingleResponseFromPort(port, "REG000000#", (input) => {
       console.log("REG", input);
     });
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await sleep(100);
     await readSingleResponseFromPort(port, "SMS1", (input) => {
       console.log("SMS1", input);
     });
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await sleep(100);
     await readSingleResponseFromPort(port, "EN", (input) => {
       console.log("EN", input);
     });
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await sleep(100);
 
     await readSingleResponseFromPort(port, "IMEI", (input) => {
       const _imei = input.split("=");
       imei = _imei[1];
     });
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await sleep(100);
     await readSingleResponseFromPort(port, "ICCID", (input) => {
       iccid = input;
     });
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await sleep(100);
     await readSingleResponseFromPort(port, "ET", (input) => {
       et = input;
     });
