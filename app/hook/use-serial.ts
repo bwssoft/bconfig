@@ -1,9 +1,9 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { INavigator, ISerialPort } from "../lib/definitions/serial";
 
 interface Props {
-  handleConnection: (port: ISerialPort) => void
-  handleDisconnection: (port: ISerialPort) => void
+  handleConnection?: (port: ISerialPort) => void
+  handleDisconnection?: (port: ISerialPort) => void
 }
 
 export const useSerial = (props: Props) => {
@@ -25,16 +25,14 @@ export const useSerial = (props: Props) => {
           const target = e.target as ISerialPort | null
           if (!target) return
           setPorts((prev) => [...prev, target])
-          console.log("connected")
-          handleConnection(target)
+          handleConnection?.(target)
         };
 
         const handleDisconnect = (e: Event) => {
           const target = e.target as ISerialPort | null
           if (!target) return
           setPorts((prev) => prev.filter(el => el !== target))
-          console.log("disconnected")
-          handleDisconnection(target)
+          handleDisconnection?.(target)
         };
 
         _navigator.serial.addEventListener("connect", handleConnect);
