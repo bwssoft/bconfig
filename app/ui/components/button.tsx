@@ -1,5 +1,5 @@
 "use client";
-import { cn } from "@/app/util/cn";
+import { cn } from "@/app/lib/util/cn";
 import { useFormStatus } from "react-dom";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {

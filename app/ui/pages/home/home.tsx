@@ -20,15 +20,15 @@ import {
   UserIcon,
 } from "@heroicons/react/20/solid";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { cn } from "@/app/util/cn";
+import { cn } from "@/app/lib/util/cn";
 import { ISerialPort } from "@/app/lib/definitions/serial";
 import { useEffect, useState } from "react";
-import { useSerial } from "@/app/hook/useSerial";
+import { useSerial } from "@/app/hook/use-serial";
 import PortsFeed from "./ports-feed";
 import { Tabs, TabHeader, TabContent, TabTrigger } from "@bwsoft/tabs";
 import { Config } from "./config";
 import { QuatroG } from "@/app/lib/parser/4G";
-import { sleep } from "@/app/util/sleep";
+import { sleep } from "@/app/lib/util/sleep";
 
 const user = {
   name: "Whitney Francis",
