@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { INavigator, ISerialPort } from "../lib/definitions/serial";
 
 interface Props {
@@ -9,38 +9,42 @@ interface Props {
 export const useSerial = (props: Props) => {
   const { handleDisconnection, handleConnection } = props
   const [ports, setPorts] = useState<ISerialPort[]>([])
+  const isFirstRendering = useRef(true);  // Referência para controlar a primeira execução
 
   useEffect(() => {
-    if (typeof window !== "undefined" && "serial" in navigator) {
-      const _navigator = navigator as INavigator
+    if (isFirstRendering.current) {
+      isFirstRendering.current = false
+      if (typeof window !== "undefined" && "serial" in navigator) {
+        const _navigator = navigator as INavigator
 
-      _navigator.serial.getPorts().then(async (ports) => {
-        setPorts(ports);
-      });
+        _navigator.serial.getPorts().then(async (ports) => {
+          setPorts(ports);
+        });
 
-      const handleConnect = (e: Event) => {
-        const target = e.target as ISerialPort | null
-        if (!target) return
-        setPorts((prev) => [...prev, target])
-        console.log("connected")
-        handleConnection(target)
-      };
+        const handleConnect = (e: Event) => {
+          const target = e.target as ISerialPort | null
+          if (!target) return
+          setPorts((prev) => [...prev, target])
+          console.log("connected")
+          handleConnection(target)
+        };
 
-      const handleDisconnect = (e: Event) => {
-        const target = e.target as ISerialPort | null
-        if (!target) return
-        setPorts((prev) => prev.filter(el => el !== target))
-        console.log("disconnected")
-        handleDisconnection(target)
-      };
+        const handleDisconnect = (e: Event) => {
+          const target = e.target as ISerialPort | null
+          if (!target) return
+          setPorts((prev) => prev.filter(el => el !== target))
+          console.log("disconnected")
+          handleDisconnection(target)
+        };
 
-      _navigator.serial.addEventListener("connect", handleConnect);
-      _navigator.serial.addEventListener("disconnect", handleDisconnect);
+        _navigator.serial.addEventListener("connect", handleConnect);
+        _navigator.serial.addEventListener("disconnect", handleDisconnect);
 
-      return () => {
-        _navigator.serial.removeEventListener("connect", handleConnect);
-        _navigator.serial.removeEventListener("disconnect", handleDisconnect);
-      };
+        return () => {
+          _navigator.serial.removeEventListener("connect", handleConnect);
+          _navigator.serial.removeEventListener("disconnect", handleDisconnect);
+        };
+      }
     }
   }, []);
 
