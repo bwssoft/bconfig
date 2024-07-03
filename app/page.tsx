@@ -1,6 +1,5 @@
-import { SerialConfigurator } from "./ui/components/serial-configurator";
-import HomePage from "./ui/pages/home/home";
+import { E3Config } from "./ui/pages/e3config";
 
 export default function Home() {
-  return <HomePage />;
+  return <E3Config />;
 }

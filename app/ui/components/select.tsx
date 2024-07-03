@@ -8,7 +8,7 @@ import {
   Transition,
 } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
-import { cn } from "@/app/util/cn";
+import { cn } from "@/app/lib/util/cn";
 
 export function Select<T>(props: {
   data: T[];

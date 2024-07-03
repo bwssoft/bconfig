@@ -1,6 +1,6 @@
 "use client";
 import { ISerialPort } from "@/app/lib/definitions/serial";
-import { cn } from "@/app/util/cn";
+import { cn } from "@/app/lib/util/cn";
 import { CheckIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import Alert from "../../components/alert";
 import { Button } from "../../components/button";
