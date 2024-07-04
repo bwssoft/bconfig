@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import {
   Label,
   Listbox,
@@ -16,15 +16,23 @@ export function Select<T>(props: {
   valueExtractor: (arg: T) => string | number;
   label?: string;
   onChange?: (arg: T) => void;
+  name: string;
+  value?: T; // Adicione a prop value
 }) {
-  const { data, keyExtractor, valueExtractor, label, onChange } = props;
-  const [selected, setSelected] = useState<T | null>(null);
+  const { data, keyExtractor, valueExtractor, label, onChange, name, value } =
+    props;
+  const [selected, setSelected] = useState<T | undefined>(undefined);
+
+  useEffect(() => {
+    setSelected(value);
+  }, [value]);
+
   const handleOnChange = (arg: T) => {
     setSelected(arg);
     onChange?.(arg);
   };
   return (
-    <Listbox value={selected} onChange={handleOnChange}>
+    <Listbox value={selected} onChange={handleOnChange} name={name}>
       {({ open }) => (
         <>
           {label && (
