@@ -1,0 +1,59 @@
+
+1. Após abrir a porta, nome da porta ser o imei
+
+2. Obrigatorio para configurar o equipamento
+apn, ip porta ou dns, senha, intervalo de transmissão
+
+3. O que não tiver preenchido, não fazer o envio do comando
+
+{
+  "Sim": "89883030000101192190", (Comunicação) (Tem no E3+)
+  "SOS": "", números de telefone (Tem no E3+)
+  "APN": "bws.br,bws,bws", (Input de texto) (Comunicação) (Tem no E3+)
+  "TZ": "W0" = FUSO HORÁRIO W é -, E é + (Input de texto para o usuário digitar: E0,E1,W1) (COMANDO TZ) (Configuração gerais) (Tem no E3+)
+  "HB": "60,1800" = Intervalo de transimissão ligado e desligado (Input numérico em segundos) (COMANDO HB e SHB) (Comunicação) (Tem no E3+)
+  "MG": "0", = Habilitar e desabilitar resposta (COMANDO SMS1 ou SMS0) (Tem no E3+)
+  "TX": "180", = Keep Alive (input numérico em segundos) (Configuração gerais) (Tem no E3+)
+  "BJ": "0", = Habilitar ou Desabilitar alerta via sms (Input checkbox) (função adicional) (Tem no E3+)
+  "ACCMODE": "1", Modo (Input select com 1 e 2 para opções) (Configurações gerais) (Tem no E3+ mas é diferente)
+  "TDET": "0", Ângulo de curva (Input numérico 0 a 90) (Configurações gerais) (OBS: Só pode definir o valor de o TUR tiver habilitado) (Tem no E3+)
+  "WKMODE": "0", Modo de trabalho (Input check box) (Funções adicional) 
+  "DD": "0", Status do bloqueio atual (bloqueado ou desbloquedo)
+  "OD": "0", Alerta de limite de velocidade (Input numérico) (Configurações gerais)
+  "ZD": "7", //não vai ter no e3+4g
+  "AC": "0,0", //não vai ter no e3+4g??
+  "SDMS": "2", Modo de economia (Input select com 0,1,2) (Configurações gerais)
+  "TUR": "1", Habilitar ou desabilitar o sensor de curva (Input checkbox) (Função adicional/Configurações gerais)
+  "PR": "1", //não vai ter no e3+4g
+  "DK": "1726", Hodometro (Input numérico, valor decimal ou inteiro)(Configurações Gerais)
+  "JD": "48", Jammer Detection (Input check box) (Funções adicionais)
+  "LBS": "*", LBS Ligado ou Desligado (Input check box) (Funções adicionais)
+  "MODE": "1", Tipo do bloqueio (Input select (progressivo, instantanio, invertido)) (Configurações Gerais)
+  "LED": "1", Ligar ou desligar o led (Input checkbox) (Funções adicionais)
+  "IV": "1", Ignição Virutal ligada ou desligada (Input checkbox) (Funções adicionais)
+  "ACC": "1", Status de ignição (ligada ou desligada)
+  "GPRS": "4G", Status da conexão (2G, 4G)
+  "GPS": "V", Status de gps (V invalido, A valido)
+  "PROT": "E3+", Protocolo (Input select GT06, E3+) (Configurações gerais)
+  "DC": "100,2000", Duty Cycle (Dois Inputs numéricos) (Configurações Gerais) (OBS: só pode aparecer se essa opção se o tipo de bloqueio for progressivo)
+  "Voltage": "13.40,12.90", Tensão para ignição (Dois inputs numéricos) (Configurações Gerais) (OBS: o primeiro é o máximo, e o segundo é o minimo)
+  "AF": "OFF", Anti-Furto (Input checkbox) (Funções Adicionais
+  "GS": "80" Ajuste de sensibilidade (Input numérico 60 até 2000) (Configurações Gerais)
+}
+
+
+5. Envio dos comandos
+
+REG000000#
+SMS1
+<COMANDOS>
+SMS0
+
+6. Tentar analisar o tipo do equipamente pelo comando ET, caso nao de certo, pedir ao usaário escolher.
+
+
+7. Logs do que foi configurado (semelhante ao da g-system)
+
+
+
+
