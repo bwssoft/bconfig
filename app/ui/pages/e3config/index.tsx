@@ -4,7 +4,7 @@ import { CheckIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import { cn } from "@/app/lib/util";
 import { Button } from "../../components/button";
 import Alert from "../../components/alert";
-import { additionalFunctions } from "@/app/constants/e3+config";
+import { ConfigE3Form } from "../../forms/config-e3";
 
 const icons = {
   open: { icon: CheckIcon, bgColorClass: "bg-green-500" },
@@ -37,178 +37,8 @@ export function E3Config() {
       <div>
         <div className="mx-auto mt-8 grid max-w-3xl grid-cols-1 gap-6 sm:px-6 lg:max-w-7xl lg:grid-flow-col-dense lg:grid-cols-3">
           <div className="space-y-6 lg:col-span-2 lg:col-start-1">
-            <div className="col-span-full flex flex-col gap-6">
-              <section aria-labelledby="communication">
-                <div className="bg-white shadow sm:rounded-lg">
-                  <div className="px-4 py-5 sm:px-6">
-                    <h2
-                      id="applicant-information-title"
-                      className="text-lg font-medium leading-6 text-gray-900"
-                    >
-                      Comunicação
-                    </h2>
-                    <p className="mt-1 max-w-2xl text-sm text-gray-500">
-                      Detalhes do equipamento e suas configurações.
-                    </p>
-                  </div>
-                  <div className="border-t border-gray-200 px-4 py-5 sm:px-6">
-                    <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
-                      <div className="sm:col-span-1">
-                        <dt className="text-sm font-medium text-gray-500">
-                          APN
-                        </dt>
-                        <dd className="mt-1 text-sm text-gray-900">
-                          bws.com.br
-                        </dd>
-                      </div>
-                      <div className="sm:col-span-1">
-                        <dt className="text-sm font-medium text-gray-500">
-                          Intervalo de Transmissão (Segundos)
-                        </dt>
-                        <div className="flex gap-2">
-                          <dd className="mt-1 text-sm text-gray-900">
-                            Ligado: 60
-                          </dd>
-                          <dd className="mt-1 text-sm text-gray-900">
-                            Desligado: 60
-                          </dd>
-                        </div>
-                      </div>
-                      <div className="sm:col-span-1">
-                        <dt className="text-sm font-medium text-gray-500">
-                          Ip Primário
-                        </dt>
-                        <dd className="mt-1 text-sm text-gray-900">
-                          143.198.247.1:2000
-                        </dd>
-                      </div>
-                      <div className="sm:col-span-1">
-                        <dt className="text-sm font-medium text-gray-500">
-                          Ip Secundário
-                        </dt>
-                        <dd className="mt-1 text-sm text-gray-900">
-                          143.198.247.2:2000
-                        </dd>
-                      </div>
-                    </dl>
-                  </div>
-                </div>
-              </section>
-
-              <section aria-labelledby="general-config">
-                <div className="bg-white shadow sm:rounded-lg">
-                  <div className="px-4 py-5 sm:px-6">
-                    <h2
-                      id="applicant-information-title"
-                      className="text-lg font-medium leading-6 text-gray-900"
-                    >
-                      Configurações Gerais
-                    </h2>
-                    <p className="mt-1 max-w-2xl text-sm text-gray-500">
-                      Detalhes do equipamento e suas configurações.
-                    </p>
-                  </div>
-                  <div className="border-t border-gray-200 px-4 py-5 sm:px-6">
-                    <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
-                      <div className="sm:col-span-1">
-                        <dt className="text-sm font-medium text-gray-500">
-                          Sensor Acelerômetro
-                        </dt>
-                        <dd className="mt-1 text-sm text-gray-900">3</dd>
-                      </div>
-                      <div className="sm:col-span-1">
-                        <dt className="text-sm font-medium text-gray-500">
-                          Tipo de Bloqueio
-                        </dt>
-                        <dd className="mt-1 text-sm text-gray-900">
-                          Progressivo
-                        </dd>
-                      </div>
-                      <div className="sm:col-span-1">
-                        <dt className="text-sm font-medium text-gray-500">
-                          Fuso Horário
-                        </dt>
-                        <dd className="mt-1 text-sm text-gray-900">
-                          UTC+00:00
-                        </dd>
-                      </div>
-                      <div className="sm:col-span-1">
-                        <dt className="text-sm font-medium text-gray-500">
-                          Sleep (Minutos)
-                        </dt>
-                        <dd className="mt-1 text-sm text-gray-900">1</dd>
-                      </div>
-                      <div className="sm:col-span-1">
-                        <dt className="text-sm font-medium text-gray-500">
-                          Ajuste Sensibilidade
-                        </dt>
-                        <dd className="mt-1 text-sm text-gray-900">500</dd>
-                      </div>
-                      <div className="sm:col-span-1">
-                        <dt className="text-sm font-medium text-gray-500">
-                          Ajuste Sensibilidade
-                        </dt>
-                        <dd className="mt-1 text-sm text-gray-900">500</dd>
-                      </div>
-                      <div className="sm:col-span-1">
-                        <dt className="text-sm font-medium text-gray-500">
-                          Tempo TX
-                        </dt>
-                        <dd className="mt-1 text-sm text-gray-900">60</dd>
-                      </div>
-                      <div className="sm:col-span-1">
-                        <dt className="text-sm font-medium text-gray-500">
-                          Hodômetro (Km)
-                        </dt>
-                        <dd className="mt-1 text-sm text-gray-900">60</dd>
-                      </div>
-                    </dl>
-                  </div>
-                </div>
-              </section>
-
-              <section aria-labelledby="additional-functions">
-                <div className="bg-white shadow sm:rounded-lg">
-                  <div className="px-4 py-5 sm:px-6">
-                    <h2
-                      id="applicant-information-title"
-                      className="text-lg font-medium leading-6 text-gray-900"
-                    >
-                      Funções Adicionais
-                    </h2>
-                    <p className="mt-1 max-w-2xl text-sm text-gray-500">
-                      Detalhes do equipamento e suas configurações.
-                    </p>
-                  </div>
-                  <div className="border-t border-gray-200 px-4 py-5 sm:px-6">
-                    <div className="divide-y divide-gray-200 border-b border-t border-gray-200">
-                      {additionalFunctions.map((prop, id) => (
-                        <div
-                          key={id}
-                          className="relative flex items-start py-4"
-                        >
-                          <div className="min-w-0 flex-1 text-sm leading-6">
-                            <label
-                              htmlFor={`person-${prop.id}`}
-                              className="select-none font-medium text-gray-900"
-                            >
-                              {prop.name}
-                            </label>
-                          </div>
-                          <div className="ml-3 flex h-6 items-center">
-                            <input
-                              id={`person-${prop.id}`}
-                              name={`person-${prop.id}`}
-                              type="checkbox"
-                              className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                            />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </section>
+            <div className="col-span-full">
+              <ConfigE3Form config={identified[0]?.config} />
             </div>
           </div>
           <section className="lg:col-span-1 lg:col-start-3">
@@ -264,7 +94,7 @@ export function E3Config() {
                               </span>
                               <div className="flex min-w-0 flex-1 justify-between space-x-4 items-center">
                                 {device?.imei || device?.iccid ? (
-                                  <p className="text-sm text-gray-500">
+                                  <p className="text-sm text-gray-500 flex flex-col">
                                     {/* {info?.usbProductId}{" "} */}
                                     <a
                                       href="#"
@@ -304,7 +134,7 @@ export function E3Config() {
                                     </div>
                                   </>
                                 )}
-                                {device?.check && (
+                                {device?.initialConfig?.check && (
                                   <div className="flex whitespace-nowrap text-right text-sm text-gray-500 gap-2">
                                     {/* <Button type="submit" variant="outlined">
                                     {isOpen ? "Fechar" : "Abrir"}
