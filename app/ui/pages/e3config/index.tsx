@@ -62,14 +62,25 @@ export function E3Config() {
           </div>
         </div>
         <section className="sticky bottom-5 mx-auto max-w-7xl">
-          <div className="bg-blue-500/5 backdrop-blur-sm rounded-lg p-6 w-full gap-3 grid grid-cols-[1fr_min-content]">
-            <div className="bg-white px-4 py-3 shadow-xl sm:rounded-lg sm:px-6 ">
-              {/* <h2
-              id="timeline-title"
-              className="text-lg font-medium text-gray-900"
-            >
-              Portas
-            </h2> */}
+          <div className="bg-gray-900/5 backdrop-blur-sm rounded-lg p-6 w-full gap-3">
+            <div className="bg-white shadow-xl sm:rounded-lg p-3 gap-3 grid grid-rows-[min-content_1fr]">
+              <div className="flex justify-between">
+                <Button
+                  variant="outlined"
+                  className="h-fit whitespace-nowrap"
+                  onClick={requestPort}
+                >
+                  Nova Porta
+                </Button>
+                <div className="flex gap-2">
+                  <Button variant="outlined" className="h-fit">
+                    Logs
+                  </Button>
+                  <Button variant="primary" className="h-fit">
+                    Configurar
+                  </Button>
+                </div>
+              </div>
               <div className="flow-root">
                 {ports.length > 0 ? (
                   <DevicesToConfigureTable
@@ -87,32 +98,9 @@ export function E3Config() {
                     })}
                   />
                 ) : (
-                  <Alert label="Você não tem nenhuma porta registrada. Aberte o botão abaixo e escolha uma." />
+                  <Alert label="Você não tem nenhuma porta." />
                 )}
               </div>
-              {/* <div className="mt-6 flex flex-col justify-stretch gap-3">
-              <form
-                id="request-new-port"
-                action={requestPort}
-                className="w-full"
-              >
-                <Button type="submit" variant="primary" className="w-full">
-                  Requisitar nova porta
-                </Button>
-              </form>
-            </div> */}
-            </div>
-            <div className="bg-white shadow-xl sm:rounded-lg p-3 flex flex-col gap-3">
-              <Button
-                variant="outlined"
-                className="w-full h-fit whitespace-nowrap"
-                onClick={requestPort}
-              >
-                Requisita Nova Porta
-              </Button>
-              <Button variant="primary" className="w-full h-fit">
-                Configurar
-              </Button>
             </div>
           </div>
         </section>

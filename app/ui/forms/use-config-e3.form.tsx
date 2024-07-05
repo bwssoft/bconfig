@@ -97,7 +97,6 @@ export function useConfigE3Form(props: Props) {
   });
 
   useEffect(() => {
-    console.log("defaultvalue", defaultValues);
     if (defaultValues) {
       hookFormReset(defaultValues);
     }
