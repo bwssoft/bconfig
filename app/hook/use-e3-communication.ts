@@ -90,7 +90,6 @@ export function useE3Communication() {
             }
             setIdentified(prev => {
               const _check = check ? E3.check(check) : undefined
-              console.log('check', check)
               return [
                 ...prev,
                 {
@@ -211,7 +210,7 @@ export function useE3Communication() {
           }
           await closePort(port)
         } catch (e) {
-          console.log('ERROR [sendCommands]', e);
+          console.error('ERROR [sendCommands]', e);
           await closePort(port)
           await sendCommands(commands)
         }
