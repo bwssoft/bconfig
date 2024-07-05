@@ -18,9 +18,18 @@ export function Select<T>(props: {
   onChange?: (arg: T) => void;
   name: string;
   value?: T; // Adicione a prop value
+  placeholder?: string;
 }) {
-  const { data, keyExtractor, valueExtractor, label, onChange, name, value } =
-    props;
+  const {
+    data,
+    keyExtractor,
+    valueExtractor,
+    label,
+    onChange,
+    name,
+    value,
+    placeholder,
+  } = props;
   const [selected, setSelected] = useState<T | undefined>(undefined);
 
   useEffect(() => {
@@ -43,7 +52,9 @@ export function Select<T>(props: {
           <div className={cn("relative", label && "mt-2")}>
             <ListboxButton className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
               <span className="block truncate">
-                {selected ? valueExtractor(selected) : "Selecione uma opção"}
+                {selected
+                  ? valueExtractor(selected)
+                  : placeholder ?? "Selecione uma opção"}
               </span>
               <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                 <ChevronUpDownIcon

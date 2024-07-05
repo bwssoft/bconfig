@@ -1,4 +1,4 @@
-import { ISerialPort } from "@/app/lib/definitions/serial";
+import { ISerialPort } from "@/app/lib/definition/serial";
 import { ColumnDef } from "@tanstack/react-table";
 
 export const columns: ColumnDef<{

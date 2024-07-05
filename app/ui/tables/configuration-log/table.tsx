@@ -3,7 +3,7 @@
 
 import { columns } from "./columns";
 import { DataTable } from "../../components/data-table";
-import { ISerialPort } from "@/app/lib/definitions/serial";
+import { ISerialPort } from "@/app/lib/definition/serial";
 
 interface Props {
   data: { answer?: string; command: string; port: ISerialPort }[];

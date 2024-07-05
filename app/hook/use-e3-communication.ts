@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef, useCallback } from "react"
 import { useSerial } from "./use-serial"
-import { ISerialPort } from "../lib/definitions/serial"
+import { ISerialPort } from "../lib/definition/serial"
 import { sleep } from "../lib/util/sleep"
 import { E3 } from "../lib/parser/e3+"
 

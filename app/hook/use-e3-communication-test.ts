@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef, useCallback } from "react"
 import { useSerial } from "./use-serial"
-import { ISerialPort } from "../lib/definitions/serial"
+import { ISerialPort } from "../lib/definition/serial"
 import { sleep } from "../lib/util/sleep"
 import { E3 } from "../lib/parser/e3+"
 
@@ -214,6 +214,7 @@ export function useE3CommunicationTest() {
         const result = await readDeviceResponse(reader, command);
         await reader.cancel()
         reader.releaseLock()
+        console.log(command, result)
         if (result) return result
       } catch (error) {
         await reader.cancel()

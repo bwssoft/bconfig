@@ -7,6 +7,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 const schema = z.object({
+  name: z.string(),
+  model: z.enum(["E3+", "E3+4G"]),
   password: z.object({ old: z.string(), new: z.string() }).optional(),
   apn: z
     .object({
@@ -17,18 +19,14 @@ const schema = z.object({
     .optional(),
   ip: z
     .object({
-      primary: z
-        .object({
-          ip: z.string(),
-          port: z.string(),
-        })
-        .optional(),
-      secondary: z
-        .object({
-          ip: z.string(),
-          port: z.string(),
-        })
-        .optional(),
+      primary: z.object({
+        ip: z.string(),
+        port: z.string(),
+      }),
+      secondary: z.object({
+        ip: z.string(),
+        port: z.string(),
+      }),
     })
     .optional(),
   dns: z
@@ -50,14 +48,14 @@ const schema = z.object({
   accelerometer_sensitivity: z.coerce.number().optional(),
   economy_mode: z.coerce.number().optional(),
   sensitivity_adjustment: z.coerce.number().optional(),
-  lbs_position: z.coerce.boolean().optional(),
-  cornering_position_update: z.coerce.boolean().optional(),
-  ignition_alert_power_cut: z.coerce.boolean().optional(),
-  gprs_failure_alert: z.coerce.boolean().optional(),
-  led: z.coerce.boolean().optional(),
-  virtual_ignition: z.coerce.boolean().optional(),
-  // panic_button: z.coerce.boolean().optional(),
-  // module_violation: z.coerce.boolean().optional(),
+  lbs_position: z.coerce.boolean().optional().default(false),
+  cornering_position_update: z.coerce.boolean().optional().default(false),
+  ignition_alert_power_cut: z.coerce.boolean().optional().default(false),
+  gprs_failure_alert: z.coerce.boolean().optional().default(false),
+  led: z.coerce.boolean().optional().default(false),
+  virtual_ignition: z.coerce.boolean().optional().default(false),
+  // panic_button: z.coerce.boolean().optional().default(false),
+  // module_violation: z.coerce.boolean().optional().default(false),
 });
 
 export type Schema = z.infer<typeof schema>;
@@ -66,7 +64,7 @@ interface Props {
   defaultValues?: Schema;
   onSubmit?: (commands: string[]) => Promise<void>;
 }
-export function useConfigE3Form(props: Props) {
+export function useProfileCreateForm(props: Props) {
   const { defaultValues, onSubmit } = props;
   const {
     register,
@@ -80,25 +78,21 @@ export function useConfigE3Form(props: Props) {
     defaultValues,
   });
 
+  const [ipdns, setIpdns] = useState<"IP" | "DNS">("IP");
+  const handleChangeIpDns = (value: "IP" | "DNS") => {
+    setIpdns(value);
+  };
+
   const handleSubmit = hookFormSubmit(async (data) => {
     try {
-      console.log("data", data);
-      const commands: string[] = [];
-      Object.entries(data).forEach(([command, args]) => {
-        const _command = E3Encoder.encoder({ command, args } as any);
-        console.log(command, _command);
-        if (_command) {
-          commands.push(...(Array.isArray(_command) ? _command : [_command]));
-        }
-      });
-      // await onSubmit?.(["REG000000#", "SMS1", "EN", "IMEI", ...commands]);
+      const { name, model, ...config } = data;
+      await createOneProfile({ name, model, config });
     } catch (e) {
       console.error("error on submit form", e);
     }
   });
 
   useEffect(() => {
-    console.log("defaultValues", defaultValues);
     if (defaultValues) {
       hookFormReset(defaultValues);
     }
@@ -111,5 +105,7 @@ export function useConfigE3Form(props: Props) {
     control,
     setValue,
     reset: hookFormReset,
+    handleChangeIpDns,
+    ipdns,
   };
 }

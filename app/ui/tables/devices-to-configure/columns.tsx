@@ -1,8 +1,8 @@
-import { ISerialPort } from "@/app/lib/definitions/serial";
+import { ISerialPort } from "@/app/lib/definition/serial";
 import { ColumnDef } from "@tanstack/react-table";
 
 const className =
-  "underline underline-offset-2 font-semibold text-blue-900 hover:text-blue-600 hover:cursor-pointer";
+  "underline underline-offset-2 font-semibold text-blue-600 hover:text-blue-500 hover:cursor-pointer";
 export const columns: ColumnDef<{
   imei?: string;
   iccid?: string;
@@ -46,7 +46,7 @@ export const columns: ColumnDef<{
       const { getDeviceConfig, port } = device;
       return (
         <div className="flex gap-2">
-          <p className={className}>Área de Teste</p>
+          <p className={className}>Área de Teste</p> |
           <p className={className} onClick={() => getDeviceConfig(port)}>
             Resgatar Configurações
           </p>

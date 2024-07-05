@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { INavigator, ISerialPort } from "../lib/definitions/serial";
+import { INavigator, ISerialPort } from "../lib/definition/serial";
 
 interface Props {
   handleConnection?: (port: ISerialPort) => void

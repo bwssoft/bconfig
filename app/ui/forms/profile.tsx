@@ -1,3 +1,5 @@
+"use client";
+
 import {
   accelerometerSensitivity,
   economyMode,
@@ -8,43 +10,78 @@ import {
 import { Input } from "../components/input";
 import { Select } from "../components/select";
 import { Radio } from "../components/radio";
-import { useConfigE3Form } from "./use-config-e3.form";
+import { useProfileCreateForm } from "./use-profile.form";
 import { Controller } from "react-hook-form";
-import ButtonGroup from "../components/toggle";
 import Toggle from "../components/toggle";
 import { Button } from "../components/button";
 
 interface Props {
-  config: any;
+  config?: any;
   onSubmit?: (commands: string[]) => Promise<void>;
 }
-export function ConfigE3Form(props: Props) {
+export function ProfileCreateForm(props: Props) {
   const { config, onSubmit } = props;
   const { register, ipdns, handleChangeIpDns, handleSubmit, control } =
-    useConfigE3Form({
+    useProfileCreateForm({
       defaultValues: config,
       onSubmit,
     });
   return (
     <form
       autoComplete="off"
-      className="flex flex-col gap-6"
+      className="flex flex-col gap-6 mt-6"
       onSubmit={handleSubmit}
     >
       <section aria-labelledby="communication">
-        <div className="bg-white shadow sm:rounded-lg">
-          <div className="px-4 py-5 sm:px-6">
-            <h2
+        <div className="bg-white sm:rounded-lg">
+          <div className="py-5">
+            <h1
               id="applicant-information-title"
-              className="text-lg font-medium leading-6 text-gray-900"
+              className="text-base font-semibold leading-7 text-gray-900"
             >
               Comunicação
-            </h2>
-            <p className="mt-1 max-w-2xl text-sm text-gray-500">
+            </h1>
+            <p className="mt-2 text-sm text-gray-700">
               Detalhes do equipamento e suas configurações.
             </p>
           </div>
-          <div className="border-t border-gray-200 px-4 py-5 sm:px-6">
+          <div className="border-t border-gray-200 py-5">
+            <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
+              <div className="sm:col-span-1">
+                <Input
+                  {...register("name")}
+                  id="Nome"
+                  label="Nome"
+                  placeholder="Perfil#00"
+                />
+              </div>
+              <div className="sm:col-span-1">
+                <Input
+                  {...register("model")}
+                  id="model"
+                  label="Modelo"
+                  placeholder="Modelo#00"
+                />
+              </div>
+            </dl>
+          </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="communication">
+        <div className="bg-white sm:rounded-lg">
+          <div className="py-5">
+            <h1
+              id="applicant-information-title"
+              className="text-base font-semibold leading-7 text-gray-900"
+            >
+              Comunicação
+            </h1>
+            <p className="mt-2 text-sm text-gray-700">
+              Detalhes do equipamento e suas configurações.
+            </p>
+          </div>
+          <div className="border-t border-gray-200 py-5">
             <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-3">
               <div className="sm:col-span-2">
                 <dt className="text-sm font-medium text-gray-400">
@@ -167,19 +204,19 @@ export function ConfigE3Form(props: Props) {
       </section>
 
       <section aria-labelledby="general-config">
-        <div className="bg-white shadow sm:rounded-lg">
-          <div className="px-4 py-5 sm:px-6">
-            <h2
+        <div className="bg-white sm:rounded-lg">
+          <div className="py-5">
+            <h1
               id="applicant-information-title"
-              className="text-lg font-medium leading-6 text-gray-900"
+              className="text-base font-semibold leading-7 text-gray-900"
             >
               Configurações Gerais
-            </h2>
-            <p className="mt-1 max-w-2xl text-sm text-gray-500">
+            </h1>
+            <p className="mt-2 text-sm text-gray-700">
               Detalhes do equipamento e suas configurações.
             </p>
           </div>
-          <div className="border-t border-gray-200 px-4 py-5 sm:px-6">
+          <div className="border-t border-gray-200 py-5">
             <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
               <div className="sm:col-span-full">
                 <dt className="text-sm font-medium text-gray-400">
@@ -303,20 +340,20 @@ export function ConfigE3Form(props: Props) {
         </div>
       </section>
 
-      <section aria-labelledby="additional-functions" className="mb-6">
-        <div className="bg-white shadow sm:rounded-lg">
-          <div className="px-4 py-5 sm:px-6">
-            <h2
+      <section aria-labelledby="additional-functions">
+        <div className="bg-white sm:rounded-lg">
+          <div className="py-5">
+            <h1
               id="applicant-information-title"
-              className="text-lg font-medium leading-6 text-gray-900"
+              className="text-base font-semibold leading-7 text-gray-900"
             >
               Funções
-            </h2>
-            <p className="mt-1 max-w-2xl text-sm text-gray-500">
+            </h1>
+            <p className="mt-2 text-sm text-gray-700">
               Detalhes do equipamento e suas configurações.
             </p>
           </div>
-          <div className="border-t border-gray-200 px-4 py-5 sm:px-6">
+          <div className="border-t border-gray-200 py-5">
             <div className="divide-y divide-gray-200 border-b border-t border-gray-200">
               {functions.map((func, id) => (
                 <div key={id} className="relative flex items-center py-4">
@@ -348,6 +385,18 @@ export function ConfigE3Form(props: Props) {
           </div>
         </div>
       </section>
+
+      <div className="mt-6 flex items-center justify-end gap-x-6">
+        <button
+          type="button"
+          className="text-sm font-semibold leading-6 text-gray-900"
+        >
+          Cancelar
+        </button>
+        <Button variant="primary" type="submit">
+          Registrar
+        </Button>
+      </div>
     </form>
   );
 }

@@ -3,26 +3,19 @@
 
 import { columns } from "./columns";
 import { DataTable } from "../../components/data-table";
-import { ISerialPort } from "@/app/lib/definition/serial";
 
 interface Props {
-  data: {
-    imei?: string;
-    iccid?: string;
-    et?: string;
-    port: ISerialPort;
-    getDeviceConfig: (port: ISerialPort) => Promise<void>;
-  }[];
+  data: { name: string; model: string }[];
 }
-export default function DevicesToConfigureTable(props: Props) {
+export default function ProfileTable(props: Props) {
   const { data } = props;
   return (
     <DataTable
       columns={columns}
       data={data}
-      mobileDisplayValue={(data) => data.imei}
+      mobileDisplayValue={(data) => data.name}
       mobileKeyExtractor={() => Math.random().toString()}
-      className="w-full"
+      className="w-full mt-10"
       theadClassName="[&_tr]:border-b bg-white border-b-1 border-b-gray-200"
     />
   );
