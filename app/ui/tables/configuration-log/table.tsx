@@ -17,6 +17,7 @@ export default function ConfigurationLogTable(props: Props) {
       mobileDisplayValue={(data) => `${data.command} ${data.answer ?? "--"}`}
       mobileKeyExtractor={() => Math.random().toString()}
       className="w-full"
+      theadClassName="[&_tr]:border-b bg-white border-b-1 border-b-gray-200"
     />
   );
 }

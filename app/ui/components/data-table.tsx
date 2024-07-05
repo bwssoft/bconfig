@@ -15,6 +15,9 @@ interface DataTableDesktopProps<TData, TValue> extends ComponentProps<"div"> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   onRowPress?(data: TData): void;
+  tdClassName?: string;
+  thClassName?: string;
+  theadClassName?: string;
 }
 
 export function DataTableDesktop<TData, TValue>({
@@ -22,6 +25,9 @@ export function DataTableDesktop<TData, TValue>({
   data,
   onRowPress = undefined,
   className,
+  tdClassName,
+  thClassName,
+  theadClassName,
   ...rest
 }: DataTableDesktopProps<TData, TValue>) {
   const table = useReactTable({
@@ -39,14 +45,17 @@ export function DataTableDesktop<TData, TValue>({
     <div {...rest} className={cn("rounded-md bg-white", className)}>
       <div className="relative w-full overflow-auto">
         <table className="w-full caption-bottom text-sm">
-          <thead className="[&_tr]:border-b bg-white border-b-1 border-b-gray-200">
+          <thead className={cn(theadClassName)}>
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
                     <th
                       key={header.id}
-                      className="px-6 py-3 text-left text-sm font-semibold text-gray-900"
+                      className={cn(
+                        "px-6 py-3 text-left text-sm font-semibold text-gray-900",
+                        thClassName
+                      )}
                     >
                       {header.isPlaceholder
                         ? null
@@ -75,7 +84,10 @@ export function DataTableDesktop<TData, TValue>({
                   {row.getVisibleCells().map((cell) => (
                     <td
                       key={cell.id}
-                      className="whitespace-nowrap align-middle px-6 py-4 text-sm text-gray-500"
+                      className={cn(
+                        "whitespace-nowrap align-middle px-6 py-4 text-sm text-gray-500",
+                        tdClassName
+                      )}
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
