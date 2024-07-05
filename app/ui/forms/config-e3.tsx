@@ -303,7 +303,7 @@ export function ConfigE3Form(props: Props) {
         </div>
       </section>
 
-      <section aria-labelledby="additional-functions">
+      <section aria-labelledby="additional-functions" className="mb-6">
         <div className="bg-white shadow sm:rounded-lg">
           <div className="px-4 py-5 sm:px-6">
             <h2
@@ -348,10 +348,6 @@ export function ConfigE3Form(props: Props) {
           </div>
         </div>
       </section>
-
-      <Button type="submit" variant="primary" className="w-full">
-        Configurar
-      </Button>
     </form>
   );
 }
