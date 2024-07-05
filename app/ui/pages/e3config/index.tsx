@@ -5,6 +5,9 @@ import { cn } from "@/app/lib/util";
 import { Button } from "../../components/button";
 import Alert from "../../components/alert";
 import { ConfigE3Form } from "../../forms/config-e3";
+import { useE3CommunicationTest } from "@/app/hook/use-e3-communication-test";
+import ConfigurationLogTable from "../../tables/configuration-log/table";
+import Disclosure from "../../components/disclosure";
 
 const icons = {
   open: { icon: CheckIcon, bgColorClass: "bg-green-500" },
@@ -12,8 +15,19 @@ const icons = {
 };
 
 export function E3Config() {
-  const { identified, requestPort, ports } = useE3Communication();
+  const {
+    identified,
+    requestPort,
+    ports,
+    sendCommands,
+    commands,
+    getDeviceConfig,
+    config,
+  } = useE3CommunicationTest();
   const date = new Date();
+  const handleSubmit = async (commands: string[]) => {
+    await sendCommands(commands);
+  };
   return (
     <main className="py-10">
       {/* Page header */}
@@ -38,7 +52,19 @@ export function E3Config() {
         <div className="mx-auto mt-8 grid max-w-3xl grid-cols-1 gap-6 sm:px-6 lg:max-w-7xl lg:grid-flow-col-dense lg:grid-cols-3">
           <div className="space-y-6 lg:col-span-2 lg:col-start-1">
             <div className="col-span-full">
-              <ConfigE3Form config={identified[0]?.config} />
+              <ConfigE3Form config={config?.config} onSubmit={handleSubmit} />
+              {commands.length > 0 && (
+                <Disclosure
+                  items={identified.map((i) => ({
+                    label: i.imei ?? "não reportou o imei",
+                    content: (
+                      <ConfigurationLogTable
+                        data={commands.filter((el) => el.port === i.port)}
+                      />
+                    ),
+                  }))}
+                />
+              )}
             </div>
           </div>
           <section className="lg:col-span-1 lg:col-start-3">
@@ -134,15 +160,20 @@ export function E3Config() {
                                     </div>
                                   </>
                                 )}
-                                {device?.initialConfig?.check && (
-                                  <div className="flex whitespace-nowrap text-right text-sm text-gray-500 gap-2">
-                                    {/* <Button type="submit" variant="outlined">
+                                <div className="flex whitespace-nowrap text-right text-sm text-gray-500 gap-2">
+                                  {/* <Button type="submit" variant="outlined">
                                     {isOpen ? "Fechar" : "Abrir"}
                                   </Button> */}
-                                    <Button type="button" variant="outlined">
-                                      Configuração
-                                    </Button>
-                                    {/* <form
+                                  <Button
+                                    type="button"
+                                    variant="outlined"
+                                    onClick={() =>
+                                      getDeviceConfig([identified?.[0].port])
+                                    }
+                                  >
+                                    Configuração
+                                  </Button>
+                                  {/* <form
                                     id="handle-forget-port"
                                     action={() => item.forget()}
                                   >
@@ -150,8 +181,7 @@ export function E3Config() {
                                       Esquecer
                                     </Button>
                                   </form> */}
-                                  </div>
-                                )}
+                                </div>
                               </div>
                             </div>
                           </div>

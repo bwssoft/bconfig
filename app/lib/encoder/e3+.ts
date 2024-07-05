@@ -153,8 +153,47 @@ export class E3Encoder {
     return `GS${props}`
   }
 
+  static lbs_position(props: boolean): string | undefined {
+    if (typeof props !== "boolean") {
+      return undefined
+    }
+    return `LBS${props ? "ON" : "OFF"}`
+  }
 
+  static cornering_position_update(props: boolean): string | undefined {
+    if (typeof props !== "boolean") {
+      return undefined
+    }
+    return `TURNDET${props ? "ON" : "OFF"}`
+  }
 
+  static ignition_alert_power_cut(props: boolean): string | undefined {
+    if (typeof props !== "boolean") {
+      return undefined
+    }
+    return `BJ${props ? 1 : 0}`
+  }
+
+  static gprs_failure_alert(props: boolean): string | undefined {
+    if (typeof props !== "boolean") {
+      return undefined
+    }
+    return `JD${props ? 1 : 0}`
+  }
+
+  static led(props: boolean): string | undefined {
+    if (typeof props !== "boolean") {
+      return undefined
+    }
+    return `LED${props ? "ON" : "OFF"}`
+  }
+
+  static virtual_ignition(props: boolean): string | undefined {
+    if (typeof props !== "boolean") {
+      return undefined
+    }
+    return `IV${props ? "ON" : "OFF"}`
+  }
 
   static commands() {
     return {
@@ -169,7 +208,13 @@ export class E3Encoder {
       keep_alive: E3Encoder.keep_alive,
       accelerometer_sensitivity: E3Encoder.accelerometer_sensitivity,
       economy_mode: E3Encoder.economy_mode,
-      sensitivity_adjustment: E3Encoder.sensitivity_adjustment
+      sensitivity_adjustment: E3Encoder.sensitivity_adjustment,
+      lbs_position: E3Encoder.lbs_position,
+      cornering_position_update: E3Encoder.cornering_position_update,
+      ignition_alert_power_cut: E3Encoder.ignition_alert_power_cut,
+      gprs_failure_alert: E3Encoder.gprs_failure_alert,
+      led: E3Encoder.led,
+      virtual_ignition: E3Encoder.virtual_ignition,
     }
   }
 

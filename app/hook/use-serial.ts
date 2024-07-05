@@ -59,7 +59,7 @@ export const useSerial = (props: Props) => {
   //SerialPort
   const openPort = async (port: ISerialPort) => {
     try {
-      await port.open({ baudRate: 115200 })
+      await port.open({ baudRate: 115200, bufferSize: 1000000 })
     } catch (e) {
       console.error("on open port", e)
     }

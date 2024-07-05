@@ -10,15 +10,20 @@ import { Select } from "../components/select";
 import { Radio } from "../components/radio";
 import { useConfigE3Form } from "./use-config-e3.form";
 import { Controller } from "react-hook-form";
+import ButtonGroup from "../components/toggle";
+import Toggle from "../components/toggle";
+import { Button } from "../components/button";
 
 interface Props {
   config: any;
+  onSubmit?: (commands: string[]) => Promise<void>;
 }
 export function ConfigE3Form(props: Props) {
-  const { config } = props;
+  const { config, onSubmit } = props;
   const { register, ipdns, handleChangeIpDns, handleSubmit, control } =
     useConfigE3Form({
       defaultValues: config,
+      onSubmit,
     });
   return (
     <form
@@ -313,22 +318,28 @@ export function ConfigE3Form(props: Props) {
           </div>
           <div className="border-t border-gray-200 px-4 py-5 sm:px-6">
             <div className="divide-y divide-gray-200 border-b border-t border-gray-200">
-              {functions.map((prop, id) => (
-                <div key={id} className="relative flex items-start py-4">
+              {functions.map((func, id) => (
+                <div key={id} className="relative flex items-center py-4">
+                  <input
+                    id={`functions-${func.name}`}
+                    type="checkbox"
+                    className="mr-3 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600"
+                  />
                   <div className="min-w-0 flex-1 text-sm leading-6">
                     <label
-                      htmlFor={`functions-${prop.id}`}
+                      htmlFor={`functions-${func.name}`}
                       className="select-none font-medium text-gray-900"
                     >
-                      {prop.name}
+                      {func.label}
                     </label>
                   </div>
-                  <div className="ml-3 flex h-6 items-center">
-                    <input
-                      id={`functions-${prop.id}`}
-                      name={`functions-${prop.id}`}
-                      type="checkbox"
-                      className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600"
+                  <div className="ml-3 flex h-6 items-center gap-2">
+                    <Controller
+                      control={control}
+                      name={func.name as any}
+                      render={({ field }) => (
+                        <Toggle onChange={field.onChange} value={field.value} />
+                      )}
                     />
                   </div>
                 </div>
@@ -338,7 +349,9 @@ export function ConfigE3Form(props: Props) {
         </div>
       </section>
 
-      <button type="submit">submit</button>
+      <Button type="submit" variant="primary" className="w-full">
+        Configurar
+      </Button>
     </form>
   );
 }

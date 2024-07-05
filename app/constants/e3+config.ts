@@ -1,37 +1,46 @@
 
 export const functions = [
   {
-    name: "Atualização da posição em curva",
-    id: 1,
+    label: "Posição de LBS",
+    name: "lbs_position",
+    data: [{ label: "Ligado", value: true }, { label: "Desligado", value: false }]
   },
   {
-    name: "Indicar LED",
-    id: 2,
-  },
-  {
-    name: "Modo de Economia",
-    id: 3,
-  },
+    label: "Atualização da posição em curva",
+    name: "cornering_position_update",
+    data: [{ label: "Ligado", value: true }, { label: "Desligado", value: false }]
 
-  {
-    name: "Alerta de falha de GPRS (SMS)",
-    id: 4,
   },
   {
-    name: "Alerta de ignição / Corte de alimentação (SMS)",
-    id: 5,
+    label: "Alerta de ignição / Corte de alimentação (SMS)",
+    name: "ignition_alert_power_cut",
+    data: [{ label: "Ligado", value: true }, { label: "Desligado", value: false }]
   },
   {
-    name: "Ignição Virtual",
-    id: 6,
+    label: "Alerta de falha de GPRS (SMS)",
+    name: "gprs_failure_alert",
+    data: [{ label: "Ligado", value: true }, { label: "Desligado", value: false }]
   },
   {
-    name: "Modo de Trabalho",
-    id: 7,
+    label: "Indicar LED",
+    name: "led",
+    data: [{ label: "Ligado", value: true }, { label: "Desligado", value: false }]
   },
   {
-    name: "Posição de LBS",
-    id: 8,
+    label: "Ignição Virtual",
+    name: "virtual_ignition",
+    data: [{ label: "Ligado", value: true }, { label: "Desligado", value: false }]
+
+  },
+  {
+    label: "Botão de Pânico",
+    name: "panic_button",
+    data: [{ label: "Ligado", value: true }, { label: "Desligado", value: false }]
+  },
+  {
+    label: "Violação de Módulo (Fio Branco)",
+    name: "module_violation",
+    data: [{ label: "Ligado", value: true }, { label: "Desligado", value: false }]
   },
 ];
 
@@ -51,7 +60,7 @@ export const timezones = [
   { label: "(UTC-01:00) Açores", value: -1 },
   { label: "(UTC+00:00) Padrão (UTC)", value: 0 },
   { label: "(UTC+00:00) Padrão (UTC)", value: 0 },
-  { label: "(UTC+01:00) Europa Ocidental", value: 1 },
+  { label: "(UTC+01:00) Europa Ocnameental", value: 1 },
   { label: "(UTC+02:00) Europa Central", value: 2 },
   { label: "(UTC+03:00) Moscou", value: 3 },
   { label: "(UTC+04:00) Geórgia", value: 4 },

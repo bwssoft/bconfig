@@ -1,3 +1,5 @@
+import { isBooleanObject } from "util/types"
+
 type APN = {
   address: string
   user: string
@@ -37,6 +39,22 @@ type AccelerometerSensitivity = number
 
 type EconomyMode = number
 
+type LBSPosition = boolean
+
+type CorneringPositionUpdate = boolean
+
+type IgnitionAlertPowerCut = boolean
+
+type GprsFailureAlert = boolean
+
+type Led = boolean
+
+type VirtualIgnition = boolean
+
+type PanicButton = boolean
+
+type ModuleViolation = boolean
+
 interface Check extends Object {
   apn?: APN
   timezone?: Timezone
@@ -46,6 +64,14 @@ interface Check extends Object {
   keep_alive?: KeepAlive
   accelerometer_sensitivity?: AccelerometerSensitivity
   economy_mode?: EconomyMode
+  lbs_position?: LBSPosition
+  cornering_position_update?: CorneringPositionUpdate
+  ignition_alert_power_cut?: IgnitionAlertPowerCut
+  gprs_failure_alert?: GprsFailureAlert
+  led?: Led
+  virtual_ignition?: VirtualIgnition
+  panic_button?: PanicButton
+  module_violation?: ModuleViolation
 }
 
 interface Status {
@@ -103,7 +129,24 @@ export class E3 {
         if (key === "SDMS") {
           parsed["economy_mode"] = this.economy_mode(value)
         }
-
+        if (key === "LBS") {
+          parsed["lbs_position"] = this.lbs_position(value)
+        }
+        if (key === "TUR") {
+          parsed["cornering_position_update"] = this.cornering_position_update(value)
+        }
+        if (key === "BJ") {
+          parsed["ignition_alert_power_cut"] = this.ignition_alert_power_cut(value)
+        }
+        if (key === "JD") {
+          parsed["gprs_failure_alert"] = this.gprs_failure_alert(value)
+        }
+        if (key === "LED") {
+          parsed["led"] = this.led(value)
+        }
+        if (key === "IV") {
+          parsed["virtual_ignition"] = this.virtual_ignition(value)
+        }
       })
     }
     return parsed;
@@ -131,10 +174,12 @@ export class E3 {
   }
 
   static imei(input: string) {
+    if (!input.includes("IMEI=")) return undefined
     return input.split("IMEI=")?.[1].trim() ?? undefined
   }
 
   static iccid(input: string) {
+    if (!input.includes("ICCID=")) return undefined
     return input.split("ICCID=")?.[1].trim() ?? undefined
   }
 
@@ -267,6 +312,45 @@ export class E3 {
     if (!input || Number.isNaN(input)) return undefined
     return Number(input)
   }
+
+  /*
+  * @example 30
+  */
+  static lbs_position(input: string): LBSPosition | undefined {
+    if (!input || (input !== "1" && input !== "0")) return undefined
+    return input === "1" ? true : false
+  }
+
+  static cornering_position_update(input: string): CorneringPositionUpdate | undefined {
+    if (!input || (input !== "1" && input !== "0")) return undefined
+    return input === "1" ? true : false
+  }
+
+  static ignition_alert_power_cut(input: string): IgnitionAlertPowerCut | undefined {
+    if (!input || (input !== "1" && input !== "0")) return undefined
+    return input === "1" ? true : false
+  }
+
+  static gprs_failure_alert(input: string): GprsFailureAlert | undefined {
+    if (!input || (input !== "1" && input !== "0")) return undefined
+    return input === "1" ? true : false
+  }
+
+  static led(input: string): Led | undefined {
+    if (!input || (input !== "1" && input !== "0")) return undefined
+    return input === "1" ? true : false
+  }
+
+  static virtual_ignition(input: string): VirtualIgnition | undefined {
+    if (!input || (input !== "1" && input !== "0")) return undefined
+    return input === "1" ? true : false
+  }
+
+  static module_violation(input: string): VirtualIgnition | undefined {
+    if (!input || (input !== "NEGATIVE" && input !== "MASTER")) return undefined
+    return input === "NEGATIVE" ? true : false
+  }
+
 
 }
 

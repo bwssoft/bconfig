@@ -45,15 +45,24 @@ const schema = z.object({
   accelerometer_sensitivity: z.coerce.number().optional(),
   economy_mode: z.coerce.number().optional(),
   sensitivity_adjustment: z.coerce.number().optional(),
+  lbs_position: z.coerce.boolean().optional().default(false),
+  cornering_position_update: z.coerce.boolean().optional().default(false),
+  ignition_alert_power_cut: z.coerce.boolean().optional().default(false),
+  gprs_failure_alert: z.coerce.boolean().optional().default(false),
+  led: z.coerce.boolean().optional().default(false),
+  virtual_ignition: z.coerce.boolean().optional().default(false),
+  // panic_button: z.coerce.boolean().optional().default(false),
+  // module_violation: z.coerce.boolean().optional().default(false),
 });
 
 export type Schema = z.infer<typeof schema>;
 
 interface Props {
   defaultValues?: Schema;
+  onSubmit?: (commands: string[]) => Promise<void>;
 }
 export function useConfigE3Form(props: Props) {
-  const { defaultValues } = props;
+  const { defaultValues, onSubmit } = props;
   const {
     register,
     handleSubmit: hookFormSubmit,
@@ -81,16 +90,14 @@ export function useConfigE3Form(props: Props) {
           commands.push(...(Array.isArray(_command) ? _command : [_command]));
         }
       });
-      console.log("commands", commands);
+      await onSubmit?.(["REG000000#", "SMS1", "EN", "IMEI", ...commands]);
     } catch (e) {
-      console.log(e);
+      console.error("error on submit form", e);
     }
   });
 
-  useEffect(() => console.log("errors", errors), [errors]);
-
   useEffect(() => {
-    console.log(defaultValues);
+    console.log("defaultvalue", defaultValues);
     if (defaultValues) {
       hookFormReset(defaultValues);
     }
