@@ -12,9 +12,11 @@ interface Props {
     iccid?: string;
     checked: boolean;
     not_configured: any;
+    step_label: string;
+    progress: number;
   }[];
 }
-export default function ConfigurationTable(props: Props) {
+export default function DeviceConfiguredTable(props: Props) {
   const { data } = props;
   return (
     <DataTable
