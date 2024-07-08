@@ -6,15 +6,23 @@ import { DataTable } from "../../components/data-table";
 import { ISerialPort } from "@/app/lib/definition/serial";
 
 interface Props {
-  data: { answer?: string; command: string; port: ISerialPort }[];
+  data: {
+    port: ISerialPort;
+    imei?: string;
+    iccid?: string;
+    checked: boolean;
+    not_configured: any;
+  }[];
 }
-export default function ConfigurationLogTable(props: Props) {
+export default function ConfigurationTable(props: Props) {
   const { data } = props;
   return (
     <DataTable
       columns={columns}
       data={data}
-      mobileDisplayValue={(data) => `${data.command} ${data.answer ?? "--"}`}
+      mobileDisplayValue={(data) =>
+        `${data.imei} ${data.checked ? "Configurado" : "Não Configurado"}`
+      }
       mobileKeyExtractor={() => Math.random().toString()}
       className="w-full"
       theadClassName="[&_tr]:border-b bg-white border-b-1 border-b-gray-200"
