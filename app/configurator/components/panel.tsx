@@ -39,18 +39,7 @@ export function Panel(props: Props) {
           <div className="flow-root w-full">
             {ports.length > 0 ? (
               <DevicesToConfigureTable
-                data={ports.map((port) => {
-                  const _deviceIdentified = deviceIdentified.find(
-                    (el) => el.port === port
-                  );
-                  return {
-                    port,
-                    imei: _deviceIdentified?.imei,
-                    iccid: _deviceIdentified?.iccid,
-                    et: _deviceIdentified?.et,
-                    getDeviceConfig,
-                  };
-                })}
+                data={deviceIdentified.map((d) => ({ ...d, getDeviceConfig }))}
               />
             ) : (
               <Alert label="Você não tem nenhuma porta." />
@@ -94,27 +83,14 @@ export function Panel(props: Props) {
             </p>
           </div>
           <div className="flex flex-col gap-6 w-full">
-            <ConfigurationTable
-              data={configurations.map((c) => {
-                const _deviceIdentified = deviceIdentified.find(
-                  (i) => i.port === c.port
-                );
-                return {
-                  ...c,
-                  ..._deviceIdentified,
-                };
-              })}
-            />
-            {deviceIdentified.map((i, idx) => {
+            <ConfigurationTable data={configurations} />
+            {configurations.map((i, idx) => {
               return (
                 <div key={idx}>
-                  <CommandLogTable
-                    data={
-                      configurations.filter(
-                        (el: any) => el.port === i.port
-                      )?.[0]?.metadata.commands_sent ?? []
-                    }
-                  />
+                  <h1 className="text-sm font-semibold leading-7 text-gray-900">
+                    Imei: {i.imei}
+                  </h1>
+                  <CommandLogTable data={i.metadata.commands_sent} />
                 </div>
               );
             })}

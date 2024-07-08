@@ -32,6 +32,9 @@ type DeviceConfiguration = IProfile["config"]
 
 interface ConfigurationResult {
   port: ISerialPort;
+  imei: string
+  iccid: string
+  et: string
   desired_config: IProfile["config"];
   actual_config?: IProfile["config"];
   checked: boolean;
@@ -258,9 +261,14 @@ export function useE3Communication() {
         commands.push(...(Array.isArray(_command) ? _command : [_command]));
       }
     });
-    const _commands = ["REG000000#", "SMS1", "EN", "IMEI", ...commands]
+    const initialize_commands = ["REG000000#", "SMS1", "EN"]
+    const _commands = initialize_commands.concat(commands)
     const result: ConfigurationResult[] = [];
     for (let port of ports) {
+      const _deviceIdentified = deviceIdentified.find(el => el.port === port)
+      if (!_deviceIdentified) return
+      const { imei, iccid, et } = _deviceIdentified
+      if (!imei || !iccid || !et) return
       const configured_device = await configureDevice(port, _commands);
       const actual_config = await getDeviceConfig(port);
       //deletar essa propriedade pois não tem como verificar a senha do equipamento
@@ -271,6 +279,9 @@ export function useE3Communication() {
       } = checkWithDifference(desired_config, actual_config)
       result.push({
         port,
+        imei,
+        iccid,
+        et,
         actual_config: actual_config ?? undefined,
         desired_config,
         checked,
@@ -278,7 +289,7 @@ export function useE3Communication() {
         metadata: configured_device,
       });
     }
-    setConfigurations((prev: any) => [...prev, ...result]);
+    setConfigurations((prev) => [...prev, ...result]);
   }
 
 
