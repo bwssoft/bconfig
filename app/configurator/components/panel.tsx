@@ -46,6 +46,21 @@ export function Panel(props: Props) {
             )}
           </div>
           <div className="flex justify-between gap-2">
+            <div className="flex gap-2">
+              <Button
+                variant="primary"
+                className="h-fit"
+                onClick={() =>
+                  config && handleDeviceConfiguration(deviceIdentified, config)
+                }
+              >
+                Configurar
+              </Button>
+              <Button variant="outlined" className="h-fit">
+                Logs
+              </Button>
+            </div>
+
             <Button
               variant="outlined"
               className="h-fit whitespace-nowrap"
@@ -53,21 +68,6 @@ export function Panel(props: Props) {
             >
               Nova Porta
             </Button>
-            <div className="flex gap-2">
-              <Button variant="outlined" className="h-fit">
-                Logs
-              </Button>
-
-              <Button
-                variant="primary"
-                className="h-fit"
-                onClick={() =>
-                  config && handleDeviceConfiguration(ports, config)
-                }
-              >
-                Configurar
-              </Button>
-            </div>
           </div>
         </div>
       </div>
@@ -84,7 +84,7 @@ export function Panel(props: Props) {
           </div>
           <div className="flex flex-col gap-6 w-full">
             <ConfigurationTable data={configurations} />
-            {configurations.map((i, idx) => {
+            {/* {configurations.map((i, idx) => {
               return (
                 <div key={idx}>
                   <h1 className="text-sm font-semibold leading-7 text-gray-900">
@@ -93,7 +93,7 @@ export function Panel(props: Props) {
                   <CommandLogTable data={i.metadata.commands_sent} />
                 </div>
               );
-            })}
+            })} */}
           </div>
         </div>
       ) : (

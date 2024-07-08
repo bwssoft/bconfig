@@ -1,6 +1,8 @@
 import { ISerialPort } from "@/app/lib/definition/serial";
 import { cn } from "@/app/lib/util";
 import { ColumnDef } from "@tanstack/react-table";
+import { Button } from "../../components/button";
+import { DocumentMagnifyingGlassIcon } from "@heroicons/react/24/outline";
 
 const statuses = {
   configured: "text-green-500 bg-green-800/20",
@@ -31,7 +33,7 @@ export const columns: ColumnDef<{
             <div className="h-1.5 w-1.5 rounded-full bg-current" />
           </div>
           <div className={cn("hidden font-semibold sm:block", text[status])}>
-            {device.checked ? "Configurado" : "Error"}
+            {device.checked ? "Configurado" : "Não Configurado"}
           </div>
         </div>
       );
@@ -46,19 +48,24 @@ export const columns: ColumnDef<{
     },
   },
   {
-    header: "Iccid",
-    accessorKey: "iccid",
-    cell: ({ row }) => {
-      const device = row.original;
-      return device.iccid ?? "--";
-    },
-  },
-  {
-    header: "Campos não configurados",
-    accessorKey: "not_configured",
-    cell: ({ row }) => {
-      const device = row.original;
-      return Object.keys(device.not_configured).join(", ");
+    header: "Ações",
+    accessorKey: "port",
+    cell: () => {
+      return (
+        <div className="flex gap-2">
+          <Button
+            variant="outlined"
+            className="p-2"
+            title="Verificar logs de configuração"
+          >
+            <DocumentMagnifyingGlassIcon
+              width={16}
+              height={16}
+              title="Verificar logs de configuração"
+            />
+          </Button>
+        </div>
+      );
     },
   },
 ];
