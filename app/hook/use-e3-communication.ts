@@ -41,6 +41,8 @@ interface ConfigurationResult {
   checked: boolean;
   not_configured: { [key in keyof IProfile]: { value1: any; value2: any } };
   metadata: DeviceConfigured;
+  step_label: string
+  progress: number
 }
 
 type DeviceResponse = string | undefined
@@ -208,14 +210,29 @@ export function useE3Communication() {
       return await getDeviceConfig(port);
     }
   };
-  const configureDevice = async (port: ISerialPort, commands: string[]): Promise<DeviceConfigured> => {
+  const configureDevice = async (input: {
+    port: ISerialPort,
+    commands: string[],
+    callback: {
+      onOpenPort: () => void
+      onPortOpened: () => void
+      onSendCommand: (command: string, idx: number) => void
+      onClosePort: () => void
+      onPortClosed: () => void
+    }
+  }): Promise<DeviceConfigured> => {
+    const { port, commands, callback } = input
     try {
       const commands_sent = []
+      callback.onOpenPort()
       await openPort(port)
+      callback.onPortOpened()
       const uid = crypto.randomUUID()
       const init_time_configuration = Date.now()
-      for (let command of commands) {
+      for (let c = 0; c < commands.length; c++) {
+        const command = commands[c]
         const init_time_command = Date.now()
+        callback.onSendCommand(command, c)
         const response = await sendCommandWithRetries(port, command);
         const end_time_command = Date.now()
         commands_sent.push({
@@ -226,7 +243,9 @@ export function useE3Communication() {
         })
       }
       const end_time_configuration = Date.now()
+      callback.onClosePort()
       await closePort(port)
+      callback.onPortClosed()
       return {
         uid,
         init_time_configuration,
@@ -237,7 +256,7 @@ export function useE3Communication() {
     } catch (e) {
       console.error('ERROR [configureDevice]', e);
       await closePort(port)
-      return await configureDevice(port, commands)
+      return await configureDevice({ port, commands, callback })
     }
   }
 
@@ -264,17 +283,58 @@ export function useE3Communication() {
   }
   const handleDeviceConfiguration = async (devices: DeviceIdentified[], desired_config: IProfile["config"]) => {
     const commands = parseCommands(desired_config)
-    const result: ConfigurationResult[] = [];
     for (let device of devices) {
       const { port, imei, iccid, et } = device
       if (!imei || !iccid || !et) continue
-      const configured_device = await configureDevice(port, commands);
+
+      setConfigurations((prev) => {
+        const rest = prev.filter(el => el.imei !== imei)
+        const current = prev.find(el => el.imei === imei)
+        if (!current) return [...rest, {
+          imei,
+          iccid,
+          et,
+          port,
+          step_label: "Iniciando a configuração",
+          progress: 0,
+          checked: false,
+          desired_config,
+          metadata: {} as any,
+          not_configured: {} as any,
+        }]
+        return [...rest, { ...current, step_label: "Iniciando a configuração", progress: 0 }]
+      });
+
+      const total_steps = commands.length + 7;
+      const step = (step_label: string, step_index: number) => updateConfigurationStep({
+        imei: imei!,
+        step_label,
+        step_index,
+        total_steps
+      })
+
+      const configured_device = await configureDevice({
+        port,
+        commands,
+        callback: {
+          onOpenPort: () => step("Abrindo a porta", 1),
+          onPortOpened: () => step("Porta aberta", 2),
+          onSendCommand: (command, idx) => step(command, 2 + idx),
+          onClosePort: () => step("Fechando a porta", total_steps - 4),
+          onPortClosed: () => step("Porta fechada", total_steps - 3),
+        }
+      });
+
+      step("Requisitando configuração", total_steps - 2)
       const actual_config = await getDeviceConfig(port);
+
+      step("Checando as diferenças", total_steps - 1)
       delete desired_config?.password;
       const {
         isEqual: checked,
         difference: not_configured
       } = checkWithDifference(desired_config, actual_config)
+
       const configuration_result = {
         port,
         imei,
@@ -285,12 +345,19 @@ export function useE3Communication() {
         checked,
         not_configured,
         metadata: configured_device,
+        step_label: "Processo concluído",
+        progress: 100
       }
-      result.push(configuration_result);
+      setConfigurations((prev) => {
+        const rest = prev.filter(el => el.imei !== imei)
+        const current = prev.find(el => el.imei === imei)
+        if (!current) return prev
+        return [...rest, { ...current, ...configuration_result }]
+      });
     }
-    setConfigurations((prev) => [...prev, ...result]);
   }
 
+  //util function
   const parseCommands = (config: IProfile["config"]) => {
     const configure_commands: string[] = [];
     Object.entries(config).forEach(([command, args]) => {
@@ -303,6 +370,22 @@ export function useE3Communication() {
     const all_commands = initialize_commands.concat(configure_commands)
     return all_commands
   }
+  const updateConfigurationStep = (input: {
+    imei: string,
+    step_label: string,
+    step_index: number,
+    total_steps: number
+  }) => {
+    const { imei, step_label, step_index, total_steps } = input
+    const percentage = Math.round((step_index / total_steps) * 100);
+    setConfigurations(prev => {
+      const rest = prev.filter(el => el.imei !== imei)
+      const current = prev.find(el => el.imei === imei)
+      if (!current) return prev
+      const result = rest.concat({ ...current, step_label, progress: percentage })
+      return result
+    });
+  };
 
 
   useEffect(() => {
