@@ -3,6 +3,8 @@ import { cn } from "@/app/lib/util";
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "../../components/button";
 import { DocumentMagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { configMapped } from "@/app/constants/e3+config";
+import { IProfile } from "@/app/lib/definition";
 
 const statuses = {
   configured: "text-green-500 bg-green-800/20",
@@ -45,6 +47,25 @@ export const columns: ColumnDef<{
     cell: ({ row }) => {
       const device = row.original;
       return device.imei ?? "--";
+    },
+  },
+  {
+    header: "Campos não configurados",
+    accessorKey: "not_configured",
+    cell: ({ row }) => {
+      const device = row.original;
+      const fields = Object.keys(
+        device.not_configured
+      ) as (keyof IProfile["config"])[];
+      const displayedFields = fields.slice(0, 3);
+      const remainingCount = fields.length - displayedFields.length;
+
+      return (
+        <div>
+          {displayedFields.map((i) => configMapped[i]).join(", ")}
+          {remainingCount > 0 && <span> +{remainingCount}</span>}
+        </div>
+      );
     },
   },
   {
