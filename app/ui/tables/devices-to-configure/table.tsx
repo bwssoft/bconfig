@@ -4,6 +4,7 @@
 import { columns } from "./columns";
 import { DataTable } from "../../components/data-table";
 import { ISerialPort } from "@/app/lib/definition/serial";
+import { IProfile } from "@/app/lib/definition";
 
 interface Props {
   data: {
@@ -11,7 +12,7 @@ interface Props {
     iccid?: string;
     et?: string;
     port: ISerialPort;
-    getDeviceConfig: (port: ISerialPort) => Promise<void>;
+    getDeviceConfig: (port: ISerialPort) => Promise<IProfile["config"] | void>;
   }[];
 }
 export default function DevicesToConfigureTable(props: Props) {

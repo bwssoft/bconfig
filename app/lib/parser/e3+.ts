@@ -1,19 +1,19 @@
 import { isBooleanObject } from "util/types"
 
 type APN = {
-  address: string
-  user: string
-  password: string
+  address?: string
+  user?: string
+  password?: string
 }
 
 type IP = {
   primary?: {
-    ip: string
-    port: string
+    ip?: string
+    port?: string
   }
   secondary?: {
-    ip: string
-    port: string
+    ip?: string
+    port?: string
   }
 }
 

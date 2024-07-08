@@ -1,4 +1,5 @@
 import { findAllProfile, findOneProfile } from "../lib/action";
+import { IProfile } from "../lib/definition";
 import { Panel } from "./components/panel";
 import { ProfileSelect } from "./components/porfile-select";
 
@@ -7,13 +8,48 @@ interface Props {
     id: string;
   };
 }
+
+const nullProfile: IProfile = {
+  id: "null",
+  name: "Nenhum",
+  config: {
+    ip: {
+      primary: {
+        ip: "",
+        port: "",
+      },
+      secondary: {
+        ip: "",
+        port: "",
+      },
+    },
+    dns: undefined,
+    apn: undefined,
+    timezone: undefined,
+    lock_type: undefined,
+    data_transmission: undefined,
+    odometer: undefined,
+    keep_alive: undefined,
+    accelerometer_sensitivity: undefined,
+    economy_mode: undefined,
+    lbs_position: undefined,
+    cornering_position_update: undefined,
+    ignition_alert_power_cut: undefined,
+    gprs_failure_alert: undefined,
+    led: undefined,
+    virtual_ignition: undefined,
+  },
+  created_at: new Date(),
+  model: "E3+" as "E3+",
+};
+
 export default async function Page(props: Props) {
   const {
     searchParams: { id },
   } = props;
   const profiles = await findAllProfile();
-  const profileSelected = await findOneProfile({ id });
-  console.log(profileSelected?.config ?? {});
+  const profileSelected =
+    id === "null" ? nullProfile : await findOneProfile({ id });
   const date = new Date();
   return (
     <div>
@@ -35,19 +71,10 @@ export default async function Page(props: Props) {
         </div>
       </div>
       <ProfileSelect
-        profiles={[
-          {
-            id: null as unknown as string,
-            name: "Nenhumm",
-            config: {} as any,
-            created_at: new Date(),
-            model: "E3+",
-          },
-          ...profiles,
-        ]}
+        profiles={[nullProfile, ...profiles]}
         currentProfileIdSelected={id}
       />
-      <Panel config={profileSelected?.config ?? {}} />
+      <Panel config={profileSelected?.config} />
     </div>
   );
 }

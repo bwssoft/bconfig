@@ -3,26 +3,22 @@
 
 import { columns } from "./columns";
 import { DataTable } from "../../components/data-table";
-import { ISerialPort } from "@/app/lib/definition/serial";
 
 interface Props {
   data: {
-    port: ISerialPort;
-    imei?: string;
-    iccid?: string;
-    checked: boolean;
-    not_configured: any;
+    init_time_command: number;
+    end_time_command?: number;
+    request: string;
+    response?: string;
   }[];
 }
-export default function ConfigurationTable(props: Props) {
+export default function CommandLogTable(props: Props) {
   const { data } = props;
   return (
     <DataTable
       columns={columns}
       data={data}
-      mobileDisplayValue={(data) =>
-        `${data.imei} ${data.checked ? "Configurado" : "Não Configurado"}`
-      }
+      mobileDisplayValue={(data) => `${data.request} ${data.response ?? "--"}`}
       mobileKeyExtractor={() => Math.random().toString()}
       className="w-full"
       theadClassName="[&_tr]:border-b bg-white border-b-1 border-b-gray-200"

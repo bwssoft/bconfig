@@ -1,3 +1,4 @@
+import { IProfile } from "@/app/lib/definition";
 import { ISerialPort } from "@/app/lib/definition/serial";
 import { ColumnDef } from "@tanstack/react-table";
 
@@ -8,7 +9,7 @@ export const columns: ColumnDef<{
   iccid?: string;
   et?: string;
   port: ISerialPort;
-  getDeviceConfig: (port: ISerialPort) => Promise<void>;
+  getDeviceConfig: (port: ISerialPort) => Promise<IProfile["config"] | void>;
 }>[] = [
   {
     header: "Imei",
@@ -47,7 +48,13 @@ export const columns: ColumnDef<{
       return (
         <div className="flex gap-2">
           <p className={className}>Área de Teste</p> |
-          <p className={className} onClick={() => getDeviceConfig(port)}>
+          <p
+            className={className}
+            onClick={async () => {
+              const result = await getDeviceConfig(port);
+              console.log("[getDeviceConfig]", result);
+            }}
+          >
             Resgatar Configurações
           </p>
         </div>
