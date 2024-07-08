@@ -3,6 +3,16 @@ import _ from 'lodash';
 // Função para identificar se os dois objetos são iguais
 export const isEqual = (obj1: any, obj2: any) => _.isEqual(obj1, obj2);
 
+export const isSubset = (obj1: any, obj2: any): boolean => {
+  return _.every(obj1, (value, key) => {
+    if (_.isObject(value) && _.isObject(obj2[key])) {
+      return isSubset(value, obj2[key]);
+    }
+    return _.isEqual(value, obj2[key]);
+  });
+};
+
+
 // Função para identificar as propriedades diferentes
 export function getDifferences(obj1: any, obj2: any): any {
   return _.reduce(obj1, (result, value, key) => {
@@ -14,7 +24,7 @@ export function getDifferences(obj1: any, obj2: any): any {
 }
 
 export function checkWithDifference(obj1: any, obj2: any) {
-  const _isEqual = isEqual(obj1, obj2)
+  const _isEqual = isSubset(obj1, obj2)
   const difference = getDifferences(obj1, obj2)
   return {
     isEqual: _isEqual,
