@@ -1,3 +1,4 @@
+import { IProfile } from "../lib/definition";
 
 export const functions = [
   {
@@ -95,3 +96,26 @@ export const economyMode = [
   { value: 0, label: "GPS Ligado (Em Sleep)" },
   { value: 1, label: "GPS Desligado (Em Sleep)" }
 ]
+
+
+
+export const configMapped: { [key in keyof IProfile["config"]]: string } = {
+  accelerometer_sensitivity: "Sensibilidade do Acelerômetro",
+  ip: "Ip",
+  apn: "Apn",
+  cornering_position_update: "Atualização de posição em curva",
+  data_transmission: "Tempo de transmissão",
+  dns: "Dns",
+  economy_mode: "Modo de Economia",
+  gprs_failure_alert: "Alerta de falha de GPRS",
+  ignition_alert_power_cut: "Alerta de Ignição / Corte de Alimentação",
+  keep_alive: "Tempo de TX",
+  lbs_position: "Posição LBS",
+  led: "Led",
+  lock_type: "Tipo de Bloqueio",
+  odometer: "Hodômetro",
+  password: "Senha",
+  timezone: "Fuso horário",
+  virtual_ignition: "Ignição Virtual",
+  sensitivity_adjustment: "Ajuste de sensibilidade"
+}
