@@ -43,5 +43,6 @@ export interface IProfile {
     gprs_failure_alert?: boolean
     led?: boolean
     virtual_ignition?: boolean
+    sensitivity_adjustment?: number
   }
 }
