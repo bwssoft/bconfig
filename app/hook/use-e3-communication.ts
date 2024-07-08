@@ -263,12 +263,12 @@ export function useE3Communication() {
     for (let port of ports) {
       const configured_device = await configureDevice(port, _commands);
       const actual_config = await getDeviceConfig(port);
+      //deletar essa propriedade pois não tem como verificar a senha do equipamento
+      delete desired_config?.password;
       const {
         isEqual: checked,
         difference: not_configured
       } = checkWithDifference(desired_config, actual_config)
-      //deletar essa propriedade pois não tem como verificar a senha do equipamento
-      delete desired_config?.password;
       result.push({
         port,
         actual_config: actual_config ?? undefined,
