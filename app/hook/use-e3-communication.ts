@@ -8,6 +8,7 @@ import { E3Encoder } from "../lib/encoder/e3+"
 import { checkWithDifference } from "../lib/util"
 
 type DeviceIdentified = {
+  inIdentification: boolean
   isIdentified: boolean
   port: ISerialPort
   imei?: string
@@ -117,7 +118,7 @@ export function useE3Communication() {
   }
 
   //
-  const getDeviceIdentification = async (port: ISerialPort): Promise<DeviceIdentified | undefined> => {
+  const getDeviceIdentification = async (port: ISerialPort): Promise<Omit<DeviceIdentified, "inIdentification"> | undefined> => {
     if (port.readable && port.writable) return
     let reader: ReadableStreamDefaultReader<Uint8Array> | undefined;
     try {
@@ -245,39 +246,36 @@ export function useE3Communication() {
   const handleDeviceIdentification = async (ports: ISerialPort[]) => {
     try {
       for (let port of ports) {
+        setDeviceIdentified(prev => [...prev, { port, isIdentified: false, inIdentification: true }])
         const identification = await getDeviceIdentification(port)
-        if (identification) setDeviceIdentified(prev => [...prev, identification])
+        setDeviceIdentified(prev => {
+          const current_device = prev.find(p => p.port === port)
+          if (!current_device) return prev
+          const others_devices = prev.filter(p => p.port !== port)
+          if (identification) {
+            return [...others_devices, { ...identification, inIdentification: false }]
+          }
+          return [...others_devices, { ...current_device, inIdentification: false }]
+        })
       }
     } catch (e) {
       console.error("[handleDeviceIdentification]", e)
     }
   }
-  const handleDeviceConfiguration = async (ports: ISerialPort[], desired_config: IProfile["config"]) => {
-    if (!desired_config) return
-    const commands: string[] = [];
-    Object.entries(desired_config).forEach(([command, args]) => {
-      const _command = E3Encoder.encoder({ command, args } as any);
-      if (_command) {
-        commands.push(...(Array.isArray(_command) ? _command : [_command]));
-      }
-    });
-    const initialize_commands = ["REG000000#", "SMS1", "EN"]
-    const _commands = initialize_commands.concat(commands)
+  const handleDeviceConfiguration = async (devices: DeviceIdentified[], desired_config: IProfile["config"]) => {
+    const commands = parseCommands(desired_config)
     const result: ConfigurationResult[] = [];
-    for (let port of ports) {
-      const _deviceIdentified = deviceIdentified.find(el => el.port === port)
-      if (!_deviceIdentified) return
-      const { imei, iccid, et } = _deviceIdentified
-      if (!imei || !iccid || !et) return
-      const configured_device = await configureDevice(port, _commands);
+    for (let device of devices) {
+      const { port, imei, iccid, et } = device
+      if (!imei || !iccid || !et) continue
+      const configured_device = await configureDevice(port, commands);
       const actual_config = await getDeviceConfig(port);
-      //deletar essa propriedade pois não tem como verificar a senha do equipamento
       delete desired_config?.password;
       const {
         isEqual: checked,
         difference: not_configured
       } = checkWithDifference(desired_config, actual_config)
-      result.push({
+      const configuration_result = {
         port,
         imei,
         iccid,
@@ -287,9 +285,23 @@ export function useE3Communication() {
         checked,
         not_configured,
         metadata: configured_device,
-      });
+      }
+      result.push(configuration_result);
     }
     setConfigurations((prev) => [...prev, ...result]);
+  }
+
+  const parseCommands = (config: IProfile["config"]) => {
+    const configure_commands: string[] = [];
+    Object.entries(config).forEach(([command, args]) => {
+      const _command = E3Encoder.encoder({ command, args } as any);
+      if (_command) {
+        configure_commands.push(...(Array.isArray(_command) ? _command : [_command]));
+      }
+    });
+    const initialize_commands = ["REG000000#", "SMS1", "EN"]
+    const all_commands = initialize_commands.concat(configure_commands)
+    return all_commands
   }
 
 
