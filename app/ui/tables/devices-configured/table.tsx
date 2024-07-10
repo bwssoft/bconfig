@@ -10,10 +10,8 @@ interface Props {
     port: ISerialPort;
     imei?: string;
     iccid?: string;
-    checked: boolean;
+    isConfigured: boolean;
     not_configured: any;
-    step_label: string;
-    progress: number;
   }[];
 }
 export default function DeviceConfiguredTable(props: Props) {
@@ -23,7 +21,7 @@ export default function DeviceConfiguredTable(props: Props) {
       columns={columns}
       data={data}
       mobileDisplayValue={(data) =>
-        `${data.imei} ${data.checked ? "Configurado" : "Não Configurado"}`
+        `${data.imei} ${data.isConfigured ? "Configurado" : "Não Configurado"}`
       }
       mobileKeyExtractor={() => Math.random().toString()}
       className="w-full"

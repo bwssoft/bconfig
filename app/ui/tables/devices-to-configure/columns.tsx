@@ -1,7 +1,6 @@
 import { IProfile } from "@/app/lib/definition";
 import { ISerialPort } from "@/app/lib/definition/serial";
 import { ColumnDef } from "@tanstack/react-table";
-import { Spinner } from "../../components/spinner";
 import {
   ArrowDownOnSquareIcon,
   ArrowTopRightOnSquareIcon,
@@ -25,8 +24,7 @@ export const columns: ColumnDef<{
   et?: string;
   port: ISerialPort;
   isIdentified: boolean;
-  inIdentification: boolean;
-  getDeviceConfig: (port: ISerialPort) => Promise<IProfile["config"] | void>;
+  getDeviceProfile: (port: ISerialPort) => Promise<IProfile["config"] | void>;
 }>[] = [
   {
     header: "Identificado",
@@ -36,25 +34,14 @@ export const columns: ColumnDef<{
       const status = device.isIdentified ? "identified" : "not_identified";
       return (
         <div className="flex items-center gap-1">
-          {device.inIdentification ? (
-            <Spinner svgClassName="w-4 h-4" />
-          ) : (
-            <>
-              <div
-                className={cn(
-                  statuses[status],
-                  "flex-none rounded-full p-1 w-fit"
-                )}
-              >
-                <div className="h-1.5 w-1.5 rounded-full bg-current" />
-              </div>
-              <div
-                className={cn("hidden font-semibold sm:block", text[status])}
-              >
-                {device.isIdentified ? "Identificado" : "Não Identificado"}
-              </div>
-            </>
-          )}
+          <div
+            className={cn(statuses[status], "flex-none rounded-full p-1 w-fit")}
+          >
+            <div className="h-1.5 w-1.5 rounded-full bg-current" />
+          </div>
+          <div className={cn("hidden font-semibold sm:block", text[status])}>
+            {device.isIdentified ? "Identificado" : "Não Identificado"}
+          </div>
         </div>
       );
     },
@@ -92,7 +79,7 @@ export const columns: ColumnDef<{
     accessorKey: "port",
     cell: ({ row }) => {
       const device = row.original;
-      const { getDeviceConfig, port } = device;
+      const { getDeviceProfile, port } = device;
       return (
         <div className="flex gap-2">
           <Button
@@ -110,8 +97,8 @@ export const columns: ColumnDef<{
             variant="outlined"
             className="p-2"
             onClick={async () => {
-              const result = await getDeviceConfig(port);
-              console.log("[getDeviceConfig]", result);
+              const result = await getDeviceProfile(port);
+              console.log("[getDeviceProfile]", result);
             }}
             title="Requisitar Configurações"
           >

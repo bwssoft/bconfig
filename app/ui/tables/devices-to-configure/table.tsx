@@ -12,7 +12,8 @@ interface Props {
     iccid?: string;
     et?: string;
     port: ISerialPort;
-    getDeviceConfig: (port: ISerialPort) => Promise<IProfile["config"] | void>;
+    isIdentified: boolean;
+    getDeviceProfile: (port: ISerialPort) => Promise<IProfile["config"] | void>;
   }[];
 }
 export default function DevicesToConfigureTable(props: Props) {
