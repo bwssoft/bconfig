@@ -68,11 +68,7 @@ const schema = z
 
 export type Schema = z.infer<typeof schema>;
 
-interface Props {
-  defaultValues?: Schema;
-}
-export function useProfileCreateForm(props: Props) {
-  const { defaultValues } = props;
+export function useProfileCreateForm() {
   const {
     register,
     handleSubmit: hookFormSubmit,
@@ -82,7 +78,6 @@ export function useProfileCreateForm(props: Props) {
     reset: hookFormReset,
   } = useForm<Schema>({
     resolver: zodResolver(schema),
-    defaultValues,
   });
 
   const [ipdns, setIpdns] = useState<"IP" | "DNS">("IP");
@@ -98,12 +93,6 @@ export function useProfileCreateForm(props: Props) {
       console.error("error on submit form", e);
     }
   });
-
-  useEffect(() => {
-    if (defaultValues) {
-      hookFormReset(defaultValues);
-    }
-  }, [defaultValues, hookFormReset]);
 
   return {
     register,

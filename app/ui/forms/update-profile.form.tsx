@@ -10,21 +10,20 @@ import {
 import { Input } from "../components/input";
 import { Select } from "../components/select";
 import { Radio } from "../components/radio";
-import { useProfileCreateForm } from "./use-profile.form";
 import { Controller } from "react-hook-form";
 import Toggle from "../components/toggle";
 import { Button } from "../components/button";
+import { IProfile } from "@/app/lib/definition";
+import { useProfileUpdateForm } from "./use-update-profile.form";
 
 interface Props {
-  config?: any;
-  onSubmit?: (commands: string[]) => Promise<void>;
+  config: IProfile;
 }
-export function ProfileCreateForm(props: Props) {
-  const { config, onSubmit } = props;
+export function ProfileUpdateForm(props: Props) {
+  const { config } = props;
   const { register, ipdns, handleChangeIpDns, handleSubmit, control } =
-    useProfileCreateForm({
+    useProfileUpdateForm({
       defaultValues: config,
-      onSubmit,
     });
   return (
     <form
@@ -304,7 +303,7 @@ export function ProfileCreateForm(props: Props) {
                       valueExtractor={(d) => d.label}
                       label="Modo de Economia"
                       value={economyMode.find((d) => d.value === field.value)}
-                      onChange={(d) => field.onChange(d.value)}
+                      onChange={(d) => alert(JSON.stringify(d.value))}
                     />
                   )}
                 />
@@ -394,7 +393,7 @@ export function ProfileCreateForm(props: Props) {
           Cancelar
         </button>
         <Button variant="primary" type="submit">
-          Registrar
+          Atualizar
         </Button>
       </div>
     </form>

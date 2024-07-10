@@ -1,4 +1,4 @@
-import { ProfileCreateForm } from "@/app/ui/forms/profile";
+import { ProfileCreateForm } from "@/app/ui/forms/create-profile.form";
 
 export default function ProfileCreate() {
   return (
