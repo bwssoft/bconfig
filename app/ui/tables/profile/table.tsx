@@ -5,7 +5,7 @@ import { columns } from "./columns";
 import { DataTable } from "../../components/data-table";
 
 interface Props {
-  data: { name: string; model: string }[];
+  data: { id: string; name: string; model: string }[];
 }
 export default function ProfileTable(props: Props) {
   const { data } = props;
