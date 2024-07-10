@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState, useRef, useCallback } from "react"
 import { useSerial } from "./use-serial"
 import { ISerialPort } from "../lib/definition/serial"
 import { sleep } from "../lib/util/sleep"
@@ -7,8 +7,10 @@ import { IProfile } from "../lib/definition"
 import { E3Encoder } from "../lib/encoder/e3+"
 import { checkWithDifference } from "../lib/util"
 
-type DeviceIdentified = {
-  inIdentification: boolean
+type DeviceProfile = IProfile["config"]
+
+
+interface Identified {
   isIdentified: boolean
   port: ISerialPort
   imei?: string
@@ -16,7 +18,19 @@ type DeviceIdentified = {
   et?: string
 }
 
-type DeviceConfigured = {
+interface Configuration {
+  port: ISerialPort;
+  imei: string
+  iccid: string
+  et: string
+  desired_profile: DeviceProfile;
+  actual_profile?: DeviceProfile;
+  isConfigured: boolean;
+  not_configured: { [key in keyof IProfile]: { value1: any; value2: any } };
+  metadata: ConfigurationMetadata;
+}
+
+type ConfigurationMetadata = {
   uid: string
   port: ISerialPort
   init_time_configuration: number
@@ -29,33 +43,43 @@ type DeviceConfigured = {
   }[]
 }
 
-type DeviceConfiguration = IProfile["config"]
+type DeviceResponse = string | undefined
 
-interface ConfigurationResult {
-  port: ISerialPort;
+interface IdentifiedLog {
+  port: ISerialPort
+  label: string
+  progress: number
+}
+interface ConfigurationLog {
   imei: string
-  iccid: string
-  et: string
-  desired_config: IProfile["config"];
-  actual_config?: IProfile["config"];
-  checked: boolean;
-  not_configured: { [key in keyof IProfile]: { value1: any; value2: any } };
-  metadata: DeviceConfigured;
-  step_label: string
+  label: string
   progress: number
 }
 
-type DeviceResponse = string | undefined
-
 export function useE3Communication() {
-  const [deviceIdentified, setDeviceIdentified] = useState<DeviceIdentified[]>([])
-  const [configurations, setConfigurations] = useState<ConfigurationResult[]>([]);
+  const [identified, setIdentified] = useState<Identified[]>([])
+  const [identifiedLog, setIdentifiedLog] = useState<IdentifiedLog[]>([])
+  const [inIdentification, setInIdentification] = useState<boolean>(false)
+
+  const [configuration, setConfiguration] = useState<Configuration[]>([]);
+  const [configurationLog, setConfigurationLog] = useState<ConfigurationLog[]>([])
+  const [inConfiguration, setInConfiguration] = useState<boolean>(false)
+
   const previousPorts = useRef<ISerialPort[]>([])
 
+  const handleSerialDisconnection = useCallback((port: ISerialPort) => {
+    setIdentified(prev => {
+      const _identified = prev.find(el => el.port === port);
+      const updatedIdentified = prev.filter(el => el.port !== port);
+      setIdentifiedLog(prevLog => prevLog.filter(el => el.port !== port));
+      setConfigurationLog(prevLog => prevLog.filter(el => el.imei !== _identified?.imei));
+      setConfiguration(prevConfig => prevConfig.filter(el => el.imei !== _identified?.imei));
+      return updatedIdentified;
+    });
+  }, [setIdentified, setConfiguration])
+
   const { ports, writeToPort, openPort, getReader, requestPort, closePort } = useSerial({
-    handleDisconnection: (port) => {
-      setDeviceIdentified(prev => prev.filter(el => el.port !== port))
-    }
+    handleDisconnection: handleSerialDisconnection
   })
 
   //
@@ -92,11 +116,6 @@ export function useE3Communication() {
 
     return Promise.race([readPromise, timeoutPromise]);
   }
-  const sendCommandAndReadResponse = async (port: ISerialPort, command: string, reader: ReadableStreamDefaultReader<Uint8Array>) => {
-    await sleep(100);
-    await writeToPort(port, command);
-    return await readDeviceResponse(reader, command);
-  };
   const sendCommandWithRetries = async (port: ISerialPort, command: string) => {
     let attempts = 0;
     const maxRetries = 3
@@ -120,32 +139,50 @@ export function useE3Communication() {
   }
 
   //
-  const getDeviceIdentification = async (port: ISerialPort): Promise<Omit<DeviceIdentified, "inIdentification"> | undefined> => {
+  const getDeviceIdentification = async (props: {
+    port: ISerialPort,
+    callback: {
+      onOpenPort: () => void
+      onPortOpened: () => void
+      onReg: () => void
+      onSms: () => void
+      onEn: () => void
+      onImei: () => void
+      onIccid: () => void
+      onEt: () => void
+      onClosePort: () => void
+      onFinished: () => void
+    }
+  }): Promise<Identified | undefined> => {
+    const { port, callback } = props
     if (port.readable && port.writable) return
-    let reader: ReadableStreamDefaultReader<Uint8Array> | undefined;
     try {
+      callback.onOpenPort()
       await openPort(port);
-      reader = await getReader(port);
-      if (!reader) {
-        await closePort(port)
-        return
-      }
-      let attempts = 0
-      const max_retries = 3
-      let imei: DeviceResponse, iccid: DeviceResponse, et: DeviceResponse
+      callback.onPortOpened()
+      // let attempts = 0
+      // const max_retries = 3
       // Main loop to gather device info
-      while (attempts < max_retries && (!imei || !iccid || !et)) {
-        await sendCommandAndReadResponse(port, "REG000000#", reader);
-        await sendCommandAndReadResponse(port, "SMS1", reader);
-        await sendCommandAndReadResponse(port, "EN", reader);
-        if (!imei) imei = await sendCommandAndReadResponse(port, "IMEI", reader);
-        if (!iccid) iccid = await sendCommandAndReadResponse(port, "ICCID", reader);
-        if (!et) et = await sendCommandAndReadResponse(port, "ET", reader);
-        attempts++
-      }
+      // while (attempts < max_retries && (!imei || !iccid || !et)) {
+      callback.onReg()
+      await sendCommandWithRetries(port, "REG000000#");
+      callback.onSms()
+      await sendCommandWithRetries(port, "SMS1");
+      callback.onEn()
+      await sendCommandWithRetries(port, "EN");
+
+      callback.onImei()
+      const imei = await sendCommandWithRetries(port, "IMEI");
+      callback.onIccid()
+      const iccid = await sendCommandWithRetries(port, "ICCID");
+      callback.onEt()
+      const et = await sendCommandWithRetries(port, "ET");
+      //   attempts++
+      // }
       const isIdentified = imei !== undefined && iccid !== undefined && et !== undefined
-      reader?.releaseLock();
+      callback.onClosePort()
       await closePort(port);
+      callback.onFinished()
       return {
         port,
         iccid: iccid ? E3.iccid(iccid) : undefined,
@@ -155,34 +192,26 @@ export function useE3Communication() {
       }
     } catch (e) {
       console.error("ERROR [getDeviceIdentification]", e);
-      if (reader) reader.releaseLock();
       await closePort(port);
-      return await getDeviceIdentification(port);
+      return await getDeviceIdentification(props);
     }
   };
-  const getDeviceConfig = async (port: ISerialPort): Promise<DeviceConfiguration | undefined> => {
+  const getDeviceProfile = async (port: ISerialPort): Promise<DeviceProfile | undefined> => {
     if (port.readable && port.writable) return
-    let reader: ReadableStreamDefaultReader<Uint8Array> | undefined;
     try {
       await openPort(port);
-      reader = await getReader(port);
-      if (!reader) {
-        await closePort(port)
-        return
-      }
       let attempts = 0
       const max_retries = 3
       let check: DeviceResponse, cxip: DeviceResponse, dns: DeviceResponse;
       while (attempts < max_retries && (!check || !cxip || !dns)) {
-        await sendCommandAndReadResponse(port, "REG000000#", reader);
-        await sendCommandAndReadResponse(port, "SMS1", reader);
-        await sendCommandAndReadResponse(port, "EN", reader);
-        if (!check) check = await sendCommandAndReadResponse(port, "CHECK", reader);
-        if (!cxip) cxip = await sendCommandAndReadResponse(port, "CXIP", reader);
-        if (!dns) dns = await sendCommandAndReadResponse(port, "DNS", reader);
+        await sendCommandWithRetries(port, "REG000000#");
+        await sendCommandWithRetries(port, "SMS1");
+        await sendCommandWithRetries(port, "EN");
+        if (!check) check = await sendCommandWithRetries(port, "CHECK");
+        if (!cxip) cxip = await sendCommandWithRetries(port, "CXIP");
+        if (!dns) dns = await sendCommandWithRetries(port, "DNS");
         attempts++
       }
-      reader?.releaseLock();
       await closePort(port);
       const _check = check ? E3.check(check) : undefined;
       return {
@@ -204,10 +233,9 @@ export function useE3Communication() {
         virtual_ignition: _check?.virtual_ignition ?? undefined,
       }
     } catch (e) {
-      console.error("ERROR [getDeviceConfig]", e);
-      if (reader) reader.releaseLock();
+      console.error("ERROR [getDeviceProfile]", e);
       await closePort(port);
-      return await getDeviceConfig(port);
+      return await getDeviceProfile(port);
     }
   };
   const configureDevice = async (input: {
@@ -218,9 +246,9 @@ export function useE3Communication() {
       onPortOpened: () => void
       onSendCommand: (command: string, idx: number) => void
       onClosePort: () => void
-      onPortClosed: () => void
+      onFinished: () => void
     }
-  }): Promise<DeviceConfigured> => {
+  }): Promise<ConfigurationMetadata> => {
     const { port, commands, callback } = input
     try {
       const commands_sent = []
@@ -245,7 +273,7 @@ export function useE3Communication() {
       const end_time_configuration = Date.now()
       callback.onClosePort()
       await closePort(port)
-      callback.onPortClosed()
+      callback.onFinished()
       return {
         uid,
         init_time_configuration,
@@ -264,96 +292,182 @@ export function useE3Communication() {
   //
   const handleDeviceIdentification = async (ports: ISerialPort[]) => {
     try {
+      setInIdentification(true)
       for (let port of ports) {
-        setDeviceIdentified(prev => [...prev, { port, isIdentified: false, inIdentification: true }])
-        const identification = await getDeviceIdentification(port)
-        setDeviceIdentified(prev => {
-          const current_device = prev.find(p => p.port === port)
-          if (!current_device) return prev
-          const others_devices = prev.filter(p => p.port !== port)
-          if (identification) {
-            return [...others_devices, { ...identification, inIdentification: false }]
+        const total_steps = 11
+        const identification = await getDeviceIdentification({
+          port,
+          callback: {
+            onOpenPort: () => updateIdentifiedLog({
+              port,
+              step_label: "Abrindo a porta",
+              step_index: 1,
+              total_steps
+            }),
+            onPortOpened: () => updateIdentifiedLog({
+              port,
+              step_label: "Porta aberta",
+              step_index: 2,
+              total_steps
+            }),
+            onReg: () => updateIdentifiedLog({
+              port,
+              step_label: "REG",
+              step_index: 3,
+              total_steps
+            }),
+            onSms: () => updateIdentifiedLog({
+              port,
+              step_label: "SMS",
+              step_index: 4,
+              total_steps
+            }),
+            onEn: () => updateIdentifiedLog({
+              port,
+              step_label: "EN",
+              step_index: 5,
+              total_steps
+            }),
+            onImei: () => updateIdentifiedLog({
+              port,
+              step_label: "IMEI",
+              step_index: 6,
+              total_steps
+            }),
+            onIccid: () => updateIdentifiedLog({
+              port,
+              step_label: "ICCID",
+              step_index: 7,
+              total_steps
+            }),
+            onEt: () => updateIdentifiedLog({
+              port,
+              step_label: "ET",
+              step_index: 8,
+              total_steps
+            }),
+            onClosePort: () => updateIdentifiedLog({
+              port,
+              step_label: "Fechando a porta",
+              step_index: 9,
+              total_steps
+            }),
+            onFinished: () => updateIdentifiedLog({
+              port,
+              step_label: "Porta Fechada",
+              step_index: 10,
+              total_steps
+            }),
           }
-          return [...others_devices, { ...current_device, inIdentification: false }]
+        })
+        identification && setIdentified(prev => prev.concat(identification))
+        updateIdentifiedLog({
+          port,
+          step_label: "Processo Finalizado",
+          step_index: 11,
+          total_steps
         })
       }
+      setInIdentification(false)
     } catch (e) {
       console.error("[handleDeviceIdentification]", e)
     }
   }
-  const handleDeviceConfiguration = async (devices: DeviceIdentified[], desired_config: IProfile["config"]) => {
-    const commands = parseCommands(desired_config)
-    for (let device of devices) {
-      const { port, imei, iccid, et } = device
-      if (!imei || !iccid || !et) continue
+  const handleDeviceConfiguration = async (devices: Identified[], desired_profile: DeviceProfile) => {
+    try {
+      setInConfiguration(true)
+      const commands = parseCommands(desired_profile)
+      for (let device of devices) {
+        const { port, imei, iccid, et } = device
+        if (!imei || !iccid || !et) continue
+        const total_steps = commands.length + 7;
 
-      setConfigurations((prev) => {
-        const rest = prev.filter(el => el.imei !== imei)
-        const current = prev.find(el => el.imei === imei)
-        if (!current) return [...rest, {
+        updateConfigurationLog({
+          imei,
+          step_index: 0,
+          step_label: "Iniciando a configuração",
+          total_steps
+        })
+
+        const configured_device = await configureDevice({
+          port,
+          commands,
+          callback: {
+            onOpenPort: () => updateConfigurationLog({
+              imei,
+              step_label: "Abrindo a porta",
+              step_index: 1,
+              total_steps
+            }),
+            onPortOpened: () => updateConfigurationLog({
+              imei,
+              step_label: "Porta aberta",
+              step_index: 2,
+              total_steps
+            }),
+            onSendCommand: (command, idx) => updateConfigurationLog({
+              imei,
+              step_label: command,
+              step_index: 2 + idx,
+              total_steps
+            }),
+            onClosePort: () => updateConfigurationLog({
+              imei,
+              step_label: "Fechando a porta",
+              step_index: total_steps - 4,
+              total_steps
+            }),
+            onFinished: () => updateConfigurationLog({
+              imei,
+              step_label: "Porta fechada",
+              step_index: total_steps - 3,
+              total_steps
+            }),
+          }
+        });
+
+        updateConfigurationLog({
+          imei,
+          step_label: "Requisitando configuração",
+          step_index: total_steps - 2,
+          total_steps
+        })
+        const actual_profile = await getDeviceProfile(port);
+
+        updateConfigurationLog({
+          imei,
+          step_label: "Checando as diferenças",
+          step_index: total_steps - 1,
+          total_steps
+        })
+        delete desired_profile?.password;
+        const {
+          isEqual: isConfigured,
+          difference: not_configured
+        } = checkWithDifference(desired_profile, actual_profile)
+
+        const configuration_result = {
+          port,
           imei,
           iccid,
           et,
-          port,
-          step_label: "Iniciando a configuração",
-          progress: 0,
-          checked: false,
-          desired_config,
-          metadata: {} as any,
-          not_configured: {} as any,
-        }]
-        return [...rest, { ...current, step_label: "Iniciando a configuração", progress: 0 }]
-      });
-
-      const total_steps = commands.length + 7;
-      const step = (step_label: string, step_index: number) => updateConfigurationStep({
-        imei: imei!,
-        step_label,
-        step_index,
-        total_steps
-      })
-
-      const configured_device = await configureDevice({
-        port,
-        commands,
-        callback: {
-          onOpenPort: () => step("Abrindo a porta", 1),
-          onPortOpened: () => step("Porta aberta", 2),
-          onSendCommand: (command, idx) => step(command, 2 + idx),
-          onClosePort: () => step("Fechando a porta", total_steps - 4),
-          onPortClosed: () => step("Porta fechada", total_steps - 3),
+          actual_profile: actual_profile ?? undefined,
+          desired_profile,
+          isConfigured,
+          not_configured,
+          metadata: configured_device
         }
-      });
-
-      step("Requisitando configuração", total_steps - 2)
-      const actual_config = await getDeviceConfig(port);
-
-      step("Checando as diferenças", total_steps - 1)
-      delete desired_config?.password;
-      const {
-        isEqual: checked,
-        difference: not_configured
-      } = checkWithDifference(desired_config, actual_config)
-
-      const configuration_result = {
-        port,
-        imei,
-        iccid,
-        et,
-        actual_config: actual_config ?? undefined,
-        desired_config,
-        checked,
-        not_configured,
-        metadata: configured_device,
-        step_label: "Processo concluído",
-        progress: 100
+        setConfiguration(prev => prev.concat(configuration_result))
+        updateConfigurationLog({
+          imei,
+          step_index: total_steps,
+          step_label: "Processo finalizado",
+          total_steps,
+        })
       }
-      setConfigurations((prev) => {
-        const rest = prev.filter(el => el.imei !== imei)
-        const current = prev.find(el => el.imei === imei)
-        if (!current) return prev
-        return [...rest, { ...current, ...configuration_result }]
-      });
+      setInConfiguration(false)
+    } catch (e) {
+      console.error("[handleDeviceConfiguration]", e)
     }
   }
 
@@ -370,22 +484,44 @@ export function useE3Communication() {
     const all_commands = initialize_commands.concat(configure_commands)
     return all_commands
   }
-  const updateConfigurationStep = (input: {
-    imei: string,
+  const updateConfigurationLog = (input: {
     step_label: string,
     step_index: number,
-    total_steps: number
+    imei: string,
+    total_steps: number,
   }) => {
-    const { imei, step_label, step_index, total_steps } = input
+    const { imei, total_steps, step_index, step_label } = input
     const percentage = Math.round((step_index / total_steps) * 100);
-    setConfigurations(prev => {
+    setConfigurationLog(prev => {
       const rest = prev.filter(el => el.imei !== imei)
       const current = prev.find(el => el.imei === imei)
-      if (!current) return prev
-      const result = rest.concat({ ...current, step_label, progress: percentage })
+      const result = rest.concat({
+        ...(current ?? { imei }),
+        label: step_label,
+        progress: percentage,
+      })
       return result
     });
-  };
+  }
+  const updateIdentifiedLog = (input: {
+    step_label: string,
+    step_index: number,
+    port: ISerialPort,
+    total_steps: number,
+  }) => {
+    const { port, total_steps, step_index, step_label } = input
+    const percentage = Math.round((step_index / total_steps) * 100);
+    setIdentifiedLog(prev => {
+      const rest = prev.filter(el => el.port !== port)
+      const current = prev.find(el => el.port === port)
+      const result = rest.concat({
+        ...(current ?? { port }),
+        label: step_label,
+        progress: percentage,
+      })
+      return result
+    });
+  }
 
 
   useEffect(() => {
@@ -401,11 +537,15 @@ export function useE3Communication() {
 
 
   return {
-    deviceIdentified,
+    identified,
     requestPort,
     ports,
-    getDeviceConfig,
+    getDeviceProfile,
     handleDeviceConfiguration,
-    configurations
+    configuration,
+    configurationLog,
+    identifiedLog,
+    inConfiguration,
+    inIdentification
   }
 }
