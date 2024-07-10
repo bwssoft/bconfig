@@ -82,7 +82,7 @@ export const columns: ColumnDef<{
       const { getDeviceProfile, port } = device;
       return (
         <div className="flex gap-2">
-          <Button
+          {/* <Button
             variant="outlined"
             className="p-2"
             title="Levar para área de teste"
@@ -92,13 +92,17 @@ export const columns: ColumnDef<{
               height={16}
               title="Levar para área de teste"
             />
-          </Button>
+          </Button> */}
           <Button
             variant="outlined"
             className="p-2"
             onClick={async () => {
               const result = await getDeviceProfile(port);
-              console.log("[getDeviceProfile]", result);
+              if (result) {
+                const uid = crypto.randomUUID();
+                localStorage.setItem(`profile_${uid}`, JSON.stringify(result));
+                window.open(`/configurator/actual-profile?id=${uid}`, "_blank");
+              }
             }}
             title="Requisitar Configurações"
           >
