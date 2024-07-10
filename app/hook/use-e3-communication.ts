@@ -19,6 +19,7 @@ interface Identified {
 }
 
 interface Configuration {
+  uid: string
   port: ISerialPort;
   imei: string
   iccid: string
@@ -31,7 +32,6 @@ interface Configuration {
 }
 
 type ConfigurationMetadata = {
-  uid: string
   port: ISerialPort
   init_time_configuration: number
   end_time_configuration: number
@@ -255,7 +255,6 @@ export function useE3Communication() {
       callback.onOpenPort()
       await openPort(port)
       callback.onPortOpened()
-      const uid = crypto.randomUUID()
       const init_time_configuration = Date.now()
       for (let c = 0; c < commands.length; c++) {
         const command = commands[c]
@@ -275,7 +274,6 @@ export function useE3Communication() {
       await closePort(port)
       callback.onFinished()
       return {
-        uid,
         init_time_configuration,
         end_time_configuration,
         commands_sent,
@@ -432,6 +430,7 @@ export function useE3Communication() {
           step_index: total_steps - 2,
           total_steps
         })
+
         const actual_profile = await getDeviceProfile(port);
 
         updateConfigurationLog({
@@ -440,13 +439,17 @@ export function useE3Communication() {
           step_index: total_steps - 1,
           total_steps
         })
+
         delete desired_profile?.password;
         const {
           isEqual: isConfigured,
           difference: not_configured
         } = checkWithDifference(desired_profile, actual_profile)
 
+        const uid = crypto.randomUUID()
+
         const configuration_result = {
+          uid,
           port,
           imei,
           iccid,
@@ -457,6 +460,8 @@ export function useE3Communication() {
           not_configured,
           metadata: configured_device
         }
+
+        localStorage.setItem(`configuration_result_${uid}`, JSON.stringify(configuration_result))
         setConfiguration(prev => prev.concat(configuration_result))
         updateConfigurationLog({
           imei,
