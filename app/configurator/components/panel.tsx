@@ -6,6 +6,8 @@ import { Button } from "@/app/ui/components/button";
 import DeviceConfiguredTable from "@/app/ui/tables/devices-configured/table";
 import DevicesToConfigureTable from "@/app/ui/tables/devices-to-configure/table";
 import { useE3Communication } from "@/app/hook/use-e3-communication";
+import { IdentificationProgress } from "./identification-progress";
+import { ConfigurationProgress } from "./configuration-progress";
 
 interface Props {
   config?: IProfile["config"];
@@ -14,12 +16,16 @@ interface Props {
 export function Panel(props: Props) {
   const { config } = props;
   const {
-    configurations,
-    deviceIdentified,
+    configuration,
+    identified,
     requestPort,
     handleDeviceConfiguration,
-    getDeviceConfig,
+    getDeviceProfile,
+    configurationLog,
+    identifiedLog,
     ports,
+    inIdentification,
+    inConfiguration,
   } = useE3Communication();
 
   return (
@@ -37,9 +43,15 @@ export function Panel(props: Props) {
         <div className="flex flex-col gap-6 w-full">
           <div className="flow-root w-full">
             {ports.length > 0 ? (
-              <DevicesToConfigureTable
-                data={deviceIdentified.map((d) => ({ ...d, getDeviceConfig }))}
-              />
+              <>
+                <IdentificationProgress
+                  identifiedLog={identifiedLog}
+                  inIdentification={inIdentification}
+                />
+                <DevicesToConfigureTable
+                  data={identified.map((d) => ({ ...d, getDeviceProfile }))}
+                />
+              </>
             ) : (
               <Alert label="Você não tem nenhuma porta." />
             )}
@@ -50,7 +62,7 @@ export function Panel(props: Props) {
                 variant="primary"
                 className="h-fit"
                 onClick={() =>
-                  config && handleDeviceConfiguration(deviceIdentified, config)
+                  config && handleDeviceConfiguration(identified, config)
                 }
               >
                 Configurar
@@ -80,7 +92,11 @@ export function Panel(props: Props) {
             enviados.
           </p>
         </div>
-        <DeviceConfiguredTable data={configurations} />
+        <ConfigurationProgress
+          configurationLog={configurationLog}
+          inConfiguration={inConfiguration}
+        />
+        <DeviceConfiguredTable data={configuration} />
       </div>
     </>
   );
