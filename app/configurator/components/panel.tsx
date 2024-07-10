@@ -34,6 +34,7 @@ export function Panel(props: Props) {
       data: input.map((c) => ({
         imei: c.imei,
         iccid: c.iccid,
+        et: c.et,
         check: c.actual_native_profile?.check,
         cxip: c.actual_native_profile?.cxip,
         dns: c.actual_native_profile?.dns,
@@ -81,9 +82,6 @@ export function Panel(props: Props) {
                 }
               >
                 Configurar
-              </Button>
-              <Button variant="outlined" className="h-fit">
-                Logs
               </Button>
             </div>
 
