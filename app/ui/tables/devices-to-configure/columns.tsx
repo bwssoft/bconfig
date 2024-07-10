@@ -24,7 +24,10 @@ export const columns: ColumnDef<{
   et?: string;
   port: ISerialPort;
   isIdentified: boolean;
-  getDeviceProfile: (port: ISerialPort) => Promise<IProfile["config"] | void>;
+  getDeviceProfile: (port: ISerialPort) => Promise<{
+    profile: IProfile["config"];
+    native_profile: { cxip?: string; dns?: string; check?: string };
+  } | void>;
 }>[] = [
   {
     header: "Identificado",

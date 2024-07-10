@@ -13,7 +13,10 @@ interface Props {
     et?: string;
     port: ISerialPort;
     isIdentified: boolean;
-    getDeviceProfile: (port: ISerialPort) => Promise<IProfile["config"] | void>;
+    getDeviceProfile: (port: ISerialPort) => Promise<{
+      profile: IProfile["config"];
+      native_profile: { cxip?: string; dns?: string; check?: string };
+    } | void>;
   }[];
 }
 export default function DevicesToConfigureTable(props: Props) {

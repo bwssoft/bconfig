@@ -8,6 +8,11 @@ import { E3Encoder } from "../lib/encoder/e3+"
 import { checkWithDifference } from "../lib/util"
 
 type DeviceProfile = IProfile["config"]
+type DeviceNativeProfile = {
+  check?: string
+  dns?: string
+  cxip?: string
+}
 
 
 interface Identified {
@@ -26,6 +31,7 @@ interface Configuration {
   et: string
   desired_profile: DeviceProfile;
   actual_profile?: DeviceProfile;
+  actual_native_profie?: DeviceNativeProfile;
   isConfigured: boolean;
   not_configured: { [key in keyof IProfile]: { value1: any; value2: any } };
   metadata: ConfigurationMetadata;
@@ -196,7 +202,7 @@ export function useE3Communication() {
       return await getDeviceIdentification(props);
     }
   };
-  const getDeviceProfile = async (port: ISerialPort): Promise<DeviceProfile | undefined> => {
+  const getDeviceProfile = async (port: ISerialPort): Promise<{ profile: DeviceProfile, native_profile: DeviceNativeProfile } | undefined> => {
     if (port.readable && port.writable) return
     try {
       await openPort(port);
@@ -215,22 +221,29 @@ export function useE3Communication() {
       await closePort(port);
       const _check = check ? E3.check(check) : undefined;
       return {
-        ip: cxip ? E3.ip(cxip) : undefined,
-        dns: dns ? E3.dns(dns) : undefined,
-        apn: _check?.apn ?? undefined,
-        timezone: _check?.timezone ?? undefined,
-        lock_type: _check?.lock_type ?? undefined,
-        data_transmission: _check?.data_transmission ?? undefined,
-        odometer: _check?.odometer ?? undefined,
-        keep_alive: _check?.keep_alive ?? undefined,
-        accelerometer_sensitivity: _check?.accelerometer_sensitivity ?? undefined,
-        economy_mode: _check?.economy_mode ?? undefined,
-        lbs_position: _check?.lbs_position ?? undefined,
-        cornering_position_update: _check?.cornering_position_update ?? undefined,
-        ignition_alert_power_cut: _check?.ignition_alert_power_cut ?? undefined,
-        gprs_failure_alert: _check?.gprs_failure_alert ?? undefined,
-        led: _check?.led ?? undefined,
-        virtual_ignition: _check?.virtual_ignition ?? undefined,
+        profile: {
+          ip: cxip ? E3.ip(cxip) : undefined,
+          dns: dns ? E3.dns(dns) : undefined,
+          apn: _check?.apn ?? undefined,
+          timezone: _check?.timezone ?? undefined,
+          lock_type: _check?.lock_type ?? undefined,
+          data_transmission: _check?.data_transmission ?? undefined,
+          odometer: _check?.odometer ?? undefined,
+          keep_alive: _check?.keep_alive ?? undefined,
+          accelerometer_sensitivity: _check?.accelerometer_sensitivity ?? undefined,
+          economy_mode: _check?.economy_mode ?? undefined,
+          lbs_position: _check?.lbs_position ?? undefined,
+          cornering_position_update: _check?.cornering_position_update ?? undefined,
+          ignition_alert_power_cut: _check?.ignition_alert_power_cut ?? undefined,
+          gprs_failure_alert: _check?.gprs_failure_alert ?? undefined,
+          led: _check?.led ?? undefined,
+          virtual_ignition: _check?.virtual_ignition ?? undefined,
+        },
+        native_profile: {
+          cxip,
+          check,
+          dns
+        }
       }
     } catch (e) {
       console.error("ERROR [getDeviceProfile]", e);
@@ -431,7 +444,7 @@ export function useE3Communication() {
           total_steps
         })
 
-        const actual_profile = await getDeviceProfile(port);
+        const { profile: actual_profile, native_profile } = await getDeviceProfile(port) ?? {};
 
         updateConfigurationLog({
           imei,
@@ -455,6 +468,7 @@ export function useE3Communication() {
           iccid,
           et,
           actual_profile: actual_profile ?? undefined,
+          actual_native_profie: native_profile ?? undefined,
           desired_profile,
           isConfigured,
           not_configured,
