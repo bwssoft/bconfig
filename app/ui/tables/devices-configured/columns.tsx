@@ -5,6 +5,7 @@ import { Button } from "../../components/button";
 import { DocumentMagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { IProfile } from "@/app/lib/definition";
 import { configMapped } from "@/app/constants/e3+config";
+import Link from "next/link";
 
 const statuses = {
   progress: "text-gray-500 bg-gray-800/20",
@@ -19,6 +20,7 @@ const text = {
 };
 
 export const columns: ColumnDef<{
+  uid: string;
   port: ISerialPort;
   imei?: string;
   iccid?: string;
@@ -85,27 +87,30 @@ export const columns: ColumnDef<{
           {remainingCount > 0 && <span> +{remainingCount}</span>}
         </div>
       ) : (
-        <p>Todos comandos respondidos</p>
+        <p>Nenhum</p>
       );
     },
   },
   {
     header: "Ações",
     accessorKey: "port",
-    cell: () => {
+    cell: ({ row }) => {
+      const configuration = row.original;
       return (
         <div className="flex gap-2">
-          <Button
-            variant="outlined"
-            className="p-2"
-            title="Verificar logs de configuração"
-          >
-            <DocumentMagnifyingGlassIcon
-              width={16}
-              height={16}
+          <Link href={`/configurator/review?id=${configuration.uid}`}>
+            <Button
+              variant="outlined"
+              className="p-2"
               title="Verificar logs de configuração"
-            />
-          </Button>
+            >
+              <DocumentMagnifyingGlassIcon
+                width={16}
+                height={16}
+                title="Verificar logs de configuração"
+              />
+            </Button>
+          </Link>
         </div>
       );
     },
