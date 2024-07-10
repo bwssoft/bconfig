@@ -34,9 +34,9 @@ export function Panel(props: Props) {
       data: input.map((c) => ({
         imei: c.imei,
         iccid: c.iccid,
-        check: c.actual_native_profie?.check,
-        cxip: c.actual_native_profie?.cxip,
-        dns: c.actual_native_profie?.dns,
+        check: c.actual_native_profile?.check,
+        cxip: c.actual_native_profile?.cxip,
+        dns: c.actual_native_profile?.dns,
       })),
       fileName: new Date().toLocaleTimeString(),
       sheetName: "Dispositivos Configurados",

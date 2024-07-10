@@ -31,7 +31,7 @@ interface Configuration {
   et: string
   desired_profile: DeviceProfile;
   actual_profile?: DeviceProfile;
-  actual_native_profie?: DeviceNativeProfile;
+  actual_native_profile?: DeviceNativeProfile;
   isConfigured: boolean;
   not_configured: { [key in keyof IProfile]: { value1: any; value2: any } };
   metadata: ConfigurationMetadata;
@@ -159,9 +159,10 @@ export function useE3Communication() {
       onClosePort: () => void
       onFinished: () => void
     }
-  }): Promise<Identified | undefined> => {
+  }, depth = 3): Promise<Identified | undefined> => {
     const { port, callback } = props
     if (port.readable && port.writable) return
+    if (depth <= 0) return undefined
     try {
       callback.onOpenPort()
       await openPort(port);
@@ -202,22 +203,23 @@ export function useE3Communication() {
       return await getDeviceIdentification(props);
     }
   };
-  const getDeviceProfile = async (port: ISerialPort): Promise<{ profile: DeviceProfile, native_profile: DeviceNativeProfile } | undefined> => {
+  const getDeviceProfile = async (port: ISerialPort, depth = 3): Promise<{ profile: DeviceProfile, native_profile: DeviceNativeProfile } | undefined> => {
     if (port.readable && port.writable) return
+    if (depth <= 0) return undefined
     try {
       await openPort(port);
-      let attempts = 0
-      const max_retries = 3
+      // let attempts = 0
+      // const max_retries = 3
       let check: DeviceResponse, cxip: DeviceResponse, dns: DeviceResponse;
-      while (attempts < max_retries && (!check || !cxip || !dns)) {
-        await sendCommandWithRetries(port, "REG000000#");
-        await sendCommandWithRetries(port, "SMS1");
-        await sendCommandWithRetries(port, "EN");
-        if (!check) check = await sendCommandWithRetries(port, "CHECK");
-        if (!cxip) cxip = await sendCommandWithRetries(port, "CXIP");
-        if (!dns) dns = await sendCommandWithRetries(port, "DNS");
-        attempts++
-      }
+      // while (attempts < max_retries && (!check || !cxip || !dns)) {
+      await sendCommandWithRetries(port, "REG000000#");
+      await sendCommandWithRetries(port, "SMS1");
+      await sendCommandWithRetries(port, "EN");
+      if (!check) check = await sendCommandWithRetries(port, "CHECK");
+      if (!cxip) cxip = await sendCommandWithRetries(port, "CXIP");
+      if (!dns) dns = await sendCommandWithRetries(port, "DNS");
+      //   attempts++
+      // }
       await closePort(port);
       const _check = check ? E3.check(check) : undefined;
       return {
@@ -248,7 +250,7 @@ export function useE3Communication() {
     } catch (e) {
       console.error("ERROR [getDeviceProfile]", e);
       await closePort(port);
-      return await getDeviceProfile(port);
+      return await getDeviceProfile(port, depth - 1);
     }
   };
   const configureDevice = async (input: {
@@ -468,7 +470,7 @@ export function useE3Communication() {
           iccid,
           et,
           actual_profile: actual_profile ?? undefined,
-          actual_native_profie: native_profile ?? undefined,
+          actual_native_profile: native_profile ?? undefined,
           desired_profile,
           isConfigured,
           not_configured,
