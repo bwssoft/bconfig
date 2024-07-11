@@ -27,7 +27,7 @@ interface Configuration {
   uid: string
   port: ISerialPort;
   imei: string
-  iccid: string
+  iccid?: string
   et: string
   desired_profile: DeviceProfile;
   actual_profile?: DeviceProfile;
@@ -181,7 +181,8 @@ export function useE3Communication() {
       callback.onImei()
       const imei = await sendCommandWithRetries(port, "IMEI");
       callback.onIccid()
-      const iccid = await sendCommandWithRetries(port, "ICCID");
+      const iccid = undefined
+      // const iccid = await sendCommandWithRetries(port, "ICCID");
       callback.onEt()
       const et = await sendCommandWithRetries(port, "ET");
       //   attempts++
@@ -392,7 +393,7 @@ export function useE3Communication() {
       const commands = parseCommands(desired_profile)
       for (let device of devices) {
         const { port, imei, iccid, et } = device
-        if (!imei || !iccid || !et) continue
+        if (!imei || !et) continue
         const total_steps = commands.length + 7;
 
         updateConfigurationLog({

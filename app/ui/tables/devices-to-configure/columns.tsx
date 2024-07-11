@@ -9,12 +9,14 @@ import { cn } from "@/app/lib/util";
 import { Button } from "../../components/button";
 
 const statuses = {
-  identified: "text-green-500 bg-green-800/20",
+  fully_identified: "text-green-500 bg-green-800/20",
+  partially_identified: "text-yellow-500 bg-yellow-800/20",
   not_identified: "text-rose-500 bg-rose-800/20",
 };
 
 const text = {
-  identified: "text-green-800",
+  fully_identified: "text-green-800",
+  partially_identified: "text-yellow-800",
   not_identified: "text-rose-800",
 };
 
@@ -34,7 +36,12 @@ export const columns: ColumnDef<{
     accessorKey: "inIdentification",
     cell: ({ row }) => {
       const device = row.original;
-      const status = device.isIdentified ? "identified" : "not_identified";
+      const not_identified = !device.imei && !device.iccid && !device.et;
+      const status = device.isIdentified
+        ? "fully_identified"
+        : not_identified
+        ? "not_identified"
+        : "partially_identified";
       return (
         <div className="flex items-center gap-1">
           <div
@@ -43,7 +50,11 @@ export const columns: ColumnDef<{
             <div className="h-1.5 w-1.5 rounded-full bg-current" />
           </div>
           <div className={cn("hidden font-semibold sm:block", text[status])}>
-            {device.isIdentified ? "Identificado" : "Não Identificado"}
+            {device.isIdentified
+              ? "Identificado"
+              : not_identified
+              ? "Não Identificado"
+              : "Parcialmente Identificado"}
           </div>
         </div>
       );
@@ -66,7 +77,7 @@ export const columns: ColumnDef<{
     },
   },
   {
-    header: "Firmeware",
+    header: "Firmware",
     accessorKey: "et",
     cell: ({ row }) => {
       const device = row.original;
