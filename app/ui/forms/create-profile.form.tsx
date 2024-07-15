@@ -95,12 +95,12 @@ export function ProfileCreateForm() {
                 </div>
               </div>
               <div className="sm:col-span-full">
-                <dt className="text-sm font-medium text-gray-400">Apn</dt>
+                <dt className="text-sm font-medium text-gray-400">APN</dt>
                 <div className="flex gap-2 mt-2">
                   <Input
                     id="addres"
                     label="Endereço"
-                    placeholder="www.bws.com"
+                    placeholder="bws.br"
                     {...register("apn.address")}
                   />
                   <Input
@@ -127,7 +127,7 @@ export function ProfileCreateForm() {
                     keyExtractor={(d) => d.value}
                     valueExtractor={(d) => d.value}
                     name="ip_dns"
-                    label="Ip ou DNS"
+                    label="IP ou DNS"
                     onChange={({ value }) =>
                       handleChangeIpDns(value as "IP" | "DNS")
                     }
@@ -141,7 +141,7 @@ export function ProfileCreateForm() {
                     <div className="flex gap-2">
                       <Input
                         id="primary_ip"
-                        label="Ip"
+                        label="IP"
                         placeholder="124.451.451.12"
                         {...register("ip.primary.ip")}
                       />
@@ -156,7 +156,7 @@ export function ProfileCreateForm() {
                     <div className="flex gap-2">
                       <Input
                         id="secondary_ip"
-                        label="Ip"
+                        label="IP"
                         placeholder="124.451.451.12"
                         {...register("ip.secondary.ip")}
                       />
