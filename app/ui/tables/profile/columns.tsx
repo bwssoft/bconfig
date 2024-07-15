@@ -1,3 +1,4 @@
+import { toast } from "@/app/hook/use-toast";
 import { deleteOneProfileById } from "@/app/lib/action";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
@@ -25,7 +26,24 @@ export const columns: ColumnDef<{
           >
             Editar
           </Link>
-          <form action={() => deleteOneProfileById({ id: profile.id })}>
+          <form
+            action={() => {
+              try {
+                deleteOneProfileById({ id: profile.id });
+                toast({
+                  title: "Sucesso!",
+                  description: "Perfil deletado com sucesso!",
+                  variant: "success",
+                });
+              } catch (e) {
+                toast({
+                  title: "Falha!",
+                  description: "Falha ao deletar o perfil!",
+                  variant: "error",
+                });
+              }
+            }}
+          >
             <button
               type="submit"
               className="text-indigo-600 hover:text-indigo-900 px-0 py-0"
