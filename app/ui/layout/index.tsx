@@ -1,6 +1,7 @@
 import { SideBar } from "../components/side-bar";
 import { cn } from "@/app/lib/util";
 import { Inter } from "next/font/google";
+import { Toaster } from "../components/toaster";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,6 +25,7 @@ export function Layout(props: Props) {
           </div>
         </div>
       </body>
+      <Toaster />
     </html>
   );
 }
