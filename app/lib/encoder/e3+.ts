@@ -195,6 +195,14 @@ export class E3Encoder {
     return `IV${props ? "ON" : "OFF"}`
   }
 
+
+  static work_mode(props: string): string | undefined {
+    if (!["SLAVE", "MASTER", "NEGATIVE"].includes(props)) {
+      return undefined
+    }
+    return props
+  }
+
   static commands() {
     return {
       apn: E3Encoder.apn,
@@ -215,6 +223,7 @@ export class E3Encoder {
       gprs_failure_alert: E3Encoder.gprs_failure_alert,
       led: E3Encoder.led,
       virtual_ignition: E3Encoder.virtual_ignition,
+      work_mode: E3Encoder.work_mode,
     }
   }
 

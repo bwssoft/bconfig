@@ -97,6 +97,11 @@ export const economyMode = [
   { value: 1, label: "GPS Desligado (Em Sleep)" }
 ]
 
+export const workMode = [
+  { value: "SLAVE", label: "Botão de Pânico" },
+  { value: "MASTER", label: "Ignição Física" },
+  { value: "NEGATIVE", label: "Violação de módulo" },
+]
 
 
 export const configMapped: { [key in keyof IProfile["config"]]: string } = {

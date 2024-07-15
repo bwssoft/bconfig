@@ -44,5 +44,6 @@ export interface IProfile {
     led?: boolean
     virtual_ignition?: boolean
     sensitivity_adjustment?: number
+    work_mode?: string
   }
 }

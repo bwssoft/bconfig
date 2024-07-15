@@ -6,6 +6,7 @@ import {
   functions,
   lockType,
   timezones,
+  workMode,
 } from "@/app/constants/e3+config";
 import { Input } from "../components/input";
 import { Select } from "../components/select";
@@ -332,6 +333,23 @@ export function ProfileUpdateForm(props: Props) {
                   label="Hodômetro"
                   placeholder="5000"
                   type="number"
+                />
+              </div>
+              <div className="sm:col-span-1">
+                <Controller
+                  control={control}
+                  name="work_mode"
+                  render={({ field }) => (
+                    <Select
+                      name="work_mode"
+                      data={workMode}
+                      keyExtractor={(d) => d.value}
+                      valueExtractor={(d) => d.label}
+                      label="Modo de trabalho"
+                      value={workMode.find((d) => d.value === field.value)}
+                      onChange={(d) => field.onChange(d.value)}
+                    />
+                  )}
                 />
               </div>
             </dl>

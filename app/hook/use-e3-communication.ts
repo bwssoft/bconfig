@@ -241,6 +241,7 @@ export function useE3Communication() {
           gprs_failure_alert: _check?.gprs_failure_alert ?? undefined,
           led: _check?.led ?? undefined,
           virtual_ignition: _check?.virtual_ignition ?? undefined,
+          work_mode: _check?.work_mode ?? undefined
         },
         native_profile: {
           cxip,

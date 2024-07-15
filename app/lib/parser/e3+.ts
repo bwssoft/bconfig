@@ -53,7 +53,7 @@ type VirtualIgnition = boolean
 
 type PanicButton = boolean
 
-type ModuleViolation = boolean
+type WorkMode = string
 
 interface Check extends Object {
   apn?: APN
@@ -71,7 +71,7 @@ interface Check extends Object {
   led?: Led
   virtual_ignition?: VirtualIgnition
   panic_button?: PanicButton
-  module_violation?: ModuleViolation
+  work_mode?: WorkMode
 }
 
 interface Status {
@@ -146,6 +146,9 @@ export class E3 {
         }
         if (key === "IV") {
           parsed["virtual_ignition"] = this.virtual_ignition(value)
+        }
+        if (key === "ACCMODE") {
+          parsed["work_mode"] = this.work_mode(value)
         }
       })
     }
@@ -351,11 +354,12 @@ export class E3 {
     return input === "1" ? true : false
   }
 
-  static module_violation(input: string): VirtualIgnition | undefined {
-    if (!input || (input !== "NEGATIVE" && input !== "MASTER")) return undefined
-    return input === "NEGATIVE" ? true : false
+  static work_mode(input: string): WorkMode | undefined {
+    if (!input || (!["SLAVE", "MASTER", "NEGATIVE"].includes(input))) {
+      return undefined
+    }
+    return input
   }
-
 
 }
 

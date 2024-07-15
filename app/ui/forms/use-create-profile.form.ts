@@ -61,6 +61,7 @@ const schema = z
     gprs_failure_alert: z.coerce.boolean().optional().default(false),
     led: z.coerce.boolean().optional().default(false),
     virtual_ignition: z.coerce.boolean().optional().default(false),
+    work_mode: zodString,
     // panic_button: z.coerce.boolean().optional().default(false),
     // module_violation: z.coerce.boolean().optional().default(false),
   })
