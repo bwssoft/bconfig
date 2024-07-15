@@ -18,8 +18,15 @@ import Toggle from "../components/toggle";
 import { Button } from "../components/button";
 
 export function ProfileCreateForm() {
-  const { register, ipdns, handleChangeIpDns, handleSubmit, control, errors } =
-    useProfileCreateForm();
+  const {
+    register,
+    ipdns,
+    handleChangeIpDns,
+    handleSubmit,
+    control,
+    errors,
+    reset,
+  } = useProfileCreateForm();
   return (
     <form
       autoComplete="off"
@@ -418,9 +425,10 @@ export function ProfileCreateForm() {
       <div className="mt-6 flex items-center justify-end gap-x-6">
         <button
           type="button"
+          onClick={() => reset()}
           className="text-sm font-semibold leading-6 text-gray-900"
         >
-          Cancelar
+          Limpar
         </button>
         <Button variant="primary" type="submit">
           Registrar

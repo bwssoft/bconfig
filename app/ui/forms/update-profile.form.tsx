@@ -23,10 +23,17 @@ interface Props {
 }
 export function ProfileUpdateForm(props: Props) {
   const { config } = props;
-  const { register, ipdns, handleChangeIpDns, handleSubmit, control, errors } =
-    useProfileUpdateForm({
-      defaultValues: config,
-    });
+  const {
+    register,
+    ipdns,
+    handleChangeIpDns,
+    handleSubmit,
+    control,
+    errors,
+    reset,
+  } = useProfileUpdateForm({
+    defaultValues: config,
+  });
   return (
     <form
       autoComplete="off"
@@ -425,9 +432,10 @@ export function ProfileUpdateForm(props: Props) {
       <div className="mt-6 flex items-center justify-end gap-x-6">
         <button
           type="button"
+          onClick={() => reset()}
           className="text-sm font-semibold leading-6 text-gray-900"
         >
-          Cancelar
+          Limpar
         </button>
         <Button variant="primary" type="submit">
           Atualizar
