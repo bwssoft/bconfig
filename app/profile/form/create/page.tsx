@@ -14,7 +14,7 @@ export default function ProfileCreate() {
         </div>
       </div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
-        <ProfileCreateForm />;
+        <ProfileCreateForm />
       </div>
     </div>
   );
