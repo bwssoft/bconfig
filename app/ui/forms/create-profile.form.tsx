@@ -2,6 +2,7 @@
 
 import {
   accelerometerSensitivity,
+  deviceModel,
   economyMode,
   functions,
   lockType,
@@ -17,7 +18,7 @@ import Toggle from "../components/toggle";
 import { Button } from "../components/button";
 
 export function ProfileCreateForm() {
-  const { register, ipdns, handleChangeIpDns, handleSubmit, control } =
+  const { register, ipdns, handleChangeIpDns, handleSubmit, control, errors } =
     useProfileCreateForm();
   return (
     <form
@@ -46,14 +47,25 @@ export function ProfileCreateForm() {
                   id="Nome"
                   label="Nome"
                   placeholder="Perfil#00"
+                  error={errors?.name?.message}
                 />
               </div>
               <div className="sm:col-span-1">
-                <Input
-                  {...register("model")}
-                  id="model"
-                  label="Modelo"
-                  placeholder="Modelo#00"
+                <Controller
+                  control={control}
+                  name="model"
+                  render={({ field }) => (
+                    <Select
+                      name="model"
+                      data={deviceModel}
+                      keyExtractor={(d) => d.value}
+                      valueExtractor={(d) => d.label}
+                      label="Modelo"
+                      value={deviceModel.find((d) => d.value === field.value)}
+                      onChange={(d) => field.onChange(d.value)}
+                      error={errors?.model?.message}
+                    />
+                  )}
                 />
               </div>
             </dl>
@@ -86,12 +98,14 @@ export function ProfileCreateForm() {
                     id="old_password"
                     label="Antiga"
                     placeholder="000000"
+                    error={errors?.password?.old?.message}
                   />
                   <Input
                     {...register("password.new")}
                     id="new_password"
                     label="Nova"
                     placeholder="123456"
+                    error={errors?.password?.new?.message}
                   />
                 </div>
               </div>
@@ -145,6 +159,7 @@ export function ProfileCreateForm() {
                         label="IP"
                         placeholder="124.451.451.12"
                         {...register("ip.primary.ip")}
+                        error={errors?.ip?.primary?.ip?.message}
                       />
                       <Input
                         id="primary_ip_port"
@@ -152,6 +167,7 @@ export function ProfileCreateForm() {
                         placeholder="2000"
                         type="number"
                         {...register("ip.primary.port")}
+                        error={errors?.ip?.primary?.port?.message}
                       />
                     </div>
                     <div className="flex gap-2">
@@ -160,6 +176,7 @@ export function ProfileCreateForm() {
                         label="IP"
                         placeholder="124.451.451.12"
                         {...register("ip.secondary.ip")}
+                        error={errors?.ip?.secondary?.ip?.message}
                       />
                       <Input
                         id="secondary_ip_port"
@@ -167,6 +184,7 @@ export function ProfileCreateForm() {
                         placeholder="2000"
                         type="number"
                         {...register("ip.secondary.port")}
+                        error={errors?.ip?.secondary?.port?.message}
                       />
                     </div>
                   </div>
@@ -187,6 +205,7 @@ export function ProfileCreateForm() {
                       placeholder="2000"
                       type="number"
                       {...register("dns.port")}
+                      error={errors?.dns?.port?.message}
                     />
                   </div>
                 </div>
@@ -213,7 +232,7 @@ export function ProfileCreateForm() {
             <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
               <div className="sm:col-span-full">
                 <dt className="text-sm font-medium text-gray-400">
-                  Intervalo de Transmissão
+                  Intervalo de Transmissão (Segundos)
                 </dt>
                 <div className="flex gap-2 mt-2">
                   <Input
@@ -222,6 +241,7 @@ export function ProfileCreateForm() {
                     label="Monitorado Ligado"
                     placeholder="60"
                     type="number"
+                    error={errors.data_transmission?.on?.message}
                   />
                   <Input
                     {...register("data_transmission.off")}
@@ -229,6 +249,7 @@ export function ProfileCreateForm() {
                     label="Monitorado Desligado"
                     placeholder="180"
                     type="number"
+                    error={errors.data_transmission?.off?.message}
                   />
                 </div>
               </div>
@@ -309,23 +330,26 @@ export function ProfileCreateForm() {
                   label="Ajuste de Sensibilidade"
                   placeholder="500"
                   type="number"
+                  error={errors.sensitivity_adjustment?.message}
                 />
               </div>
               <div className="sm:col-span-1">
                 <Input
                   {...register("keep_alive")}
                   id="keep_alive"
-                  label="Tempo Keep Alive"
+                  label="Tempo Keep Alive (Segundos)"
                   placeholder="60"
+                  error={errors.keep_alive?.message}
                 />
               </div>
               <div className="sm:col-span-1">
                 <Input
                   {...register("odometer")}
-                  id="hodometer"
+                  id="odometer"
                   label="Hodômetro"
                   placeholder="5000"
                   type="number"
+                  error={errors.odometer?.message}
                 />
               </div>
               <div className="sm:col-span-1">
@@ -367,11 +391,6 @@ export function ProfileCreateForm() {
             <div className="divide-y divide-gray-200 border-b border-t border-gray-200">
               {functions.map((func, id) => (
                 <div key={id} className="relative flex items-center py-4">
-                  <input
-                    id={`functions-${func.name}`}
-                    type="checkbox"
-                    className="mr-3 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600"
-                  />
                   <div className="min-w-0 flex-1 text-sm leading-6">
                     <label
                       htmlFor={`functions-${func.name}`}
