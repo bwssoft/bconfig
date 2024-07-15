@@ -19,6 +19,7 @@ export function Select<T>(props: {
   name: string;
   value?: T; // Adicione a prop value
   placeholder?: string;
+  error?: string;
 }) {
   const {
     data,
@@ -29,6 +30,7 @@ export function Select<T>(props: {
     name,
     value,
     placeholder,
+    error,
   } = props;
   const [selected, setSelected] = useState<T | undefined>(undefined);
 
@@ -111,6 +113,7 @@ export function Select<T>(props: {
               </ListboxOptions>
             </Transition>
           </div>
+          {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
         </>
       )}
     </Listbox>
