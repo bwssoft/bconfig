@@ -60,7 +60,6 @@ export const timezones = [
   { label: "(UTC-02:00) Meio-Atlântico", value: -2 },
   { label: "(UTC-01:00) Açores", value: -1 },
   { label: "(UTC+00:00) Padrão (UTC)", value: 0 },
-  { label: "(UTC+00:00) Padrão (UTC)", value: 0 },
   { label: "(UTC+01:00) Europa Ocnameental", value: 1 },
   { label: "(UTC+02:00) Europa Central", value: 2 },
   { label: "(UTC+03:00) Moscou", value: 3 },
@@ -101,6 +100,11 @@ export const workMode = [
   { value: "SLAVE", label: "Botão de Pânico" },
   { value: "MASTER", label: "Ignição Física" },
   { value: "NEGATIVE", label: "Violação de módulo" },
+]
+
+export const deviceModel = [
+  { value: "E3+", label: "E3+" },
+  { value: "E3+4G", label: "E3+4G" },
 ]
 
 
