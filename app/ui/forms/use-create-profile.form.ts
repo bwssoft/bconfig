@@ -1,30 +1,10 @@
 import { toast } from "@/app/hook/use-toast";
 import { createOneProfile } from "@/app/lib/action";
-import { removeUndefined } from "@/app/lib/util";
+import { removeEmptyValues, removeUndefined } from "@/app/lib/util";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-
-
-const preprocessObject = <T>(obj: T): T => {
-  if (typeof obj !== 'object' || obj === null) return obj;
-  if (Array.isArray(obj)) return obj.map(preprocessObject) as unknown as T;
-
-  const entries = Object.entries(obj).map(([key, value]) => {
-    if (typeof value === 'string' && value === '') {
-      return [key, undefined];
-    } else if (typeof value === 'number' && value === 0) {
-      return [key, undefined];
-    } else if (typeof value === 'object' && value !== null) {
-      return [key, preprocessObject(value)];
-    } else {
-      return [key, value];
-    }
-  });
-
-  return Object.fromEntries(entries) as T;
-};
 
 const password = z
   .string()
@@ -71,7 +51,7 @@ const odometer = z
   .positive({ message: "O valor deve ser positivo" })
   .optional()
 
-const schema = z.preprocess(preprocessObject, z
+const schema = z.preprocess(removeEmptyValues, z
   .object({
     name: z.string({ message: "O nome é orbigatório" }),
     model: z.enum(["E3+", "E3+4G"], { message: "O modelo deve ser E3+ ou E3+4G" }),
@@ -162,7 +142,7 @@ export function useProfileCreateForm() {
         })
       }
     },
-    (errors) => {
+    () => {
       toast({
         title: "Erro de Validação",
         description: "Por favor, corrija os erros no formulário antes de submeter.",

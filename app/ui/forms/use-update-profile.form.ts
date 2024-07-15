@@ -1,76 +1,115 @@
-import { createOneProfile, updateOneProfileById } from "@/app/lib/action";
-import { removeUndefined } from "@/app/lib/util";
+import { toast } from "@/app/hook/use-toast";
+import { updateOneProfileById } from "@/app/lib/action";
+import { IProfile } from "@/app/lib/definition";
+import { removeEmptyValues, removeUndefined } from "@/app/lib/util";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-const numberTransform = (number?: number) =>
-  number === 0 ? undefined : number;
+const password = z
+  .string()
+  .max(6, { message: "A senha deve ter no máximo 6 caracteres." })
+  .optional()
 
-const stringTransform = (str?: string) => (str === "" ? undefined : str);
+const data_transmission = z
+  .coerce
+  .number()
+  .positive({ message: "O valor deve ser positivo" })
+  .max(65535, { message: "O valor deve ser no máximo 65535" })
+  .optional()
 
-const zodNumber = z.coerce.number().optional().transform(numberTransform);
-const zodString = z.string().optional().transform(stringTransform);
-const schema = z
+const ip = z
+  .string()
+  .ip({ message: "IP inválido." })
+  .optional()
+
+const port = z
+  .coerce
+  .number()
+  .positive({ message: "O valor deve ser positivo" })
+  .optional()
+
+const sensitivity_adjustment = z
+  .coerce
+  .number()
+  .positive({ message: "O valor deve ser positivo" })
+  .min(60, { message: "O valor deve ser no mínimo 60" })
+  .max(2000, { message: "O valor deve ser no máximo 2000" })
+  .optional()
+
+const keep_alive = z
+  .coerce
+  .number()
+  .positive({ message: "O valor deve ser positivo" })
+  .min(60, { message: "O valor deve ser no mínimo 60" })
+  .max(1800, { message: "O valor deve ser no máximo 1800" })
+  .optional()
+
+const odometer = z
+  .coerce
+  .number()
+  .positive({ message: "O valor deve ser positivo" })
+  .optional()
+
+const schema = z.preprocess(removeEmptyValues, z
   .object({
-    name: z.string(),
-    model: z.enum(["E3+", "E3+4G"]),
-    password: z.object({ old: zodString, new: zodString }).optional(),
+    name: z.string({ message: "O nome é orbigatório" }),
+    model: z.enum(["E3+", "E3+4G"], { message: "O modelo deve ser E3+ ou E3+4G" }),
+    password: z.object({ old: password, new: password }).optional(),
     apn: z
       .object({
-        address: zodString,
-        user: zodString,
-        password: zodString,
+        address: z.string().optional(),
+        user: z.string().optional(),
+        password: z.string().optional(),
       })
       .optional(),
     ip: z
       .object({
         primary: z.object({
-          ip: zodString,
-          port: zodString,
-        }),
+          ip: ip,
+          port: port,
+        }).optional(),
         secondary: z.object({
-          ip: zodString,
-          port: zodString,
-        }),
+          ip: ip,
+          port: port,
+        }).optional(),
       })
       .optional(),
     dns: z
       .object({
-        address: zodString,
-        port: zodString,
+        address: z.string().optional(),
+        port: port,
       })
       .optional(),
-    timezone: zodNumber,
-    lock_type: zodNumber,
+    timezone: z.coerce.number().optional(),
+    lock_type: z.coerce.number().optional(),
     data_transmission: z
       .object({
-        on: zodString,
-        off: zodString,
+        on: data_transmission,
+        off: data_transmission,
       })
       .optional(),
-    odometer: zodNumber,
-    keep_alive: zodNumber,
-    accelerometer_sensitivity: zodNumber,
-    economy_mode: zodNumber,
-    sensitivity_adjustment: zodNumber,
+    odometer: odometer,
+    keep_alive: keep_alive,
+    accelerometer_sensitivity: z.coerce.number().optional(),
+    economy_mode: z.coerce.number().optional(),
+    sensitivity_adjustment: sensitivity_adjustment,
     lbs_position: z.coerce.boolean().optional().default(false),
     cornering_position_update: z.coerce.boolean().optional().default(false),
     ignition_alert_power_cut: z.coerce.boolean().optional().default(false),
     gprs_failure_alert: z.coerce.boolean().optional().default(false),
     led: z.coerce.boolean().optional().default(false),
     virtual_ignition: z.coerce.boolean().optional().default(false),
-    work_mode: zodString,
+    work_mode: z.string().optional(),
     // panic_button: z.coerce.boolean().optional().default(false),
     // module_violation: z.coerce.boolean().optional().default(false),
-  })
-  .transform((value) => removeUndefined(value));
+  })).transform(removeUndefined)
 
 export type Schema = z.infer<typeof schema>;
 
 interface Props {
-  defaultValues?: Schema;
+  defaultValues?: IProfile;
 }
 export function useProfileUpdateForm(props: Props) {
   const { defaultValues } = props;
@@ -91,15 +130,32 @@ export function useProfileUpdateForm(props: Props) {
     setIpdns(value);
   };
 
-  const handleSubmit = hookFormSubmit(async (data) => {
-    try {
-      const { name, model, ...config } = data;
-      console.log('config.economy_mode', config.economy_mode)
-      await updateOneProfileById({ id: defaultValues.id }, { name, model, config });
-    } catch (e) {
-      console.error("error on submit form", e);
+  const handleSubmit = hookFormSubmit(
+    async (data) => {
+      try {
+        const { name, model, ...config } = data;
+        await updateOneProfileById({ id: defaultValues?.id! }, { name, model, config });
+        toast({
+          title: "Sucesso!",
+          description: "Perfil atualizado com sucesso!",
+          variant: "success",
+        })
+      } catch (e) {
+        toast({
+          title: "Falha!",
+          description: "Falha ao atualizar o perfil!",
+          variant: "error",
+        })
+      }
+    },
+    () => {
+      toast({
+        title: "Erro de Validação",
+        description: "Por favor, corrija os erros no formulário antes de submeter.",
+        variant: "error",
+      });
     }
-  });
+  );
 
   useEffect(() => {
     console.log('errors', errors)

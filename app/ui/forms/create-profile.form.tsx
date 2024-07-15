@@ -232,13 +232,13 @@ export function ProfileCreateForm() {
             <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
               <div className="sm:col-span-full">
                 <dt className="text-sm font-medium text-gray-400">
-                  Intervalo de Transmissão (Segundos)
+                  Intervalo de Transmissão
                 </dt>
                 <div className="flex gap-2 mt-2">
                   <Input
                     {...register("data_transmission.on")}
                     id="transmission_on"
-                    label="Monitorado Ligado"
+                    label="Monitorado Ligado (Segundos)"
                     placeholder="60"
                     type="number"
                     error={errors.data_transmission?.on?.message}
@@ -246,7 +246,7 @@ export function ProfileCreateForm() {
                   <Input
                     {...register("data_transmission.off")}
                     id="transmission_off"
-                    label="Monitorado Desligado"
+                    label="Monitorado Desligado (Segundos)"
                     placeholder="180"
                     type="number"
                     error={errors.data_transmission?.off?.message}
