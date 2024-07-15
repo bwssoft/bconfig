@@ -11,16 +11,16 @@ export interface IProfile {
     ip?: {
       primary?: {
         ip?: string
-        port?: string
+        port?: number
       }
       secondary?: {
         ip?: string
-        port?: string
+        port?: number
       }
     }
     dns?: {
       address?: string
-      port?: string
+      port?: number
     }
     apn?: {
       address?: string
@@ -30,8 +30,8 @@ export interface IProfile {
     timezone?: number
     lock_type?: number
     data_transmission?: {
-      on?: string
-      off?: string
+      on?: number
+      off?: number
     }
     odometer?: number
     keep_alive?: number
