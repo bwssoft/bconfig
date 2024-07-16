@@ -9,17 +9,17 @@ type APN = {
 type IP = {
   primary?: {
     ip?: string
-    port?: string
+    port?: number
   }
   secondary?: {
     ip?: string
-    port?: string
+    port?: number
   }
 }
 
 type DNS = {
   address?: string
-  port?: string
+  port?: number
 }
 
 type Timezone = number
@@ -27,8 +27,8 @@ type Timezone = number
 type Locktype = number
 
 type DataTransmission = {
-  on?: string
-  off?: string
+  on?: number
+  off?: number
 }
 
 type Odometer = number
@@ -36,6 +36,8 @@ type Odometer = number
 type KeepAlive = number
 
 type AccelerometerSensitivity = number
+
+type SensitivityAdjustment = number
 
 type EconomyMode = number
 
@@ -218,14 +220,14 @@ export class E3 {
       const [ip, port] = ip1.split(":")
       result["primary"] = {
         ip,
-        port
+        port: Number.isNaN(port) ? undefined : Number(port)
       }
     }
     if (ip2) {
       const [ip, port] = ip2.split(":")
       result["secondary"] = {
         ip,
-        port
+        port: Number.isNaN(port) ? undefined : Number(port)
       }
     }
     if (Object.keys(result).length === 0) return undefined
@@ -243,8 +245,8 @@ export class E3 {
     if (address) {
       result["address"] = address
     }
-    if (port) {
-      result["port"] = port
+    if (port && !Number.isNaN(port)) {
+      result["port"] = Number(port)
     }
     if (Object.keys(result).length === 0) return undefined
     return result
@@ -283,9 +285,10 @@ export class E3 {
   static data_transmission(input: string): DataTransmission | undefined {
     const [on, off] = input.split(',')
     if (!on || !off) return undefined
+    if (Number.isNaN(on) || Number.isNaN(off)) return undefined
     return {
-      on,
-      off
+      on: Number(on),
+      off: Number(off)
     }
   }
 
