@@ -6,6 +6,7 @@ import { E3 } from "../lib/parser/e3+"
 import { IProfile } from "../lib/definition"
 import { E3Encoder } from "../lib/encoder/e3+"
 import { checkWithDifference } from "../lib/util"
+import { toast } from "./use-toast"
 
 type DeviceProfile = IProfile["config"]
 type DeviceNativeProfile = {
@@ -75,6 +76,12 @@ export function useE3Communication() {
   const disconnectedPorts = useRef<ISerialPort[]>([])
 
   const handleSerialDisconnection = useCallback((port: ISerialPort) => {
+    toast({
+      title: "Desconexão!",
+      description: "Equipamento desconectado!",
+      variant: "success",
+      className: "destructive group border bg-stone-400 border-stone-300 text-white"
+    })
     disconnectedPorts.current.push(port)
     setIdentified(prev => {
       const _identified = prev.find(el => el.port === port);
@@ -86,8 +93,17 @@ export function useE3Communication() {
     });
   }, [setIdentified, setConfiguration])
 
+  const handleSerialConnection = (port: ISerialPort) => {
+    toast({
+      title: "Conexão!",
+      description: "Equipamento conectado!",
+      variant: "success",
+    })
+  }
+
   const { ports, writeToPort, openPort, getReader, requestPort, closePort } = useSerial({
-    handleDisconnection: handleSerialDisconnection
+    handleDisconnection: handleSerialDisconnection,
+    handleConnection: handleSerialConnection
   })
 
   //
