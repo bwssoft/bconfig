@@ -32,20 +32,11 @@ export const functions = [
     name: "virtual_ignition",
     data: [{ label: "Ligado", value: true }, { label: "Desligado", value: false }]
 
-  },
-  {
-    label: "Botão de Pânico",
-    name: "panic_button",
-    data: [{ label: "Ligado", value: true }, { label: "Desligado", value: false }]
-  },
-  {
-    label: "Violação de Módulo (Fio Branco)",
-    name: "module_violation",
-    data: [{ label: "Ligado", value: true }, { label: "Desligado", value: false }]
-  },
+  }
 ];
 
 export const lockType = [{ label: "Progressivo", value: 1 }, { label: "Instantâneo", value: 2 }, { label: "Inverso", value: 3 }]
+
 export const timezones = [
   { label: "(UTC-12:00) Linha Internacional de Data Oeste", value: -12 },
   { label: "(UTC-11:00) Samoa", value: -11 },
