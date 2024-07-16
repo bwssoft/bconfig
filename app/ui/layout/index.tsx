@@ -24,8 +24,8 @@ export function Layout(props: Props) {
             </main>
           </div>
         </div>
+        <Toaster />
       </body>
-      <Toaster />
     </html>
   );
 }
