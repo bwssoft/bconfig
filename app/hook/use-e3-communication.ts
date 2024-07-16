@@ -72,8 +72,10 @@ export function useE3Communication() {
   const [inConfiguration, setInConfiguration] = useState<boolean>(false)
 
   const previousPorts = useRef<ISerialPort[]>([])
+  const disconnectedPorts = useRef<ISerialPort[]>([])
 
   const handleSerialDisconnection = useCallback((port: ISerialPort) => {
+    disconnectedPorts.current.push(port)
     setIdentified(prev => {
       const _identified = prev.find(el => el.port === port);
       const updatedIdentified = prev.filter(el => el.port !== port);
@@ -375,13 +377,24 @@ export function useE3Communication() {
             }),
           }
         })
-        identification && setIdentified(prev => prev.concat(identification))
         updateIdentifiedLog({
           port,
           step_label: "Processo Finalizado",
           step_index: 11,
           total_steps
         })
+        const portHasDisconnected = disconnectedPorts.current.find(p => p === port)
+        if (identification) {
+          if (portHasDisconnected) {
+            setIdentified(prev => {
+              const updatedIdentified = prev.filter(el => el.port !== port);
+              setIdentifiedLog(prevLog => prevLog.filter(el => el.port !== port));
+              return updatedIdentified;
+            });
+          } else if (!portHasDisconnected) {
+            setIdentified(prev => prev.concat(identification))
+          }
+        }
       }
       setInIdentification(false)
     } catch (e) {
