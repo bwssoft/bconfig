@@ -16,11 +16,11 @@ const nullProfile: IProfile = {
     ip: {
       primary: {
         ip: "",
-        port: "",
+        port: undefined,
       },
       secondary: {
         ip: "",
-        port: "",
+        port: undefined,
       },
     },
     dns: undefined,
