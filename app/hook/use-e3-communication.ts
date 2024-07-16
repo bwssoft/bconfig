@@ -213,7 +213,7 @@ export function useE3Communication() {
       await openPort(port);
       // let attempts = 0
       // const max_retries = 3
-      let check: DeviceResponse, cxip: DeviceResponse, dns: DeviceResponse;
+      let check: DeviceResponse, cxip: DeviceResponse, dns: DeviceResponse, gs: DeviceResponse;
       // while (attempts < max_retries && (!check || !cxip || !dns)) {
       await sendCommandWithRetries(port, "REG000000#");
       await sendCommandWithRetries(port, "SMS1");
@@ -221,6 +221,7 @@ export function useE3Communication() {
       if (!check) check = await sendCommandWithRetries(port, "CHECK");
       if (!cxip) cxip = await sendCommandWithRetries(port, "CXIP");
       if (!dns) dns = await sendCommandWithRetries(port, "DNS");
+      if (!gs) gs = await sendCommandWithRetries(port, "GS");
       //   attempts++
       // }
       await closePort(port);
@@ -243,7 +244,8 @@ export function useE3Communication() {
           gprs_failure_alert: _check?.gprs_failure_alert ?? undefined,
           led: _check?.led ?? undefined,
           virtual_ignition: _check?.virtual_ignition ?? undefined,
-          work_mode: _check?.work_mode ?? undefined
+          work_mode: _check?.work_mode ?? undefined,
+          sensitivity_adjustment: gs ? E3.sensitivity_adjustment(gs) : undefined,
         },
         native_profile: {
           cxip,

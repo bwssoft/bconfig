@@ -361,6 +361,13 @@ export class E3 {
     return input
   }
 
+  static sensitivity_adjustment(input: string): SensitivityAdjustment | undefined {
+    if (!input.includes("GS:")) return undefined
+    const gs = input.split("GS:")
+    if (Number.isNaN(gs)) return undefined
+    return Number(gs)
+  }
+
 }
 
 // const check = "Sim=89883030000101192190 SOS= APN=bws.br,bws,bws TZ=W0 HB=60,1800 MG=0 TX=180 BJ=0 ACCMODE=1 TDET=0 WKMODE=0 DD=0 OD=0 ZD=7 AC=0,0 SDMS=2 TUR=1 PR=1 DK=1726 JD=48 LBS=* MODE=1 LED=1 IV=1 ACC=1 GPRS:4G E_UTRAN GPS:V PROT=E3+ DC:100,2000 Voltage:13.40,12.90 AF:OFF GS:80";
