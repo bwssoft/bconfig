@@ -23,7 +23,7 @@ interface Identified {
   et?: string
 }
 
-interface Configuration {
+export interface Configuration {
   uid: string
   port: ISerialPort;
   imei: string
