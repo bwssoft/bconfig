@@ -495,13 +495,23 @@ export function useE3Communication() {
         }
 
         localStorage.setItem(`configuration_result_${uid}`, JSON.stringify(configuration_result))
-        setConfiguration(prev => prev.concat(configuration_result))
         updateConfigurationLog({
           imei,
           step_index: total_steps,
           step_label: "Processo finalizado",
           total_steps,
         })
+        const portHasDisconnected = disconnectedPorts.current.find(p => p === port)
+        if (portHasDisconnected) {
+          setConfiguration(prev => {
+            const _identified = identified.find(el => el.port === port);
+            const updatedConfiguration = prev.filter(el => el.port !== port);
+            setConfigurationLog(prevLog => prevLog.filter(el => el.imei !== _identified?.imei));
+            return updatedConfiguration;
+          });
+        } else if (!portHasDisconnected) {
+          setConfiguration(prev => prev.concat(configuration_result))
+        }
       }
       setInConfiguration(false)
     } catch (e) {
