@@ -1,12 +1,8 @@
 import { IProfile } from "@/app/lib/definition";
 import { ISerialPort } from "@/app/lib/definition/serial";
 import { ColumnDef } from "@tanstack/react-table";
-import {
-  ArrowDownOnSquareIcon,
-  ArrowTopRightOnSquareIcon,
-} from "@heroicons/react/24/outline";
 import { cn } from "@/app/lib/util";
-import { Button } from "../../components/button";
+import { DevicesToConfigureActionColumn } from "./action-column";
 
 const statuses = {
   fully_identified: "text-green-500 bg-green-800/20",
@@ -95,38 +91,10 @@ export const columns: ColumnDef<{
       const device = row.original;
       const { getDeviceProfile, port } = device;
       return (
-        <div className="flex gap-2">
-          {/* <Button
-            variant="outlined"
-            className="p-2"
-            title="Levar para área de teste"
-          >
-            <ArrowTopRightOnSquareIcon
-              width={16}
-              height={16}
-              title="Levar para área de teste"
-            />
-          </Button> */}
-          <Button
-            variant="outlined"
-            className="p-2"
-            onClick={async () => {
-              const result = await getDeviceProfile(port);
-              if (result) {
-                const uid = crypto.randomUUID();
-                localStorage.setItem(`profile_${uid}`, JSON.stringify(result));
-                window.open(`/configurator/actual-profile?id=${uid}`, "_blank");
-              }
-            }}
-            title="Requisitar Configurações"
-          >
-            <ArrowDownOnSquareIcon
-              width={16}
-              height={16}
-              title="Requisitar Configurações"
-            />
-          </Button>
-        </div>
+        <DevicesToConfigureActionColumn
+          getDeviceProfile={getDeviceProfile}
+          port={port}
+        />
       );
     },
   },

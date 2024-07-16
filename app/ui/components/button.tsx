@@ -15,16 +15,16 @@ const styles = {
 };
 
 export const Button: React.FC<ButtonProps> = (props) => {
-  const { pending, data, method, action } = useFormStatus();
+  const { pending } = useFormStatus();
   return (
     <button
+      disabled={pending}
       {...props}
       className={cn(
         styles[props.variant],
         props.className,
         pending && "opacity-30"
       )}
-      disabled={pending}
     >
       {props.children}
     </button>
