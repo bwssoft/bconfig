@@ -134,7 +134,9 @@ export function Progress(props: Props) {
           ></div>
         </div>
         <div className="w-6 text-end">
-          <span className="text-sm text-gray-800">{percentage}%</span>
+          <span className="text-sm text-gray-800">
+            {percentage.toFixed(2)}%
+          </span>
         </div>
       </div>
     </div>
