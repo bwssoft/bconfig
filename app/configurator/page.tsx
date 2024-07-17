@@ -59,7 +59,7 @@ export default async function Page(props: Props) {
             Configurador
           </h1>
           <p className="mt-2 text-sm text-gray-700">
-            Possivel configurar a{" "}
+            Ferramenta para configurar a{" "}
             <a href="#" className="text-gray-900">
               Família E3.
             </a>{" "}
