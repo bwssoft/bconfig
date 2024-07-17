@@ -6,10 +6,11 @@ interface Props {
 }
 export const ConfigurationProgress = (props: Props) => {
   const { inConfiguration, configurationLog } = props;
-  const totalProgress = configurationLog.reduce(
-    (acc, cur) => acc + cur.progress,
-    0
-  );
+
+  const totalProgress = configurationLog
+    .filter((el) => el.progress !== 100)
+    .reduce((acc, cur) => acc + cur.progress, 0);
+
   const averageProgress =
     configurationLog.length > 0 ? totalProgress / configurationLog.length : 0;
 

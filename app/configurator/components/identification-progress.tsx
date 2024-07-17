@@ -7,10 +7,11 @@ interface Props {
 }
 export const IdentificationProgress = (props: Props) => {
   const { inIdentification, identifiedLog } = props;
-  const totalProgress = identifiedLog.reduce(
-    (acc, cur) => acc + cur.progress,
-    0
-  );
+
+  const totalProgress = identifiedLog
+    .filter((el) => el.progress !== 100)
+    .reduce((acc, cur) => acc + cur.progress, 0);
+
   const averageProgress =
     identifiedLog.length > 0 ? totalProgress / identifiedLog.length : 0;
 
