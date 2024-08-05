@@ -53,7 +53,7 @@ const navigation: NavItem[] = [
     icon: WrenchIcon,
     children: [
       { name: "Perfis", icon: UsersIcon, pathname: "/profile" },
-      { name: "Configurador E3+", pathname: "/configurator" },
+      { name: "Configurador E3+", pathname: "/configurator/E3+" },
       { name: "Área de teste", pathname: "/test-area" },
     ],
   },

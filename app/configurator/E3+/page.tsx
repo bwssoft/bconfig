@@ -1,5 +1,5 @@
-import { findAllProfile, findOneProfile } from "../lib/action";
-import { IProfile } from "../lib/definition";
+import { findAllProfile, findOneProfile } from "../../lib/action";
+import { IProfile } from "../../lib/definition";
 import { Panel } from "./components/panel";
 import { ProfileSelect } from "./components/porfile-select";
 
