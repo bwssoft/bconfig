@@ -1,4 +1,4 @@
-import { Configuration } from "@/app/hook/use-E3-communication";
+import { Configuration } from "@/app/hook/use-E33-communication";
 import CommandLogTable from "../../tables/command-log/table";
 import { configMapped } from "@/app/constants/e3+config";
 import { cn } from "@/app/lib/util";
