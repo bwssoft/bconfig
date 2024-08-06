@@ -13,8 +13,7 @@ export default async function Example() {
             Gestão de Perfis
           </h1>
           <p className="mt-2 text-sm text-gray-700">
-            Uma lista de todos os insumos registrados na sua conta incluindo o
-            nome, unidade de medida e data de criação.
+            Uma lista de todos os perfis registrados na sua conta.
           </p>
         </div>
 

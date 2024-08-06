@@ -49,6 +49,7 @@ type NavItem = {
 const navigation: NavItem[] = [
   { name: "Dashboard", icon: HomeIcon },
   { name: "Perfis de Configuração", pathname: "/profile", icon: UsersIcon },
+  { name: "Logs de Configuração", pathname: "/log", icon: Bars3Icon },
   {
     name: "Ferramentas",
     icon: WrenchIcon,
