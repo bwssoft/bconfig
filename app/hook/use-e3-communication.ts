@@ -127,6 +127,9 @@ export function useE3Communication() {
         buffer = lines.pop() || "";
         for (const line of lines) {
           if (line.length > 0) {
+            if (command.includes("GS") && line.includes("GS")) {
+              return line
+            }
             if (line.includes(`SMS:${command}`)) {
               foundCommandResponse = true;
             } else if (foundCommandResponse) {
