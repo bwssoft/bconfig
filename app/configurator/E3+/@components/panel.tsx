@@ -5,10 +5,10 @@ import Alert from "@/app/ui/components/alert";
 import { Button } from "@/app/ui/components/button";
 import DeviceConfiguredTable from "@/app/ui/tables/devices-configured/table";
 import DevicesToConfigureTable from "@/app/ui/tables/devices-to-configure/table";
-import { useE3Communication } from "@/app/hook/use-e3-communication";
-import { IdentificationProgress } from "./identification-progress";
-import { ConfigurationProgress } from "./configuration-progress";
+import { useE3Communication } from "@/app/hook/use-E3-communication";
 import { jsonToXlsx } from "@/app/lib/util/json-to-xlsx";
+import { IdentificationProgress } from "@/app/ui/components/identification-progress";
+import { ConfigurationProgress } from "@/app/ui/components/configuration-progress";
 
 interface Props {
   config?: IProfile["config"];
@@ -66,6 +66,7 @@ export function Panel(props: Props) {
                   inIdentification={inIdentification}
                 />
                 <DevicesToConfigureTable
+                  model={"E3+" as IProfile["model"]}
                   data={identified.map((d) => ({ ...d, getDeviceProfile }))}
                 />
               </>

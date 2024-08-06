@@ -1,7 +1,7 @@
 "use client";
 
-import { Configuration } from "@/app/hook/use-e3-communication";
-import { ViewConfigurationForm } from "@/app/ui/forms/view-configuration.form";
+import { Configuration } from "@/app/hook/use-E3-communication";
+import { ViewConfigurationForm } from "@/app/ui/forms/E3/view-configuration.form";
 
 interface Props {
   searchParams: {

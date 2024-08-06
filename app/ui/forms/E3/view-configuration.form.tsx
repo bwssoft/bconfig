@@ -1,5 +1,5 @@
-import { Configuration } from "@/app/hook/use-e3-communication";
-import CommandLogTable from "../tables/command-log/table";
+import { Configuration } from "@/app/hook/use-E3-communication";
+import CommandLogTable from "../../tables/command-log/table";
 import { configMapped } from "@/app/constants/e3+config";
 import { cn } from "@/app/lib/util";
 

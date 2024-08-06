@@ -1,7 +1,7 @@
 import { findAllProfile, findOneProfile } from "../../lib/action";
 import { IProfile } from "../../lib/definition";
-import { Panel } from "./components/panel";
-import { ProfileSelect } from "./components/porfile-select";
+import { Panel } from "./@components/panel";
+import { ProfileSelect } from "./@components/porfile-select";
 
 interface Props {
   searchParams: {
@@ -12,14 +12,16 @@ interface Props {
 const nullProfile: IProfile = {
   id: "null",
   name: "Nenhum",
+  created_at: new Date(),
+  model: "E3+" as IProfile["model"],
   config: {
     ip: {
       primary: {
-        ip: "",
+        ip: undefined,
         port: undefined,
       },
       secondary: {
-        ip: "",
+        ip: undefined,
         port: undefined,
       },
     },
@@ -39,8 +41,6 @@ const nullProfile: IProfile = {
     led: undefined,
     virtual_ignition: undefined,
   },
-  created_at: new Date(),
-  model: "E3+" as "E3+",
 };
 
 export default async function Page(props: Props) {

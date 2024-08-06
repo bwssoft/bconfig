@@ -1,7 +1,6 @@
 "use client";
 
 import { IProfile } from "@/app/lib/definition";
-import { Button } from "@/app/ui/components/button";
 import { Select } from "@/app/ui/components/select";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
