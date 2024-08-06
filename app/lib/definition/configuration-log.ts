@@ -1,0 +1,36 @@
+import { IProfile } from "./profile";
+import { ISerialPort } from "./serial";
+
+export interface IConfigurationLog {
+  id: string
+  port: ISerialPort;
+  imei: string
+  iccid?: string
+  et: string
+  desired_profile: DeviceProfile;
+  actual_profile?: DeviceProfile;
+  actual_native_profile?: DeviceNativeProfile;
+  isConfigured: boolean;
+  not_configured: { [key in keyof IProfile["config"]]: { value1: any; value2: any } };
+  metadata: ConfigurationMetadata;
+  created_at: Date
+}
+
+
+type ConfigurationMetadata = {
+  port: ISerialPort
+  init_time_configuration: number
+  end_time_configuration: number
+  commands_sent: {
+    init_time_command: number
+    end_time_command?: number
+    request: string
+    response?: string
+  }[]
+}
+type DeviceProfile = IProfile["config"]
+type DeviceNativeProfile = {
+  check?: string
+  dns?: string
+  cxip?: string
+}
