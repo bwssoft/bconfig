@@ -1,5 +1,6 @@
 "use server"
 
+import { revalidatePath } from "next/cache"
 import { IProfile } from "../definition"
 import profileRepository from "../repository/mongodb/profile.repository"
 
@@ -8,12 +9,16 @@ const repository = profileRepository
 export async function createOneProfile(input: Omit<IProfile
   , "id" | "created_at">) {
   await repository.create({ ...input, created_at: new Date(), id: crypto.randomUUID() })
+  revalidatePath("/profile")
+  revalidatePath("/configurator")
   return input
 }
 
 export async function createManyProfile(input: Omit<IProfile
   , "id" | "created_at">[]) {
   await repository.createMany(input.map(i => ({ ...i, created_at: new Date(), id: crypto.randomUUID() })))
+  revalidatePath("/profile")
+  revalidatePath("/configurator")
   return input
 }
 
@@ -22,11 +27,17 @@ export async function findOneProfile(input: Partial<IProfile>) {
 }
 
 export async function updateOneProfileById(query: { id: string }, value: Omit<IProfile, "id" | "created_at">) {
-  return await repository.updateOne(query, value)
+  const result = await repository.updateOne(query, value)
+  revalidatePath("/profile")
+  revalidatePath("/configurator")
+  return result
 }
 
 export async function deleteOneProfileById(query: { id: string }) {
-  return await repository.deleteOne(query)
+  const result = await repository.deleteOne(query)
+  revalidatePath("/profile")
+  revalidatePath("/configurator")
+  return result
 }
 
 export async function findAllProfile(): Promise<IProfile[]> {
