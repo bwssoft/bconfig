@@ -7,6 +7,7 @@ import { IProfile } from "../lib/definition"
 import { E3Encoder } from "../lib/encoder/E3"
 import { checkWithDifference } from "../lib/util"
 import { toast } from "./use-toast"
+import { createOneConfigurationLog } from "../lib/action/configuration-log.action"
 
 type DeviceProfile = IProfile["config"]
 type DeviceNativeProfile = {
@@ -539,6 +540,7 @@ export function useE3Communication() {
         } else if (!portHasDisconnected) {
           setConfiguration(prev => prev.concat(configuration_result))
         }
+        await createOneConfigurationLog(JSON.parse(JSON.stringify(configuration_result)))
       }
       setInConfiguration(false)
     } catch (e) {
