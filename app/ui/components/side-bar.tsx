@@ -48,12 +48,13 @@ type NavItem = {
 };
 const navigation: NavItem[] = [
   { name: "Dashboard", icon: HomeIcon },
+  { name: "Perfis de Configuração", pathname: "/profile", icon: UsersIcon },
   {
     name: "Ferramentas",
     icon: WrenchIcon,
     children: [
-      { name: "Perfis", icon: UsersIcon, pathname: "/profile" },
       { name: "Configurador E3+", pathname: "/configurator/E3+" },
+      { name: "Configurador E3+4G", pathname: "/configurator/E3+4G" },
       { name: "Área de teste", pathname: "/test-area" },
     ],
   },
