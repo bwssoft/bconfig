@@ -18,12 +18,13 @@ interface Props {
       native_profile: { cxip?: string; dns?: string; check?: string };
     } | void>;
   }[];
+  model: IProfile["model"];
 }
 export default function DevicesToConfigureTable(props: Props) {
-  const { data } = props;
+  const { data, model } = props;
   return (
     <DataTable
-      columns={columns}
+      columns={columns(model)}
       data={data}
       mobileDisplayValue={(data) => data.imei}
       mobileKeyExtractor={() => Math.random().toString()}

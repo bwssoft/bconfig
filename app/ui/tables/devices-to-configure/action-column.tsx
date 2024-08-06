@@ -7,6 +7,7 @@ import { IProfile, ISerialPort } from "@/app/lib/definition";
 
 interface Props {
   port: ISerialPort;
+  model: IProfile["model"];
   getDeviceProfile: (port: ISerialPort) => Promise<{
     profile: IProfile["config"];
     native_profile: { cxip?: string; dns?: string; check?: string };
@@ -14,7 +15,7 @@ interface Props {
 }
 
 export function DevicesToConfigureActionColumn(props: Props) {
-  const { getDeviceProfile, port } = props;
+  const { getDeviceProfile, port, model } = props;
   const [loading, setLoading] = useState(false);
   return (
     <div className="flex gap-2">
@@ -40,7 +41,10 @@ export function DevicesToConfigureActionColumn(props: Props) {
           if (result) {
             const uid = crypto.randomUUID();
             localStorage.setItem(`profile_${uid}`, JSON.stringify(result));
-            window.open(`/configurator/E3+/actual-profile?id=${uid}`, "_blank");
+            window.open(
+              `/configurator/${model}/actual-profile?id=${uid}`,
+              "_blank"
+            );
           } else {
             toast({
               title: "Falha!",

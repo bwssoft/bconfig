@@ -16,7 +16,9 @@ const text = {
   not_identified: "text-rose-800",
 };
 
-export const columns: ColumnDef<{
+export const columns = (
+  model: IProfile["model"]
+): ColumnDef<{
   imei?: string;
   iccid?: string;
   et?: string;
@@ -26,7 +28,7 @@ export const columns: ColumnDef<{
     profile: IProfile["config"];
     native_profile: { cxip?: string; dns?: string; check?: string };
   } | void>;
-}>[] = [
+}>[] => [
   {
     header: "Identificado",
     accessorKey: "inIdentification",
@@ -94,6 +96,7 @@ export const columns: ColumnDef<{
         <DevicesToConfigureActionColumn
           getDeviceProfile={getDeviceProfile}
           port={port}
+          model={model}
         />
       );
     },
