@@ -1,5 +1,6 @@
 import { toast } from "@/app/hook/use-toast";
 import { createOneProfile } from "@/app/lib/action";
+import { IProfile } from "@/app/lib/definition";
 import { removeEmptyValues, removeUndefined } from "@/app/lib/util";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
@@ -128,7 +129,11 @@ export function useProfileCreateForm() {
     async (data) => {
       try {
         const { name, model, ...config } = data;
-        await createOneProfile({ name, model, config });
+        await createOneProfile({
+          name,
+          config,
+          model: model as IProfile["model"]
+        });
         toast({
           title: "Sucesso!",
           description: "Perfil registrado com sucesso!",

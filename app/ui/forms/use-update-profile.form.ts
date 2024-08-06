@@ -134,7 +134,10 @@ export function useProfileUpdateForm(props: Props) {
     async (data) => {
       try {
         const { name, model, ...config } = data;
-        await updateOneProfileById({ id: defaultValues?.id! }, { name, model, config });
+        await updateOneProfileById(
+          { id: defaultValues?.id! },
+          { name, config, model: model as IProfile["model"] }
+        );
         toast({
           title: "Sucesso!",
           description: "Perfil atualizado com sucesso!",
