@@ -190,7 +190,11 @@ export function useE3Communication() {
       // Main loop to gather device info
       // while (attempts < max_retries && (!imei || !iccid || !et)) {
       callback.onReg()
-      await sendCommandWithRetries(port, "REG000000#");
+      const reg = await sendCommandWithRetries(port, "REG000000#");
+      if (!reg) {
+        await closePort(port);
+        return undefined
+      }
       callback.onSms()
       await sendCommandWithRetries(port, "SMS1");
       callback.onEn()
@@ -199,8 +203,7 @@ export function useE3Communication() {
       callback.onImei()
       const imei = await sendCommandWithRetries(port, "IMEI");
       callback.onIccid()
-      const iccid = undefined
-      // const iccid = await sendCommandWithRetries(port, "ICCID");
+      const iccid = await sendCommandWithRetries(port, "ICCID");
       callback.onEt()
       const et = await sendCommandWithRetries(port, "ET");
       //   attempts++
@@ -410,8 +413,16 @@ export function useE3Communication() {
               return updatedIdentified;
             });
           } else if (!portHasDisconnected) {
-            setIdentified(prev => prev.concat(identification))
+            setIdentified(prev => {
+              const oldIdentifiers = prev.filter(el => el.port !== port);
+              return oldIdentifiers.concat(identification)
+            })
           }
+        } else {
+          setIdentified(prev => {
+            const oldIdentifiers = prev.filter(el => el.port !== port);
+            return oldIdentifiers.concat({ port, isIdentified: false })
+          })
         }
       }
       setInIdentification(false)
@@ -588,17 +599,22 @@ export function useE3Communication() {
   }
 
 
+  // useEffect(() => {
+  //   const newPorts = ports.filter(port => !previousPorts.current.includes(port));
+
+  //   if (newPorts.length > 0) {
+  //     handleDeviceIdentification(newPorts);
+  //   }
+
+  //   previousPorts.current = ports
+  // }, [ports]);
+
   useEffect(() => {
-    const newPorts = ports.filter(port => !previousPorts.current.includes(port));
-
-    if (newPorts.length > 0) {
-      handleDeviceIdentification(newPorts);
-    }
-
-    previousPorts.current = ports
-  }, [ports]);
-
-
+    const interval = setInterval(() => {
+      handleDeviceIdentification(ports)
+    }, 5000)
+    return () => clearInterval(interval)
+  }, [ports])
 
   return {
     identified,
