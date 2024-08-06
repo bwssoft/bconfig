@@ -1,5 +1,4 @@
 import { findAllProfile, findOneProfile } from "../../lib/action";
-import { IProfile } from "../../lib/definition";
 import { Panel } from "./@components/panel";
 import { ProfileSelect } from "./@components/porfile-select";
 
@@ -9,47 +8,12 @@ interface Props {
   };
 }
 
-const nullProfile: IProfile = {
-  id: "null",
-  name: "Nenhum",
-  created_at: new Date(),
-  model: "E3+" as IProfile["model"],
-  config: {
-    ip: {
-      primary: {
-        ip: undefined,
-        port: undefined,
-      },
-      secondary: {
-        ip: undefined,
-        port: undefined,
-      },
-    },
-    dns: undefined,
-    apn: undefined,
-    timezone: undefined,
-    lock_type: undefined,
-    data_transmission: undefined,
-    odometer: undefined,
-    keep_alive: undefined,
-    accelerometer_sensitivity: undefined,
-    economy_mode: undefined,
-    lbs_position: undefined,
-    cornering_position_update: undefined,
-    ignition_alert_power_cut: undefined,
-    gprs_failure_alert: undefined,
-    led: undefined,
-    virtual_ignition: undefined,
-  },
-};
-
 export default async function Page(props: Props) {
   const {
     searchParams: { id },
   } = props;
   const profiles = await findAllProfile();
-  const profileSelected =
-    id === "null" ? nullProfile : await findOneProfile({ id });
+  const profileSelected = (await findOneProfile({ id })) ?? undefined;
   const date = new Date();
   return (
     <div>
@@ -70,11 +34,8 @@ export default async function Page(props: Props) {
           </p>
         </div>
       </div>
-      <ProfileSelect
-        profiles={[nullProfile, ...profiles]}
-        currentProfileIdSelected={id}
-      />
-      <Panel config={profileSelected?.config} />
+      <ProfileSelect profiles={profiles} currentProfileIdSelected={id} />
+      <Panel profile={profileSelected} />
     </div>
   );
 }

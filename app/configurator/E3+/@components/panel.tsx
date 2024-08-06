@@ -11,11 +11,14 @@ import { IdentificationProgress } from "@/app/ui/components/identification-progr
 import { ConfigurationProgress } from "@/app/ui/components/configuration-progress";
 
 interface Props {
-  config?: IProfile["config"];
+  profile?: IProfile;
 }
 
 export function Panel(props: Props) {
-  const { config } = props;
+  const { profile } = props;
+
+  const { config } = profile ?? {};
+
   const {
     configuration,
     identified,
@@ -33,6 +36,8 @@ export function Panel(props: Props) {
     jsonToXlsx({
       data: input.map((c) => ({
         configurado: c.isConfigured ? "Sucesso" : "Falha",
+        perfil: profile?.name,
+        date: new Date(c.metadata.init_time_configuration).toLocaleString(),
         imei: c.imei,
         iccid: c.iccid,
         et: c.et,

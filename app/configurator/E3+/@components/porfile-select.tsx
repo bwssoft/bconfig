@@ -34,7 +34,15 @@ export function ProfileSelect(props: Props) {
         </p>
       </div>
       <Select
-        data={profiles}
+        data={[
+          {
+            id: "null",
+            name: "Nenhum",
+            model: "E3+" as IProfile["model"],
+            config: {} as IProfile["config"],
+            created_at: new Date(),
+          },
+        ].concat(profiles)}
         keyExtractor={(i) => i.id}
         valueExtractor={(i) => i.name}
         onChange={(i) => handleChange(i.id)}
