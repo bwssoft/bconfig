@@ -25,7 +25,7 @@ interface Identified {
 }
 
 export interface Configuration {
-  uid: string
+  id: string
   port: ISerialPort;
   imei: string
   iccid?: string
@@ -34,7 +34,7 @@ export interface Configuration {
   actual_profile?: DeviceProfile;
   actual_native_profile?: DeviceNativeProfile;
   isConfigured: boolean;
-  not_configured: { [key in keyof IProfile]: { value1: any; value2: any } };
+  not_configured: { [key in keyof IProfile["config"]]: { value1: any; value2: any } };
   metadata: ConfigurationMetadata;
 }
 
@@ -488,10 +488,10 @@ export function useE34GCommunication() {
           difference: not_configured
         } = checkWithDifference(desired_profile, actual_profile)
 
-        const uid = crypto.randomUUID()
+        const id = crypto.randomUUID()
 
         const configuration_result = {
-          uid,
+          id,
           port,
           imei,
           iccid,
@@ -504,7 +504,7 @@ export function useE34GCommunication() {
           metadata: configured_device
         }
 
-        localStorage.setItem(`configuration_result_${uid}`, JSON.stringify(configuration_result))
+        localStorage.setItem(`configuration_result_${id}`, JSON.stringify(configuration_result))
         updateConfigurationLog({
           imei,
           step_index: total_steps,

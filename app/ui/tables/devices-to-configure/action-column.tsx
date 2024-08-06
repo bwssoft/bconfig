@@ -39,10 +39,10 @@ export function DevicesToConfigureActionColumn(props: Props) {
           const result = await getDeviceProfile(port);
           setLoading(false);
           if (result) {
-            const uid = crypto.randomUUID();
-            localStorage.setItem(`profile_${uid}`, JSON.stringify(result));
+            const id = crypto.randomUUID();
+            localStorage.setItem(`profile_${id}`, JSON.stringify(result));
             window.open(
-              `/configurator/${model}/actual-profile?id=${uid}`,
+              `/configurator/${model}/actual-profile?id=${id}`,
               "_blank"
             );
           } else {

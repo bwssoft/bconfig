@@ -20,7 +20,7 @@ const text = {
 };
 
 export const columns: ColumnDef<{
-  uid: string;
+  id: string;
   port: ISerialPort;
   imei?: string;
   iccid?: string;
@@ -99,7 +99,7 @@ export const columns: ColumnDef<{
       return (
         <div className="flex gap-2">
           <Link
-            href={`/configurator/E3+/review?id=${configuration.uid}`}
+            href={`/configurator/E3+/review?id=${configuration.id}`}
             target="_blank"
           >
             <Button

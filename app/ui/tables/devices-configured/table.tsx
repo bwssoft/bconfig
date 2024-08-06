@@ -7,7 +7,7 @@ import { ISerialPort } from "@/app/lib/definition/serial";
 
 interface Props {
   data: {
-    uid: string;
+    id: string;
     port: ISerialPort;
     imei?: string;
     iccid?: string;
