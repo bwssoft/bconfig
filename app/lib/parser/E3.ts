@@ -366,7 +366,8 @@ export class E3 {
 
   static sensitivity_adjustment(input: string): SensitivityAdjustment | undefined {
     if (!input.includes("GS:")) return undefined
-    const gs = input.split("GS:")?.[1]
+    let gs = input.split("GS:")?.[1]
+    gs = gs.split(",")?.[0]
     if (Number.isNaN(gs)) return undefined
     return Number(gs)
   }
