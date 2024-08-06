@@ -7,24 +7,22 @@ import configurationLogRepository from "../repository/mongodb/configuration-log.
 const repository = configurationLogRepository
 
 export async function createOneConfigurationLog(input: Omit<IConfigurationLog
-  , "id" | "created_at">) {
+  , "created_at">) {
   await repository.create({
     ...input,
-    id: crypto.randomUUID(),
     created_at: new Date()
   })
-  revalidatePath("/profile")
+  revalidatePath("/log")
   return input
 }
 
 export async function createManyConfigurationLog(input: Omit<IConfigurationLog
-  , "id" | "created_at">[]) {
+  , "created_at">[]) {
   await repository.createMany(input.map(i => ({
     ...i,
-    id: crypto.randomUUID(),
     created_at: new Date()
   })))
-  revalidatePath("/profile")
+  revalidatePath("/log")
   return input
 }
 
@@ -34,13 +32,13 @@ export async function findOneConfigurationLog(input: Partial<IConfigurationLog>)
 
 export async function updateOneConfigurationLogById(query: { id: string }, value: Omit<IConfigurationLog, "id" | "created_at">) {
   const result = await repository.updateOne(query, value)
-  revalidatePath("/profile")
+  revalidatePath("/log")
   return result
 }
 
 export async function deleteOneConfigurationLogById(query: { id: string }) {
   const result = await repository.deleteOne(query)
-  revalidatePath("/profile")
+  revalidatePath("/log")
   return result
 }
 
