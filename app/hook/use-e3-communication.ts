@@ -611,10 +611,11 @@ export function useE3Communication() {
 
   useEffect(() => {
     const interval = setInterval(() => {
+      if (inConfiguration) return
       handleDeviceIdentification(ports)
     }, 5000)
     return () => clearInterval(interval)
-  }, [ports])
+  }, [ports, inConfiguration])
 
   return {
     identified,
