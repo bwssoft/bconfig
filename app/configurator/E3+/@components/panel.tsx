@@ -5,7 +5,7 @@ import Alert from "@/app/ui/components/alert";
 import { Button } from "@/app/ui/components/button";
 import DeviceConfiguredTable from "@/app/ui/tables/devices-configured/table";
 import DevicesToConfigureTable from "@/app/ui/tables/devices-to-configure/table";
-import { useE3Communication } from "@/app/hook/use-E33-communication";
+import { useE3Communication } from "@/app/hook/use-E3-communication";
 import { jsonToXlsx } from "@/app/lib/util/json-to-xlsx";
 import { IdentificationProgress } from "@/app/ui/components/identification-progress";
 import { ConfigurationProgress } from "@/app/ui/components/configuration-progress";

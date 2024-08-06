@@ -1,6 +1,6 @@
 "use client";
 
-import { Configuration } from "@/app/hook/use-E33-communication";
+import { Configuration } from "@/app/hook/use-E3-communication";
 import { E34GViewConfigurationForm } from "@/app/ui/forms/E34G/view-configuration.form";
 
 interface Props {
