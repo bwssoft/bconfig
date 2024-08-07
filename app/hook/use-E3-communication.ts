@@ -37,6 +37,8 @@ export interface Configuration {
   is_configured: boolean;
   not_configured: { [key in keyof IProfile["config"]]: { value1: any; value2: any } };
   metadata: ConfigurationMetadata;
+  profile_name: string
+  profile_id: string
 }
 
 type ConfigurationMetadata = {

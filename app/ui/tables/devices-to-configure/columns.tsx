@@ -88,7 +88,7 @@ export const columns = (
     },
   },
   {
-    header: "Progresso",
+    header: "Conexão",
     accessorKey: "progress",
     cell: ({ row }) => {
       const device = row.original;

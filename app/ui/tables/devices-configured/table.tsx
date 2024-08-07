@@ -13,6 +13,7 @@ interface Props {
     iccid?: string;
     is_configured: boolean;
     not_configured: any;
+    profile_name: string;
   }[];
 }
 export default function DeviceConfiguredTable(props: Props) {
