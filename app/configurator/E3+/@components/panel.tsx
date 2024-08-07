@@ -6,8 +6,6 @@ import { Button } from "@/app/ui/components/button";
 import DeviceConfiguredTable from "@/app/ui/tables/devices-configured/table";
 import DevicesToConfigureTable from "@/app/ui/tables/devices-to-configure/table";
 import { useE3Communication } from "@/app/hook/use-E3-communication";
-import { jsonToXlsx } from "@/app/lib/util/json-to-xlsx";
-import { IdentificationProgress } from "@/app/ui/components/identification-progress";
 import { ConfigurationProgress } from "@/app/ui/components/configuration-progress";
 
 interface Props {
@@ -16,9 +14,7 @@ interface Props {
 
 export function Panel(props: Props) {
   const { profile } = props;
-
   const { config } = profile ?? {};
-
   const {
     configuration,
     identified,
@@ -31,24 +27,6 @@ export function Panel(props: Props) {
     inIdentification,
     inConfiguration,
   } = useE3Communication({ profile });
-
-  const handleExport = (input: typeof configuration) => {
-    jsonToXlsx({
-      data: input.map((c) => ({
-        configurado: c.is_configured ? "Sucesso" : "Falha",
-        perfil: profile?.name,
-        date: new Date(c.metadata.init_time_configuration).toLocaleString(),
-        imei: c.imei,
-        iccid: c.iccid,
-        et: c.et,
-        check: c.actual_native_profile?.check,
-        cxip: c.actual_native_profile?.cxip,
-        dns: c.actual_native_profile?.dns,
-      })),
-      fileName: new Date().toLocaleTimeString(),
-      sheetName: "Dispositivos Configurados",
-    });
-  };
 
   return (
     <>
@@ -128,24 +106,6 @@ export function Panel(props: Props) {
           inConfiguration={inConfiguration}
         />
         <DeviceConfiguredTable data={configuration} />
-      </div>
-      <div className="mt-10 flex flex-col gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
-        <div>
-          <h1 className="text-base font-semibold leading-7 text-gray-900">
-            Etapa 4: Exportar resultados
-          </h1>
-          <p className="mt-2 text-sm text-gray-700">
-            Uma planilha excel é gerada com todos os equipamentos configurados
-            com sucesso.
-          </p>
-        </div>
-        <Button
-          variant="outlined"
-          className="w-fit"
-          onClick={() => handleExport(configuration)}
-        >
-          Exportar
-        </Button>
       </div>
     </>
   );
