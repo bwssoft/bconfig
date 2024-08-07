@@ -95,7 +95,7 @@ export const columns: ColumnDef<{
       const fields = Object.keys(
         device.not_configured
       ) as (keyof IProfile["config"])[];
-      const displayedFields = fields.slice(0, 3);
+      const displayedFields = fields.slice(0, 2);
       const remainingCount = fields.length - displayedFields.length;
 
       return fields.length ? (

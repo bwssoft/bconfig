@@ -26,7 +26,7 @@ export default function DeviceConfiguredTable(props: Props) {
         `${data.imei} ${data.is_configured ? "Configurado" : "Não Configurado"}`
       }
       mobileKeyExtractor={() => Math.random().toString()}
-      className="w-full"
+      className="mt-5 w-full"
       theadClassName="[&_tr]:border-b bg-white border-b-1 border-b-gray-200"
     />
   );
