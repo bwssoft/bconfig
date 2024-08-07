@@ -36,6 +36,7 @@ export interface Configuration {
   is_configured: boolean;
   not_configured: { [key in keyof IProfile["config"]]: { value1: any; value2: any } };
   metadata: ConfigurationMetadata;
+  profile_name: string
 }
 
 type ConfigurationMetadata = {
@@ -501,7 +502,9 @@ export function useE34GCommunication() {
           desired_profile,
           is_configured,
           not_configured,
-          metadata: configured_device
+          metadata: configured_device,
+          profile_id: "configured_device",
+          profile_name: "configured_device",
         }
 
         localStorage.setItem(`configuration_result_${id}`, JSON.stringify(configuration_result))
