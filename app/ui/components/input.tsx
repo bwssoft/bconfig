@@ -18,7 +18,7 @@ const Input = forwardRef<HTMLInputElement, Props>(
             {label}
           </label>
         )}
-        <div className="mt-2">
+        <div className={cn(label && "mt-2")}>
           <input
             type="text"
             name={name}
