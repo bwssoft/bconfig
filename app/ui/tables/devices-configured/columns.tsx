@@ -60,7 +60,7 @@ export const columns: ColumnDef<{
     accessorKey: "iccid",
     cell: ({ row }) => {
       const device = row.original;
-      return device.iccid ?? "--";
+      return <p title={device.iccid}>{device.iccid ? device.iccid : "--"}</p>;
     },
   },
   {

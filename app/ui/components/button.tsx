@@ -23,7 +23,7 @@ export const Button: React.FC<ButtonProps> = (props) => {
       className={cn(
         styles[props.variant],
         props.className,
-        pending && "opacity-30"
+        (pending || props.disabled) && "opacity-30"
       )}
     >
       {props.children}

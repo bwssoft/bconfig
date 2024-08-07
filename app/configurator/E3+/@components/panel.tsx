@@ -94,6 +94,7 @@ export function Panel(props: Props) {
               <Button
                 variant="primary"
                 className="h-fit"
+                disabled={inConfiguration}
                 onClick={() =>
                   config && handleDeviceConfiguration(identified, config)
                 }
