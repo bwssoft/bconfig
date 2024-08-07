@@ -13,6 +13,8 @@ export interface IConfigurationLog {
   is_configured: boolean;
   not_configured: { [key in keyof IProfile["config"]]: { value1: any; value2: any } };
   metadata: ConfigurationMetadata;
+  profile_id: string
+  profile_name: string
   created_at: Date
 }
 

@@ -26,6 +26,7 @@ export const columns: ColumnDef<{
   iccid?: string;
   is_configured: boolean;
   not_configured: any;
+  profile_name: string;
 }>[] = [
   {
     header: "Configurado",
@@ -60,6 +61,14 @@ export const columns: ColumnDef<{
     cell: ({ row }) => {
       const device = row.original;
       return device.iccid ?? "--";
+    },
+  },
+  {
+    header: "Nome do perfil",
+    accessorKey: "profile_name",
+    cell: ({ row }) => {
+      const device = row.original;
+      return device.profile_name ?? "--";
     },
   },
   // {

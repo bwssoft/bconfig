@@ -64,7 +64,8 @@ interface ConfigurationLog {
   progress: number
 }
 
-export function useE3Communication() {
+export function useE3Communication(props: { profile?: IProfile }) {
+  const { profile } = props
   const [identified, setIdentified] = useState<Identified[]>([])
   const [identifiedLog, setIdentifiedLog] = useState<IdentifiedLog[]>([])
   const [inIdentification, setInIdentification] = useState<boolean>(false)
@@ -519,7 +520,9 @@ export function useE3Communication() {
           desired_profile,
           is_configured,
           not_configured,
-          metadata: configured_device
+          metadata: configured_device,
+          profile_id: profile?.id!,
+          profile_name: profile?.name!
         }
 
         localStorage.setItem(`configuration_result_${id}`, JSON.stringify(configuration_result))

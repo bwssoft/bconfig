@@ -30,7 +30,7 @@ export function Panel(props: Props) {
     ports,
     inIdentification,
     inConfiguration,
-  } = useE3Communication();
+  } = useE3Communication({ profile });
 
   const handleExport = (input: typeof configuration) => {
     jsonToXlsx({
