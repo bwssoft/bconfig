@@ -66,13 +66,23 @@ export function Panel(props: Props) {
           <div className="flow-root w-full">
             {ports.length > 0 ? (
               <>
-                <IdentificationProgress
+                {/* <IdentificationProgress
                   identifiedLog={identifiedLog}
                   inIdentification={inIdentification}
-                />
+                /> */}
                 <DevicesToConfigureTable
                   model={"E3+" as IProfile["model"]}
-                  data={identified.map((d) => ({ ...d, getDeviceProfile }))}
+                  data={identified.map((d) => ({
+                    ...d,
+                    getDeviceProfile,
+                    progress: identifiedLog.find((el) => el.port === d.port)
+                      ?.progress,
+                  }))}
+                  // data={identifiedLog.map((d) => ({
+                  //   ...d,
+                  //   getDeviceProfile,
+                  //   ...(identified.find((el) => el.port === d.port) ?? {}),
+                  // }))}
                 />
               </>
             ) : (

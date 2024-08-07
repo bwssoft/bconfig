@@ -32,9 +32,7 @@ export function Spinner(props: Props) {
         <span className="sr-only">Loading...</span>
       </div>
       {label && (
-        <p className="text-sm text-gray-500 whitespace-nowrap">
-          Buscando informações
-        </p>
+        <p className="text-sm text-gray-500 whitespace-nowrap">{label}</p>
       )}
     </div>
   );

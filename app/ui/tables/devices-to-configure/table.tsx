@@ -13,6 +13,7 @@ interface Props {
     et?: string;
     port: ISerialPort;
     isIdentified: boolean;
+    progress?: number;
     getDeviceProfile: (port: ISerialPort) => Promise<{
       profile: IProfile["config"];
       native_profile: { cxip?: string; dns?: string; check?: string };

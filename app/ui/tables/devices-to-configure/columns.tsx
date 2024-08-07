@@ -24,6 +24,7 @@ export const columns = (
   et?: string;
   port: ISerialPort;
   isIdentified: boolean;
+  progress?: number;
   getDeviceProfile: (port: ISerialPort) => Promise<{
     profile: IProfile["config"];
     native_profile: { cxip?: string; dns?: string; check?: string };
@@ -84,6 +85,15 @@ export const columns = (
           {device.et ?? "--"}
         </p>
       );
+    },
+  },
+  {
+    header: "Progresso",
+    accessorKey: "progress",
+    cell: ({ row }) => {
+      const device = row.original;
+      const { progress } = device;
+      return `${progress}%`;
     },
   },
   {
