@@ -1,6 +1,4 @@
-"use client";
-
-import { Configuration } from "@/app/hook/use-E3-communication";
+import { findOneConfigurationLog } from "@/app/lib/action/configuration-log.action";
 import { ViewConfigurationForm } from "@/app/ui/forms/E3/view-configuration.form";
 
 interface Props {
@@ -9,18 +7,12 @@ interface Props {
   };
 }
 
-export default function Page(props: Props) {
+export default async function Page(props: Props) {
   const {
     searchParams: { id },
   } = props;
 
-  let configurationInLocalstorage = localStorage.getItem(
-    `configuration_result_${id}`
-  );
-  let configuration: null | Configuration = null;
-  if (configurationInLocalstorage) {
-    configuration = JSON.parse(configurationInLocalstorage) as Configuration;
-  }
+  const configuration = await findOneConfigurationLog({ id });
 
   return (
     <div>
