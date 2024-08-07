@@ -25,7 +25,7 @@ export function E34GViewConfigurationForm(props: Props) {
     imei,
     iccid,
     et,
-    isConfigured,
+    is_configured,
     metadata,
     not_configured,
     actual_native_profile,
@@ -33,8 +33,8 @@ export function E34GViewConfigurationForm(props: Props) {
   const not_configured_mapped = Object.keys(not_configured).map(
     (c) => configMapped[c as keyof typeof configMapped]
   );
-  const status = isConfigured ? "configured" : "error";
-  const label = isConfigured ? "Configurado" : "Não Configurado";
+  const status = is_configured ? "configured" : "error";
+  const label = is_configured ? "Configurado" : "Não Configurado";
   return (
     <form autoComplete="off" className="flex flex-col gap-6 mt-6">
       <section aria-labelledby="general-config">

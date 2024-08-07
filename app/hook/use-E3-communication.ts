@@ -34,7 +34,7 @@ export interface Configuration {
   desired_profile: DeviceProfile;
   actual_profile?: DeviceProfile;
   actual_native_profile?: DeviceNativeProfile;
-  isConfigured: boolean;
+  is_configured: boolean;
   not_configured: { [key in keyof IProfile["config"]]: { value1: any; value2: any } };
   metadata: ConfigurationMetadata;
 }
@@ -502,7 +502,7 @@ export function useE3Communication() {
 
         delete desired_profile?.password;
         const {
-          isEqual: isConfigured,
+          isEqual: is_configured,
           difference: not_configured
         } = checkWithDifference(desired_profile, actual_profile)
 
@@ -517,7 +517,7 @@ export function useE3Communication() {
           actual_profile: actual_profile ?? undefined,
           actual_native_profile: native_profile ?? undefined,
           desired_profile,
-          isConfigured,
+          is_configured,
           not_configured,
           metadata: configured_device
         }

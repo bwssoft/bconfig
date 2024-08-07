@@ -24,7 +24,7 @@ export const columns: ColumnDef<{
   port: ISerialPort;
   imei?: string;
   iccid?: string;
-  isConfigured: boolean;
+  is_configured: boolean;
   not_configured: any;
 }>[] = [
   {
@@ -32,8 +32,8 @@ export const columns: ColumnDef<{
     accessorKey: "checked",
     cell: ({ row }) => {
       const device = row.original;
-      const status = device.isConfigured ? "configured" : "error";
-      const label = device.isConfigured ? "Configurado" : "Não Configurado";
+      const status = device.is_configured ? "configured" : "error";
+      const label = device.is_configured ? "Configurado" : "Não Configurado";
       return (
         <div className="flex items-center gap-1">
           <div className={cn(statuses[status], "flex-none rounded-full p-1")}>
@@ -52,6 +52,14 @@ export const columns: ColumnDef<{
     cell: ({ row }) => {
       const device = row.original;
       return device.imei ?? "--";
+    },
+  },
+  {
+    header: "Iccid",
+    accessorKey: "iccid",
+    cell: ({ row }) => {
+      const device = row.original;
+      return device.iccid ?? "--";
     },
   },
   // {

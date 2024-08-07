@@ -35,7 +35,7 @@ export function Panel(props: Props) {
   const handleExport = (input: typeof configuration) => {
     jsonToXlsx({
       data: input.map((c) => ({
-        configurado: c.isConfigured ? "Sucesso" : "Falha",
+        configurado: c.is_configured ? "Sucesso" : "Falha",
         perfil: profile?.name,
         date: new Date(c.metadata.init_time_configuration).toLocaleString(),
         imei: c.imei,

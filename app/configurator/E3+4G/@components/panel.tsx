@@ -32,7 +32,7 @@ export function Panel(props: Props) {
   const handleExport = (input: typeof configuration) => {
     jsonToXlsx({
       data: input.map((c) => ({
-        configurado: c.isConfigured ? "Sucesso" : "Falha",
+        configurado: c.is_configured ? "Sucesso" : "Falha",
         imei: c.imei,
         iccid: c.iccid,
         et: c.et,

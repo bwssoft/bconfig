@@ -10,7 +10,7 @@ export interface IConfigurationLog {
   desired_profile: DeviceProfile;
   actual_profile?: DeviceProfile;
   actual_native_profile?: DeviceNativeProfile;
-  isConfigured: boolean;
+  is_configured: boolean;
   not_configured: { [key in keyof IProfile["config"]]: { value1: any; value2: any } };
   metadata: ConfigurationMetadata;
   created_at: Date
