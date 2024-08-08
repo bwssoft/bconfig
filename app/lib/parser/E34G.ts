@@ -55,6 +55,21 @@ type PanicButton = boolean
 
 type WorkMode = string
 
+export type AutoTest = {
+  SN: string,
+  IC: string,
+  FW: string,
+  GPS: string,
+  GPSf: string,
+  GSM: string,
+  LTE: string,
+  IN1: string,
+  IN2: string,
+  OUT: string,
+  ACEL: string,
+  VCC: string
+}
+
 interface Check extends Object {
   apn?: APN
   timezone?: Timezone
@@ -367,6 +382,16 @@ export class E34G {
     const gs = input.split("GS:")?.[1]
     if (Number.isNaN(gs)) return undefined
     return Number(gs)
+  }
+
+  static auto_test(input: string): AutoTest | undefined {
+    if (!input.startsWith("SN:")) return undefined
+    const splited = input.split(",")
+    return splited.reduce((acc, cur) => {
+      const [key, value] = cur.split(":")
+      acc[key as keyof AutoTest] = value
+      return acc
+    }, {} as AutoTest)
   }
 
 }

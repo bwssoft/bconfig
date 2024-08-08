@@ -14,7 +14,7 @@ interface Props {
   config?: IProfile["config"];
 }
 
-export function Panel(props: Props) {
+export function ConfigPanel(props: Props) {
   const { config } = props;
   const {
     configuration,

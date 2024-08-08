@@ -54,9 +54,17 @@ const navigation: NavItem[] = [
     name: "Ferramentas",
     icon: WrenchIcon,
     children: [
-      { name: "Configurador E3+", pathname: "/configurator/E3+" },
-      { name: "Configurador E3+4G", pathname: "/configurator/E3+4G" },
-      { name: "Área de teste", pathname: "/test-area" },
+      {
+        name: "E3+",
+        children: [{ name: "Configurador", pathname: "/configurator/E3+" }],
+      },
+      {
+        name: "E3+4G",
+        children: [
+          { name: "Configurador", pathname: "/configurator/E3+4G" },
+          { name: "AUTO Teste", pathname: "/configurator/E3+4G/auto-test" },
+        ],
+      },
     ],
   },
 ];
