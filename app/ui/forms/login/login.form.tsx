@@ -1,8 +1,18 @@
+"use client";
+
+import { useFormState } from "react-dom";
 import { Button } from "../../components/button";
+import { authenticate } from "@/app/lib/action";
+import { ExclamationCircleIcon } from "@heroicons/react/20/solid";
 
 export function LoginForm() {
+  const [errorMessage, formAction, isPending] = useFormState(
+    authenticate,
+    undefined
+  );
+
   return (
-    <form action="#" method="POST" className="space-y-6">
+    <form action={formAction} className="space-y-6">
       <div>
         <label
           htmlFor="email"
@@ -51,6 +61,18 @@ export function LoginForm() {
         >
           Sign in
         </Button>
+      </div>
+      <div
+        className="flex h-8 items-end space-x-1"
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        {errorMessage && (
+          <>
+            <ExclamationCircleIcon className="h-5 w-5 text-red-500" />
+            <p className="text-sm text-red-500">{errorMessage}</p>
+          </>
+        )}
       </div>
     </form>
   );

@@ -1,5 +1,4 @@
 import { LoginForm } from "@/app/ui/forms/login/login.form";
-
 /*
   This example requires some changes to your config:
   
