@@ -47,22 +47,22 @@ type NavItem = {
   children?: NavItem[];
 };
 const navigation: NavItem[] = [
-  { name: "Dashboard", icon: HomeIcon },
-  { name: "Perfis de Configuração", pathname: "/profile", icon: UsersIcon },
-  { name: "Logs de Configuração", pathname: "/log", icon: Bars3Icon },
+  { name: "Dashboard", icon: HomeIcon, pathname: "/" },
+  { name: "Configuration Profile", pathname: "/profile", icon: UsersIcon },
+  { name: "Configuration Logs", pathname: "/log", icon: Bars3Icon },
   {
-    name: "Ferramentas",
+    name: "Tools",
     icon: WrenchIcon,
     children: [
       {
         name: "E3+",
-        children: [{ name: "Configurador", pathname: "/configurator/E3+" }],
+        children: [{ name: "Configurator", pathname: "/configurator/E3+" }],
       },
       {
         name: "E3+4G",
         children: [
-          { name: "Configurador", pathname: "/configurator/E3+4G" },
-          { name: "AUTO Teste", pathname: "/configurator/E3+4G/auto-test" },
+          { name: "Configurator", pathname: "/configurator/E3+4G" },
+          { name: "AUTO Test", pathname: "/configurator/E3+4G/auto-test" },
         ],
       },
     ],

@@ -22,7 +22,7 @@ export const columns: ColumnDef<{
   isIdentified: boolean;
 }>[] = [
   {
-    header: "Identificado",
+    header: "Identified",
     accessorKey: "inIdentification",
     cell: ({ row }) => {
       const device = row.original;
@@ -41,10 +41,10 @@ export const columns: ColumnDef<{
           </div>
           <div className={cn("hidden font-semibold sm:block", text[status])}>
             {device.isIdentified
-              ? "Identificado"
+              ? "Identified"
               : not_identified
-              ? "Não Identificado"
-              : "Parcialmente Identificado"}
+              ? "Not Identified"
+              : "Partially identified"}
           </div>
         </div>
       );

@@ -15,11 +15,10 @@ export function AutoTestPanel() {
       <div className="mt-10 flex flex-col gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
         <div>
           <h1 className="text-base font-semibold leading-7 text-gray-900">
-            Etapa 1: Portas
+            Step 1: Serial Ports
           </h1>
           <p className="mt-2 text-sm text-gray-700">
-            Uma lista de todas as portas conectadas vinculadas ao equipamento
-            identificado
+            List of all connected serial ports sync with identified devices.
           </p>
         </div>
         <div className="flex flex-col gap-6 w-full">
@@ -27,7 +26,7 @@ export function AutoTestPanel() {
             {ports.length > 0 ? (
               <DevicesToAutoTest data={identified} />
             ) : (
-              <Alert label="Você não tem nenhuma porta." />
+              <Alert label="You have no serial ports sync." />
             )}
           </div>
           <div className="flex justify-between gap-2">
@@ -47,7 +46,7 @@ export function AutoTestPanel() {
               className="h-fit whitespace-nowrap"
               onClick={requestPort}
             >
-              Nova Porta
+              New serial port
             </Button>
           </div>
         </div>
@@ -55,11 +54,10 @@ export function AutoTestPanel() {
       <div className="mt-10 flex flex-col gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
         <div>
           <h1 className="text-base font-semibold leading-7 text-gray-900">
-            Etapa 2: Verificação
+            Step 2: Review
           </h1>
           <p className="mt-2 text-sm text-gray-700">
-            Uma lista com o resultado do auto teste para todos equipamentos
-            conectados.
+            List of auto test results for all connected devices.
           </p>
         </div>
         <div className="flex flex-wrap gap-4">
@@ -74,12 +72,12 @@ export function AutoTestPanel() {
                   <div className="grid grid-cols-1 gap-4">
                     <div className="p-4 rounded-lg">
                       <h3 className="font-semibold text-sm text-gray-700">
-                        Identificação do Equipamento
+                        Device Identification
                       </h3>
                       <div className="mt-4 flex items-center gap-2">
                         <div className="w-full">
                           <dt className="text-sm font-medium leading-6 text-gray-900">
-                            Número serial
+                            Serial Number
                           </dt>
                           <dd className="mt-1 text-sm leading-6 text-gray-700">
                             {t.imei?.length ? t.imei : "--"}
@@ -110,7 +108,7 @@ export function AutoTestPanel() {
                   {/* Tests Status */}
                   <div className="p-4 rounded-lg">
                     <h3 className="font-semibold text-sm text-gray-700">
-                      Resultado
+                      Results
                     </h3>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
                       {[
@@ -150,7 +148,7 @@ export function AutoTestPanel() {
               ))}
             </>
           ) : (
-            <Alert label="Você não tem nenhum resultado." />
+            <Alert label="You have no results." />
           )}
         </div>
       </div>
