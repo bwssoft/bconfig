@@ -271,7 +271,7 @@ export function useE34GAutoTest() {
         const auto_test_parsed = test_metadata.commands_sent
           .map((c) => c.response !== undefined ? E34G.auto_test(c.response) : undefined)
           .filter(c => c !== undefined)
-
+        // @ts-ignore
         const auto_test_analysis = autoTestAnalysis(auto_test_parsed)
 
         const result = {
