@@ -294,7 +294,10 @@ export function useE34GAutoTest() {
             return updatedConfiguration;
           });
         } else if (!portHasDisconnected) {
-          setTest(prev => prev.concat(result))
+          setTest(prev => {
+            const old = prev.filter(el => el.port !== port);
+            return old.concat(result)
+          })
         }
       }
       setInTest(false)
