@@ -71,8 +71,8 @@ export function useE34GAutoTest() {
 
   const handleSerialDisconnection = useCallback((port: ISerialPort) => {
     toast({
-      title: "Desconexão!",
-      description: "Equipamento desconectado!",
+      title: "Disconnected!",
+      description: "Serial port disconnected!",
       variant: "success",
       className: "destructive group border bg-stone-400 border-stone-300 text-white"
     })
@@ -86,8 +86,8 @@ export function useE34GAutoTest() {
 
   const handleSerialConnection = () => {
     toast({
-      title: "Conexão!",
-      description: "Equipamento conectado!",
+      title: "Connected!",
+      description: "Serial port connected!",
       variant: "success",
     })
   }
