@@ -1,6 +1,6 @@
-import DeviceConfiguredTable from "../ui/tables/devices-configured/table";
-import { findAllConfigurationLog } from "../lib/action/configuration-log.action";
-import { SearchLogForm } from "../ui/forms/log/search-log.form";
+import DeviceConfiguredTable from "@/app/ui/tables/devices-configured/table";
+import { findAllConfigurationLog } from "@/app/lib/action/configuration-log.action";
+import { SearchLogForm } from "@/app/ui/forms/log/search-log.form";
 
 export default async function Example(props: {
   searchParams: { query?: string; is_configured?: string };

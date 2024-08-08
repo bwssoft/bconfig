@@ -1,5 +1,5 @@
-import { findOneProfile } from "../../lib/action";
-import { IProfile } from "../../lib/definition";
+import { findOneProfile } from "@/app/lib/action";
+import { IProfile } from "@/app/lib/definition";
 import { ConfigPanel } from "./@components/config-panel";
 
 interface Props {

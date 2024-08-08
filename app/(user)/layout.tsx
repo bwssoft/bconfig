@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import "./globals.css";
-import { Layout } from "./ui/layout";
+import "../globals.css";
+import { Layout } from "../ui/layout";
 
 export const metadata: Metadata = {
   title: "BConfig",

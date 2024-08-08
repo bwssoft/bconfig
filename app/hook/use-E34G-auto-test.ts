@@ -4,8 +4,6 @@ import { ISerialPort } from "../lib/definition/serial"
 import { sleep } from "../lib/util/sleep"
 import { AutoTest, E34G } from "../lib/parser/E34G"
 import { toast } from "./use-toast"
-import { metadata } from "../layout"
-import { boolean } from "zod"
 
 interface Identified {
   isIdentified: boolean
