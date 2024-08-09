@@ -1,6 +1,7 @@
 import { ISerialPort } from "@/app/lib/definition/serial";
 import { ColumnDef } from "@tanstack/react-table";
 import { cn } from "@/app/lib/util";
+import { Spinner } from "../../components/spinner";
 
 const statuses = {
   fully_identified: "text-green-500 bg-green-800/20",
@@ -20,6 +21,8 @@ export const columns: ColumnDef<{
   et?: string;
   port: ISerialPort;
   isIdentified: boolean;
+  progress: number;
+  label: string;
 }>[] = [
   {
     header: "Identified",
@@ -72,8 +75,26 @@ export const columns: ColumnDef<{
     cell: ({ row }) => {
       const device = row.original;
       return (
-        <p className="truncate w-[200px]" title={device.et}>
+        <p className="truncate w-[250px]" title={device.et}>
           {device.et ?? "--"}
+        </p>
+      );
+    },
+  },
+  {
+    header: "Connection",
+    accessorKey: "progress",
+    cell: ({ row }) => {
+      const device = row.original;
+      return (
+        <p className="flex gap-2">
+          {device.progress}%
+          {device.progress !== 100 && (
+            <>
+              - {device.label}
+              <Spinner svgClassName="h-4 w-4 fill-gray-600" />
+            </>
+          )}
         </p>
       );
     },

@@ -4,7 +4,6 @@
 import { columns } from "./columns";
 import { DataTable } from "../../components/data-table";
 import { ISerialPort } from "@/app/lib/definition/serial";
-import { IProfile } from "@/app/lib/definition";
 
 interface Props {
   data: {
@@ -13,6 +12,8 @@ interface Props {
     et?: string;
     port: ISerialPort;
     isIdentified: boolean;
+    progress: number;
+    label: string;
   }[];
 }
 export default function DevicesToAutoTest(props: Props) {

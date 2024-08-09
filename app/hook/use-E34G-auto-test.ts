@@ -147,28 +147,61 @@ export function useE34GAutoTest() {
 
   const getDeviceIdentification = async (props: {
     port: ISerialPort,
+    callback: {
+      onOpenPort: () => void
+      onPortOpened: () => void
+      onReg: () => void
+      onSms: () => void
+      onEn: () => void
+      onImei: () => void
+      onIccid: () => void
+      onEt: () => void
+      onClosePort: () => void
+      onFinished: () => void
+    }
   }, depth = 3): Promise<Identified | undefined> => {
-    const { port } = props
+    const { port, callback } = props
     if (port.readable && port.writable) return
     if (depth <= 0) return undefined
     try {
+      callback.onOpenPort()
       await openPort(port);
-
+      callback.onPortOpened()
+      // let attempts = 0
+      // const max_retries = 3
+      // Main loop to gather device info
+      // while (attempts < max_retries && (!imei || !iccid || !et)) {
+      callback.onReg()
       await sendCommandWithRetries(port, "REG000000#");
+      callback.onSms()
       await sendCommandWithRetries(port, "SMS1");
+      callback.onEn()
       await sendCommandWithRetries(port, "EN");
 
-      const imei = await sendCommandWithRetries(port, "IMEI");
-      const iccid = await sendCommandWithRetries(port, "ICCID");
-      const et = await sendCommandWithRetries(port, "ET");
+      callback.onImei()
+      let imei = await sendCommandWithRetries(port, "IMEI");
+      callback.onIccid()
+      let iccid = await sendCommandWithRetries(port, "ICCID");
+      callback.onEt()
+      let et = await sendCommandWithRetries(port, "ET");
+      //   attempts++
+      // }
+
+      iccid = iccid ? E34G.iccid(iccid) : undefined
+      imei = imei ? E34G.imei(imei) : undefined
+      et = et ? E34G.et(et) : undefined
 
       const isIdentified = imei !== undefined && iccid !== undefined && et !== undefined
+
+      callback.onClosePort()
       await closePort(port);
+      callback.onFinished()
+
       return {
         port,
-        iccid: iccid ? E34G.iccid(iccid) : undefined,
-        imei: imei ? E34G.imei(imei) : undefined,
-        et: et ? E34G.et(et) : undefined,
+        iccid,
+        imei,
+        et,
         isIdentified
       }
     } catch (e) {
@@ -219,8 +252,77 @@ export function useE34GAutoTest() {
     try {
       setInIdentification(true)
       for (let port of ports) {
+        const total_steps = 11
         const identification = await getDeviceIdentification({
-          port
+          port,
+          callback: {
+            onOpenPort: () => updateIdentifiedLog({
+              port,
+              step_label: "Opening serial port",
+              step_index: 1,
+              total_steps
+            }),
+            onPortOpened: () => updateIdentifiedLog({
+              port,
+              step_label: "Serial port opened",
+              step_index: 2,
+              total_steps
+            }),
+            onReg: () => updateIdentifiedLog({
+              port,
+              step_label: "REG",
+              step_index: 3,
+              total_steps
+            }),
+            onSms: () => updateIdentifiedLog({
+              port,
+              step_label: "SMS",
+              step_index: 4,
+              total_steps
+            }),
+            onEn: () => updateIdentifiedLog({
+              port,
+              step_label: "EN",
+              step_index: 5,
+              total_steps
+            }),
+            onImei: () => updateIdentifiedLog({
+              port,
+              step_label: "IMEI",
+              step_index: 6,
+              total_steps
+            }),
+            onIccid: () => updateIdentifiedLog({
+              port,
+              step_label: "ICCID",
+              step_index: 7,
+              total_steps
+            }),
+            onEt: () => updateIdentifiedLog({
+              port,
+              step_label: "ET",
+              step_index: 8,
+              total_steps
+            }),
+            onClosePort: () => updateIdentifiedLog({
+              port,
+              step_label: "Closing serial port",
+              step_index: 9,
+              total_steps
+            }),
+            onFinished: () => updateIdentifiedLog({
+              port,
+              step_label: "Serial port closed",
+              step_index: 10,
+              total_steps
+            }),
+          }
+        })
+        updateIdentifiedLog({
+          port,
+          step_label: "Process Finished",
+          step_index: 11,
+          total_steps
         })
         const portHasDisconnected = disconnectedPorts.current.find(p => p === port)
         if (identification) {
@@ -321,6 +423,26 @@ export function useE34GAutoTest() {
 
       return acc
     }, {} as AutoTestAnalysis)
+  }
+
+  const updateIdentifiedLog = (input: {
+    step_label: string,
+    step_index: number,
+    port: ISerialPort,
+    total_steps: number,
+  }) => {
+    const { port, total_steps, step_index, step_label } = input
+    const percentage = Math.round((step_index / total_steps) * 100);
+    setIdentifiedLog(prev => {
+      const rest = prev.filter(el => el.port !== port)
+      const current = prev.find(el => el.port === port)
+      const result = rest.concat({
+        ...(current ?? { port }),
+        label: step_label,
+        progress: percentage,
+      })
+      return result
+    });
   }
 
   useEffect(() => {

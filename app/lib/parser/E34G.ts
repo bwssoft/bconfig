@@ -193,12 +193,14 @@ export class E34G {
 
   static imei(input: string) {
     if (!input.includes("IMEI=")) return undefined
-    return input.split("IMEI=")?.[1].trim() ?? undefined
+    const imei = input.split("IMEI=")?.[1].replace(/\s+/g, '')
+    return imei.length ? imei : undefined
   }
 
   static iccid(input: string) {
     if (!input.includes("ICCID=")) return undefined
-    return input.split("ICCID=")?.[1].trim() ?? undefined
+    const iccid = input.split("ICCID=")?.[1].replace(/\s+/g, '')
+    return iccid.length ? iccid : undefined
   }
 
   static et(input: string) {

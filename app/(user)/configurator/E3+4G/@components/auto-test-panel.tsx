@@ -7,8 +7,15 @@ import DevicesToAutoTest from "@/app/ui/tables/devices-to-auto-test/table";
 import { cn } from "@/app/lib/util";
 
 export function AutoTestPanel() {
-  const { identified, requestPort, handleDeviceAutoTest, ports, test, inTest } =
-    useE34GAutoTest();
+  const {
+    identified,
+    requestPort,
+    handleDeviceAutoTest,
+    ports,
+    test,
+    inTest,
+    identifiedLog,
+  } = useE34GAutoTest();
 
   return (
     <>
@@ -24,7 +31,14 @@ export function AutoTestPanel() {
         <div className="flex flex-col gap-6 w-full">
           <div className="flow-root w-full">
             {ports.length > 0 ? (
-              <DevicesToAutoTest data={identified} />
+              <DevicesToAutoTest
+                data={identifiedLog.map((d) => ({
+                  ...d,
+                  ...(identified.find((el) => el.port === d.port) ?? {
+                    isIdentified: false,
+                  }),
+                }))}
+              />
             ) : (
               <Alert label="You have no serial ports sync." />
             )}
