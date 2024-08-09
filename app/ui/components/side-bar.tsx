@@ -214,7 +214,7 @@ export function SideBar(props: Props) {
                     <div className="flex h-16 shrink-0 items-center">
                       <img
                         className="h-8 w-auto"
-                        src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+                        src="/logo-bws.png"
                         alt="Your Company"
                       />
                     </div>
@@ -241,7 +241,7 @@ export function SideBar(props: Props) {
             <div className="flex h-16 shrink-0 items-center">
               <img
                 className="h-8 w-auto"
-                src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+                src="/logo-bws.png"
                 alt="Your Company"
               />
             </div>
