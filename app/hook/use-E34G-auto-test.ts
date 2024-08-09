@@ -4,6 +4,7 @@ import { ISerialPort } from "../lib/definition/serial"
 import { sleep } from "../lib/util/sleep"
 import { AutoTest, E34G } from "../lib/parser/E34G"
 import { toast } from "./use-toast"
+import { E34G_constants } from "../constants/e3+4g-autotest"
 
 interface Identified {
   isIdentified: boolean
@@ -28,6 +29,8 @@ interface Test {
   is_successful: boolean;
   metadata: TestMetadata;
   auto_test_analysis: AutoTestAnalysis
+  auto_test_hints: AutoTestHints
+  last_auto_test_result: AutoTest
 }
 
 interface AutoTestAnalysis {
@@ -40,7 +43,24 @@ interface AutoTestAnalysis {
   OUT: boolean
   ACEL: boolean
   VCC: boolean
-  IC: boolean
+  SIMHW: boolean
+  CHARGER: boolean
+  MEM: boolean
+}
+
+interface AutoTestHints {
+  GPS?: string
+  GPSf?: string
+  GSM?: string
+  LTE?: string
+  IN1?: string
+  IN2?: string
+  OUT?: string
+  ACEL?: string
+  VCC?: string
+  SIMHW?: string
+  CHARGER?: string
+  MEM: string
 }
 
 type TestMetadata = {
@@ -182,11 +202,11 @@ export function useE34GAutoTest() {
       // Main loop to gather device info
       // while (attempts < max_retries && (!imei || !iccid || !et)) {
       callback.onReg()
-      await sendCommandWithRetries(port, "REG000000#");
+      // await sendCommandWithRetries(port, "REG000000#");
       callback.onSms()
-      await sendCommandWithRetries(port, "SMS1");
+      // await sendCommandWithRetries(port, "SMS1");
       callback.onEn()
-      await sendCommandWithRetries(port, "EN");
+      // await sendCommandWithRetries(port, "EN");
 
       callback.onImei()
       let imei = await sendCommandWithRetries(port, "IMEI");
@@ -378,11 +398,11 @@ export function useE34GAutoTest() {
         if (!imei || !et) continue
 
         const commands: [string, number][] = [
-          ["REG000000#", 500],
-          ["SMS1", 500],
-          ["EN", 500],
-          ["AUTOTEST", 25000],
-          ["AUTOTEST", 25000],
+          // ["REG000000#", 500],
+          // ["SMS1", 500],
+          // ["EN", 500],
+          //["AUTOTEST", 25000],
+          //["AUTOTEST", 25000],
           ["AUTOTEST", 25000]
         ]
 
@@ -432,6 +452,7 @@ export function useE34GAutoTest() {
         const id = crypto.randomUUID()
 
         const auto_test_parsed = test_metadata.commands_sent
+          .filter(c => c.request === "AUTOTEST")
           .map((c) => c.response !== undefined ? E34G.auto_test(c.response) : undefined)
           .filter(c => c !== undefined)
 
@@ -442,8 +463,10 @@ export function useE34GAutoTest() {
           total_steps,
         })
 
+        console.log('auto_test_parsed', auto_test_parsed)
         // @ts-ignore
         const auto_test_analysis = autoTestAnalysis(auto_test_parsed)
+        const auto_test_hints = autoTestHints(auto_test_analysis)
 
         updateTestLog({
           imei,
@@ -460,7 +483,9 @@ export function useE34GAutoTest() {
           et,
           metadata: test_metadata,
           is_successful: Object.values(auto_test_analysis).every(el => el === true),
-          auto_test_analysis
+          auto_test_analysis,
+          auto_test_hints,
+          last_auto_test_result: auto_test_parsed[auto_test_parsed.length - 1]
         }
 
         const portHasDisconnected = disconnectedPorts.current.find(p => p === port)
@@ -486,19 +511,30 @@ export function useE34GAutoTest() {
   const autoTestAnalysis = (autoTest: AutoTest[]) => {
     return autoTest.reduce((acc, cur) => {
 
-      acc["IC"] = /^\d{19,20}$/.test(cur["IC"])
+      acc["SIMHW"] = /^\d{19,20}$/.test(cur["IC"])
       acc["GPS"] = cur["GPS"] === "OK" ? true : false
-      acc["GPSf"] = cur["GPSf"] === "OK" ? true : false
-      acc["GSM"] = cur["GSM"] === "OK" ? true : false
-      acc["LTE"] = cur["LTE"] === "OK" ? true : false
+      // acc["GPSf"] = cur["GPSf"] === "OK" ? true : false
+      // acc["GSM"] = cur["GSM"] === "OK" ? true : false
+      // acc["LTE"] = cur["LTE"] === "OK" ? true : false
       acc["IN1"] = cur["IN1"] === "OK" ? true : false
       acc["IN2"] = cur["IN2"] === "OK" ? true : false
       acc["OUT"] = cur["OUT"] === "OK" ? true : false
-      acc["ACEL"] = cur["ACEL"] === "OK" ? true : false
+      acc["ACEL"] = cur["ACELP"] === "1" ? true : false
       acc["VCC"] = cur["VCC"] === "OK" ? true : false
+      acc["CHARGER"] = cur["CHARGER"] === "OK" ? true : false
+      acc["MEM"] = cur["ID_MEM"]?.length > 0 ? true : false
 
       return acc
     }, {} as AutoTestAnalysis)
+  }
+
+  const autoTestHints = (autoTest: AutoTestAnalysis) => {
+    return Object.entries(autoTest).reduce((acc, [key, value]) => {
+      if (!value) {
+        acc[key as keyof AutoTestHints] = E34G_constants.auto_test_hints[key as keyof typeof E34G_constants.auto_test_hints] ?? "--"
+      }
+      return acc
+    }, {} as AutoTestHints)
   }
 
   const updateIdentifiedLog = (input: {

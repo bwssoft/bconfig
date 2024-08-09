@@ -126,11 +126,37 @@ export function AutoTestPanel() {
                     </div>
                   );
                 }
+                const test_result_status = current_test.is_successful
+                  ? "success"
+                  : "fail";
                 return (
                   <div
                     className="flex flex-col p-4 max-w-96 bg-white shadow-lg rounded-lg"
                     key={i}
                   >
+                    <div className="grid grid-cols-1 gap-4">
+                      <div className="p-4 pb-0 rounded-lg">
+                        <div className="flex items-center gap-1">
+                          <div
+                            className={cn(
+                              statuses[test_result_status],
+                              "flex-none rounded-full p-1 w-fit"
+                            )}
+                          >
+                            <div className="h-1.5 w-1.5 rounded-full bg-current" />
+                          </div>
+                          <div
+                            className={cn(
+                              "hidden font-semibold sm:block",
+                              text[test_result_status]
+                            )}
+                          >
+                            {current_test.is_successful ? "Success" : "Failed"}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
                     {/* Serial and Device Info */}
                     <div className="grid grid-cols-1 gap-4">
                       <div className="p-4 rounded-lg">
@@ -221,16 +247,18 @@ export function AutoTestPanel() {
                       </h3>
                       <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
                         {[
-                          ["SIM HW", "IC"],
+                          ["SIM HW", "SIMHW"],
                           ["GPS HW", "GPS"],
-                          ["GPS Signal", "GPSf"],
-                          ["GSM", "GSM"],
-                          ["LTE Signal", "LTE"],
+                          // ["GPS Signal", "GPSf"],
+                          // ["GSM", "GSM"],
+                          // ["LTE Signal", "LTE"],
                           ["IN 1", "IN1"],
                           ["IN 2", "IN2"],
                           ["OUT 1", "OUT"],
                           ["ACEL HW", "ACEL"],
                           ["VCC", "VCC"],
+                          ["CHARGER", "CHARGER"],
+                          ["MEM", "MEM"],
                         ].map((label) => (
                           <div
                             key={label[0]}
@@ -261,7 +289,7 @@ export function AutoTestPanel() {
                           Raw data
                         </h3>
                         <div className="mt-4 flex-col gap-2">
-                          {[current_test.metadata.commands_sent?.[5]].map(
+                          {[current_test.metadata.commands_sent?.[0]].map(
                             (c, cindex) => (
                               <div className="w-full" key={cindex}>
                                 <dt className="text-sm font-medium leading-6 text-gray-900">
@@ -276,6 +304,33 @@ export function AutoTestPanel() {
                         </div>
                       </div>
                     </div>
+
+                    {/* Test hints */}
+                    {Object.entries(current_test.auto_test_hints).length > 0 ? (
+                      <div className="grid grid-cols-1 gap-4">
+                        <div className="p-4 rounded-lg">
+                          <h3 className="font-semibold text-sm text-gray-700">
+                            Hints
+                          </h3>
+                          <div className="mt-4 flex-col gap-2">
+                            {Object.entries(current_test.auto_test_hints).map(
+                              (h, hindex) => (
+                                <div className="w-full" key={hindex}>
+                                  <dt className="text-sm font-medium leading-6 text-gray-900">
+                                    {h[0]}
+                                  </dt>
+                                  <dd className="mt-1 text-sm leading-6 text-gray-700 break-words">
+                                    {h[1]}
+                                  </dd>
+                                </div>
+                              )
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <></>
+                    )}
                   </div>
                 );
               })}
@@ -288,3 +343,13 @@ export function AutoTestPanel() {
     </>
   );
 }
+
+const statuses = {
+  success: "text-green-500 bg-green-800/20",
+  fail: "text-rose-500 bg-rose-800/20",
+};
+
+const text = {
+  success: "text-green-800",
+  fail: "text-rose-800",
+};
