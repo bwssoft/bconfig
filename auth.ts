@@ -4,11 +4,11 @@ import { authConfig } from './auth.config';
 import { z } from 'zod';
 import { IUser } from '@/app/lib/definition';
 import bcrypt from 'bcrypt';
-import { findOneUser } from './app/lib/action/user.action';
+import { findOneUser, updateOneUserById } from './app/lib/action';
 
 async function getUser(email: string): Promise<IUser | null> {
   try {
-    const user = await findOneUser(email);
+    const user = await findOneUser({ email, connected: false });
     return user
   } catch (error) {
     console.error('Failed to fetch user:', error);
@@ -30,7 +30,10 @@ export const { auth, signIn, signOut } = NextAuth({
           const user = await getUser(email);
           if (!user) return null;
           const passwordsMatch = await bcrypt.compare(password, user.password);
-          if (passwordsMatch) return user;
+          if (passwordsMatch) {
+            await updateOneUserById({ id: user.id }, { ...user, connected: true })
+            return user
+          };
         }
 
         return null;

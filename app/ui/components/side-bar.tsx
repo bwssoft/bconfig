@@ -25,6 +25,7 @@ import {
   WrenchIcon,
   BriefcaseIcon,
   RectangleStackIcon,
+  ArrowRightEndOnRectangleIcon,
 } from "@heroicons/react/24/outline";
 import {
   Disclosure,
@@ -34,6 +35,9 @@ import {
 import { cn } from "@/app/lib/util";
 import Link from "next/link";
 import { useIsOnPathname } from "@/app/hook/is-on-pathname";
+import { Button } from "./button";
+import { IUser } from "@/app/lib/definition";
+import { useRouter } from "next/navigation";
 
 type NavItem = {
   name: string;
@@ -82,9 +86,16 @@ const getPaddingClass = (depth: number) => {
   }
 };
 
-export function SideBar() {
+interface Props {
+  user: Omit<IUser, "password">;
+  logout: () => Promise<void>;
+}
+
+export function SideBar(props: Props) {
+  const { user, logout } = props;
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const isOnPathname = useIsOnPathname();
+  const router = useRouter();
 
   const renderNavItem = (item: NavItem, depth = 0) => {
     const paddingLeft = getPaddingClass(depth); // Calcula o padding-left baseado na profundidade
@@ -241,7 +252,7 @@ export function SideBar() {
                     {navigation.map((item) => renderNavItem(item))}
                   </ul>
                 </li>
-                <li className="-mx-6 mt-auto">
+                <li className="-mx-6 mt-auto flex items-center justify-between">
                   <a
                     href="#"
                     className="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-50"
@@ -252,8 +263,23 @@ export function SideBar() {
                       alt=""
                     />
                     <span className="sr-only">Your profile</span>
-                    <span aria-hidden="true">Tom Cook</span>
+                    <span aria-hidden="true">{user.name}</span>
                   </a>
+                  <form
+                    action={async () => {
+                      await logout();
+                      router.push("/login");
+                    }}
+                    className="px-6 py-3"
+                  >
+                    <Button variant="outlined" type="submit" title="Logout">
+                      <ArrowRightEndOnRectangleIcon
+                        height={18}
+                        width={18}
+                        className="rotate-180"
+                      />
+                    </Button>
+                  </form>
                 </li>
               </ul>
             </nav>

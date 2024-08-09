@@ -4,4 +4,5 @@ export interface IUser {
   password: string
   name: string
   created_at: Date
+  connected: boolean
 }

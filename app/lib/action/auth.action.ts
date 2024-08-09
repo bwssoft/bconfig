@@ -1,7 +1,8 @@
 'use server';
 
-import { signIn } from '@/auth';
+import { auth, signIn, signOut } from '@/auth';
 import { AuthError } from 'next-auth';
+import { updateOneUserByEmail } from './user.action';
 
 export async function authenticate(
   prevState: string | undefined,
@@ -18,6 +19,20 @@ export async function authenticate(
           return 'Something went wrong.';
       }
     }
+    throw error;
+  }
+}
+
+export async function logout() {
+  try {
+    const session = await auth()
+    if (!session) return
+    const email = session.user?.email
+    if (!email) return
+    await updateOneUserByEmail({ email }, { connected: false })
+    await signOut({ redirect: false });
+  } catch (error) {
+    console.log("error", error)
     throw error;
   }
 }
