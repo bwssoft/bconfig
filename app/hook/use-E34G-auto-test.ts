@@ -485,7 +485,6 @@ export function useE34GAutoTest() {
           is_successful: Object.values(auto_test_analysis).every(el => el === true),
           auto_test_analysis,
           auto_test_hints,
-          // @ts-ignore
           last_auto_test_result: auto_test_parsed[auto_test_parsed.length - 1]
         }
 
@@ -498,6 +497,7 @@ export function useE34GAutoTest() {
         } else if (!portHasDisconnected) {
           setTest(prev => {
             const old = prev.filter(el => el.imei !== imei);
+            // @ts-ignore
             return old.concat(result)
           })
         }
