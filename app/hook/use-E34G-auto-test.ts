@@ -55,6 +55,12 @@ type TestMetadata = {
   }[]
 }
 
+interface TestLog {
+  imei: string
+  label: string
+  progress: number
+}
+
 
 export function useE34GAutoTest() {
   const [identified, setIdentified] = useState<Identified[]>([])
@@ -62,6 +68,7 @@ export function useE34GAutoTest() {
   const [inIdentification, setInIdentification] = useState<boolean>(false)
 
   const [test, setTest] = useState<Test[]>([])
+  const [testLog, setTestLog] = useState<TestLog[]>([])
   const [inTest, setInTest] = useState<boolean>(false)
 
   const previousPorts = useRef<ISerialPort[]>([])
@@ -76,8 +83,11 @@ export function useE34GAutoTest() {
     })
     disconnectedPorts.current.push(port)
     setIdentified(prev => {
+      const _identified = prev.find(el => el.port === port);
       const updatedIdentified = prev.filter(el => el.port !== port);
       setIdentifiedLog(prevLog => prevLog.filter(el => el.port !== port));
+      setTestLog(prevLog => prevLog.filter(el => el.imei !== _identified?.imei));
+      setTest(prevConfig => prevConfig.filter(el => el.imei !== _identified?.imei));
       return updatedIdentified;
     });
   }, [setIdentified])
@@ -213,18 +223,26 @@ export function useE34GAutoTest() {
   const autoTest = async (input: {
     port: ISerialPort,
     commands: [string, number][],
+    callback: {
+      onOpenPort: () => void
+      onPortOpened: () => void
+      onSendCommand: (command: string, idx: number) => void
+      onClosePort: () => void
+      onFinished: () => void
+    }
   }): Promise<TestMetadata> => {
-    const { port, commands } = input
+    const { port, commands, callback } = input
     try {
       const commands_sent = []
+      callback.onOpenPort()
       await openPort(port)
+      callback.onPortOpened()
       const init_time_configuration = Date.now()
       for (let c = 0; c < commands.length; c++) {
         const [command, timeout] = commands[c]
         const init_time_command = Date.now()
-        console.log('command: ', command)
+        callback.onSendCommand(command, c)
         const response = await sendCommandWithRetries(port, command, timeout);
-        console.log('response: ', response)
         const end_time_command = Date.now()
         commands_sent.push({
           response,
@@ -234,7 +252,9 @@ export function useE34GAutoTest() {
         })
       }
       const end_time_configuration = Date.now()
+      callback.onClosePort()
       await closePort(port)
+      callback.onFinished()
       return {
         init_time_configuration,
         end_time_configuration,
@@ -244,7 +264,7 @@ export function useE34GAutoTest() {
     } catch (e) {
       console.error('ERROR [autoTest]', e);
       await closePort(port)
-      return await autoTest({ port, commands })
+      return await autoTest({ port, commands, callback })
     }
   }
 
@@ -365,14 +385,72 @@ export function useE34GAutoTest() {
           ["AUTOTEST", 25000],
           ["AUTOTEST", 25000]
         ]
-        const test_metadata = await autoTest({ port, commands })
+
+        const total_steps = commands.length + 6;
+
+        updateTestLog({
+          imei,
+          step_index: 0,
+          step_label: "Auto Test initializing",
+          total_steps
+        })
+
+        const test_metadata = await autoTest({
+          port, commands, callback: {
+            onOpenPort: () => updateTestLog({
+              imei,
+              step_label: "Opening serial port",
+              step_index: 1,
+              total_steps
+            }),
+            onPortOpened: () => updateTestLog({
+              imei,
+              step_label: "Serial port opened",
+              step_index: 2,
+              total_steps
+            }),
+            onSendCommand: (command, idx) => updateTestLog({
+              imei,
+              step_label: command,
+              step_index: 2 + idx,
+              total_steps
+            }),
+            onClosePort: () => updateTestLog({
+              imei,
+              step_label: "Closing serial port",
+              step_index: total_steps - 3,
+              total_steps
+            }),
+            onFinished: () => updateTestLog({
+              imei,
+              step_label: "Serial port closed",
+              step_index: total_steps - 2,
+              total_steps
+            }),
+          }
+        })
         const id = crypto.randomUUID()
 
         const auto_test_parsed = test_metadata.commands_sent
           .map((c) => c.response !== undefined ? E34G.auto_test(c.response) : undefined)
           .filter(c => c !== undefined)
+
+        updateTestLog({
+          imei,
+          step_index: total_steps - 1,
+          step_label: "Analyzing result",
+          total_steps,
+        })
+
         // @ts-ignore
         const auto_test_analysis = autoTestAnalysis(auto_test_parsed)
+
+        updateTestLog({
+          imei,
+          step_index: total_steps,
+          step_label: "Process Finished",
+          total_steps,
+        })
 
         const result = {
           id,
@@ -381,11 +459,9 @@ export function useE34GAutoTest() {
           iccid,
           et,
           metadata: test_metadata,
-          is_successful: false,
+          is_successful: Object.values(auto_test_analysis).every(el => el === true),
           auto_test_analysis
         }
-
-
 
         const portHasDisconnected = disconnectedPorts.current.find(p => p === port)
         if (portHasDisconnected) {
@@ -395,7 +471,7 @@ export function useE34GAutoTest() {
           });
         } else if (!portHasDisconnected) {
           setTest(prev => {
-            const old = prev.filter(el => el.port !== port);
+            const old = prev.filter(el => el.imei !== imei);
             return old.concat(result)
           })
         }
@@ -444,6 +520,25 @@ export function useE34GAutoTest() {
       return result
     });
   }
+  const updateTestLog = (input: {
+    step_label: string,
+    step_index: number,
+    imei: string,
+    total_steps: number,
+  }) => {
+    const { imei, total_steps, step_index, step_label } = input
+    const percentage = Math.round((step_index / total_steps) * 100);
+    setTestLog(prev => {
+      const rest = prev.filter(el => el.imei !== imei)
+      const current = prev.find(el => el.imei === imei)
+      const result = rest.concat({
+        ...(current ?? { imei }),
+        label: step_label,
+        progress: percentage,
+      })
+      return result
+    });
+  }
 
   useEffect(() => {
     const newPorts = ports.filter(port => !previousPorts.current.includes(port));
@@ -463,6 +558,7 @@ export function useE34GAutoTest() {
     identifiedLog,
     inIdentification,
     handleDeviceAutoTest,
-    inTest
+    inTest,
+    testLog
   }
 }
