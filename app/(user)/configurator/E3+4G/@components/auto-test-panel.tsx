@@ -79,13 +79,13 @@ export function AutoTestPanel() {
         <div className="flex flex-wrap gap-4">
           {testLog.length > 0 ? (
             <>
-              {testLog.map((log, i) => {
-                const current_test = test.find((el) => (el.imei = log.imei));
+              {testLog.map((log) => {
+                const current_test = test.find((el) => el.imei === log.imei);
                 if (!current_test || log.progress !== 100) {
                   return (
                     <div
                       className="flex flex-col p-4 max-w-96 bg-white shadow-lg rounded-lg"
-                      key={i}
+                      key={log.imei}
                     >
                       <div className="grid grid-cols-1 gap-4">
                         <div className="p-4 rounded-lg">
@@ -132,7 +132,7 @@ export function AutoTestPanel() {
                 return (
                   <div
                     className="flex flex-col p-4 max-w-96 bg-white shadow-lg rounded-lg"
-                    key={i}
+                    key={current_test.imei}
                   >
                     <div className="grid grid-cols-1 gap-4">
                       <div className="p-4 pb-0 rounded-lg">

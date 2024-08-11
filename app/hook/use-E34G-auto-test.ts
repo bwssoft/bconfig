@@ -393,9 +393,9 @@ export function useE34GAutoTest() {
   const handleDeviceAutoTest = async (devices: Identified[]) => {
     try {
       setInTest(true)
-      for (let device of devices) {
+      await Promise.all(devices.map(async device => {
         const { port, imei, iccid, et } = device
-        if (!imei || !et) continue
+        if (!imei || !et) return
 
         const commands: [string, number][] = [
           // ["REG000000#", 500],
@@ -501,7 +501,7 @@ export function useE34GAutoTest() {
             return old.concat(result)
           })
         }
-      }
+      }))
       setInTest(false)
     } catch (e) {
       console.error("[handleDeviceAutoTest]", e)
@@ -520,7 +520,7 @@ export function useE34GAutoTest() {
       acc["IN1"] = cur["IN1"] === "OK" ? true : false
       acc["IN2"] = cur["IN2"] === "OK" ? true : false
       acc["OUT"] = cur["OUT"] === "OK" ? true : false
-      acc["ACEL"] = cur["ACELP"] === "1" ? true : false
+      acc["ACEL"] = cur["ACELP"] === "OK" ? true : false
       acc["VCC"] = cur["VCC"] === "OK" ? true : false
       acc["CHARGER"] = cur["CHARGER"] === "OK" ? true : false
       acc["MEM"] = cur["ID_MEM"]?.length > 0 ? true : false
