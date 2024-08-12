@@ -85,7 +85,14 @@ export async function findAllConfigurationLog(props: { is_configured?: boolean, 
         user: { $first: "$user" }
       }
     },
-    { $project: { _id: 0 } }
+    {
+      $project: {
+        _id: 0,
+        "profile._id": 0,
+        "user._id": 0,
+        "user.password": 0,
+      }
+    }
   ])
   return await aggregate.toArray() as (IConfigurationLog & { profile: IProfile, user: IUser })[]
 }

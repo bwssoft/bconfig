@@ -51,7 +51,13 @@ export async function findAllAutoTestLog(): Promise<(IAutoTestLog & { user: IUse
         user: { $first: "$user" }
       }
     },
-    { $project: { _id: 0 } }
+    {
+      $project: {
+        _id: 0,
+        "user._id": 0,
+        "user.password": 0,
+      }
+    }
   ])
   return await aggregate.toArray() as (IAutoTestLog & { user: IUser })[]
 }
