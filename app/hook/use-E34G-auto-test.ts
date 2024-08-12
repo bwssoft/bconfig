@@ -440,7 +440,12 @@ export function useE34GAutoTest() {
           iccid,
           et,
           metadata: test_metadata,
-          is_successful: Object.values(auto_test_analysis).every(el => el === true),
+          is_successful:
+            Object.keys(auto_test_analysis).length > 0
+              ?
+              Object.values(auto_test_analysis).every(el => el === true)
+              :
+              false,
           auto_test_analysis,
           auto_test_hints,
           last_auto_test_result: auto_test_parsed[auto_test_parsed.length - 1]
