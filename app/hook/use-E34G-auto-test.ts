@@ -6,6 +6,7 @@ import { AutoTest, E34G } from "../lib/parser/E34G"
 import { toast } from "./use-toast"
 import { E34G_constants } from "../constants/e3+4g-autotest"
 import { AutoTestAnalysis, AutoTestHints, TestMetadata } from "../lib/definition/auto-test-log"
+import { createOneAutoTestLog } from "../lib/action/auto-test-log.action"
 
 interface Identified {
   isIdentified: boolean
@@ -421,7 +422,6 @@ export function useE34GAutoTest() {
           total_steps,
         })
 
-        console.log('auto_test_parsed', auto_test_parsed)
         // @ts-ignore
         const auto_test_analysis = autoTestAnalysis(auto_test_parsed)
         const auto_test_hints = autoTestHints(auto_test_analysis)
@@ -459,6 +459,7 @@ export function useE34GAutoTest() {
             return old.concat(result)
           })
         }
+        await createOneAutoTestLog(JSON.parse(JSON.stringify(result)))
       }))
       setInTest(false)
     } catch (e) {
