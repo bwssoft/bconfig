@@ -3,18 +3,11 @@ import { useSerial } from "./use-serial"
 import { ISerialPort } from "../lib/definition/serial"
 import { sleep } from "../lib/util/sleep"
 import { E3 } from "../lib/parser/E3"
-import { IProfile } from "../lib/definition"
+import { ConfigurationMetadata, DeviceNativeProfile, DeviceProfile, IProfile } from "../lib/definition"
 import { E3Encoder } from "../lib/encoder/E3"
 import { checkWithDifference } from "../lib/util"
 import { toast } from "./use-toast"
 import { createOneConfigurationLog } from "../lib/action/configuration-log.action"
-
-type DeviceProfile = IProfile["config"]
-type DeviceNativeProfile = {
-  check?: string
-  dns?: string
-  cxip?: string
-}
 
 
 interface Identified {
@@ -24,6 +17,12 @@ interface Identified {
   iccid?: string
   et?: string
 }
+interface IdentifiedLog {
+  port: ISerialPort
+  label: string
+  progress: number
+}
+
 
 export interface Configuration {
   id: string
@@ -40,31 +39,13 @@ export interface Configuration {
   profile_name: string
   profile_id: string
 }
-
-type ConfigurationMetadata = {
-  port: ISerialPort
-  init_time_configuration: number
-  end_time_configuration: number
-  commands_sent: {
-    init_time_command: number
-    end_time_command?: number
-    request: string
-    response?: string
-  }[]
-}
-
-type DeviceResponse = string | undefined
-
-interface IdentifiedLog {
-  port: ISerialPort
-  label: string
-  progress: number
-}
 interface ConfigurationLog {
   imei: string
   label: string
   progress: number
 }
+
+type DeviceResponse = string | undefined
 
 export function useE3Communication(props: { profile?: IProfile }) {
   const { profile } = props

@@ -19,7 +19,7 @@ export interface IConfigurationLog {
 }
 
 
-type ConfigurationMetadata = {
+export type ConfigurationMetadata = {
   port: ISerialPort
   init_time_configuration: number
   end_time_configuration: number
@@ -30,8 +30,8 @@ type ConfigurationMetadata = {
     response?: string
   }[]
 }
-type DeviceProfile = IProfile["config"]
-type DeviceNativeProfile = {
+export type DeviceProfile = IProfile["config"]
+export type DeviceNativeProfile = {
   check?: string
   dns?: string
   cxip?: string

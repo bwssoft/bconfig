@@ -5,6 +5,7 @@ import { sleep } from "../lib/util/sleep"
 import { AutoTest, E34G } from "../lib/parser/E34G"
 import { toast } from "./use-toast"
 import { E34G_constants } from "../constants/e3+4g-autotest"
+import { AutoTestAnalysis, AutoTestHints, TestMetadata } from "../lib/definition/auto-test-log"
 
 interface Identified {
   isIdentified: boolean
@@ -13,12 +14,12 @@ interface Identified {
   iccid?: string
   et?: string
 }
-
 interface IdentifiedLog {
   port: ISerialPort
   label: string
   progress: number
 }
+
 
 interface Test {
   id: string
@@ -32,49 +33,6 @@ interface Test {
   auto_test_hints: AutoTestHints
   last_auto_test_result: AutoTest
 }
-
-interface AutoTestAnalysis {
-  GPS: boolean
-  GPSf: boolean
-  GSM: boolean
-  LTE: boolean
-  IN1: boolean
-  IN2: boolean
-  OUT: boolean
-  ACEL: boolean
-  VCC: boolean
-  SIMHW: boolean
-  CHARGER: boolean
-  MEM: boolean
-}
-
-interface AutoTestHints {
-  GPS?: string
-  GPSf?: string
-  GSM?: string
-  LTE?: string
-  IN1?: string
-  IN2?: string
-  OUT?: string
-  ACEL?: string
-  VCC?: string
-  SIMHW?: string
-  CHARGER?: string
-  MEM: string
-}
-
-type TestMetadata = {
-  port: ISerialPort
-  init_time_configuration: number
-  end_time_configuration: number
-  commands_sent: {
-    init_time_command: number
-    end_time_command?: number
-    request: string
-    response?: string
-  }[]
-}
-
 interface TestLog {
   imei: string
   label: string
