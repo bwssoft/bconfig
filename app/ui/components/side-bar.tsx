@@ -66,7 +66,7 @@ const navigation: NavItem[] = [
         name: "E3+4G",
         children: [
           { name: "Configurator", pathname: "/configurator/E3+4G" },
-          { name: "AUTO Test", pathname: "/configurator/E3+4G/auto-test" },
+          { name: "AUTO Test", pathname: "/auto-test/E3+4G" },
         ],
       },
     ],

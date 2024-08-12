@@ -1,4 +1,4 @@
-import { AutoTestPanel } from "../@components/auto-test-panel";
+import { AutoTestPanel } from "./@components/auto-test-panel";
 
 interface Props {}
 
