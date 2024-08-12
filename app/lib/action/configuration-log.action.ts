@@ -1,7 +1,7 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { IConfigurationLog, IProfile } from "../definition"
+import { IConfigurationLog, IProfile, IUser } from "../definition"
 import configurationLogRepository from "../repository/mongodb/configuration-log.repository"
 import { auth } from "@/auth"
 
@@ -35,7 +35,7 @@ export async function findOneConfigurationLog(input: Partial<IConfigurationLog>)
   return await repository.findOne(input)
 }
 
-export async function findAllConfigurationLog(props: { is_configured?: boolean, query?: string }): Promise<(IConfigurationLog & { profile: IProfile })[]> {
+export async function findAllConfigurationLog(props: { is_configured?: boolean, query?: string }): Promise<(IConfigurationLog & { profile: IProfile, user: IUser })[]> {
   const aggregate = await repository.aggregate([
     {
       $lookup: {
@@ -43,6 +43,14 @@ export async function findAllConfigurationLog(props: { is_configured?: boolean, 
         localField: "profile_id",
         foreignField: "id",
         as: "profile"
+      }
+    },
+    {
+      $lookup: {
+        from: "user",
+        localField: "user_id",
+        foreignField: "id",
+        as: "user"
       }
     },
     {
@@ -73,12 +81,13 @@ export async function findAllConfigurationLog(props: { is_configured?: boolean, 
     },
     {
       $addFields: {
-        profile: { $first: "$profile" }
+        profile: { $first: "$profile" },
+        user: { $first: "$user" }
       }
     },
     { $project: { _id: 0 } }
   ])
-  return await aggregate.toArray() as (IConfigurationLog & { profile: IProfile })[]
+  return await aggregate.toArray() as (IConfigurationLog & { profile: IProfile, user: IUser })[]
 }
 
 

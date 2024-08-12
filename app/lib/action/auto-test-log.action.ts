@@ -1,7 +1,7 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { IAutoTestLog } from "../definition"
+import { IAutoTestLog, IUser } from "../definition"
 import autoTestLogRepository from "../repository/mongodb/auto-test-log.repository"
 import { auth } from "@/auth"
 
@@ -35,12 +35,25 @@ export async function findOneAutoTestLog(input: Partial<IAutoTestLog>) {
   return await repository.findOne(input)
 }
 
-export async function findAllAutoTestLog(): Promise<IAutoTestLog[]> {
+export async function findAllAutoTestLog(): Promise<(IAutoTestLog & { user: IUser })[]> {
   const aggregate = await repository.aggregate([
+    {
+      $lookup: {
+        from: "user",
+        localField: "user_id",
+        foreignField: "id",
+        as: "user"
+      }
+    },
     { $match: {} },
+    {
+      $addFields: {
+        user: { $first: "$user" }
+      }
+    },
     { $project: { _id: 0 } }
   ])
-  return await aggregate.toArray() as IAutoTestLog[]
+  return await aggregate.toArray() as (IAutoTestLog & { user: IUser })[]
 }
 
 
