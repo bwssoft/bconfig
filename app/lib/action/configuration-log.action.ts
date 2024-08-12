@@ -73,6 +73,12 @@ export async function findAllConfigurationLog(props: { is_configured?: boolean, 
                   $regex: props?.query,
                   $options: "i"
                 }
+              },
+              {
+                "user.name": {
+                  $regex: props?.query,
+                  $options: "i"
+                }
               }
             ]
           }

@@ -1,8 +1,27 @@
 import { findAllAutoTestLog } from "@/app/lib/action/auto-test-log.action";
+import { SearchAutoTestLogForm } from "@/app/ui/forms/auto-test-log/search-auto-test-log.form";
 import AutoTestLogTable from "@/app/ui/tables/auto-test-log/table";
 
-export default async function Example() {
-  const autoTestLog = await findAllAutoTestLog();
+export default async function Example(props: {
+  searchParams: { query?: string; is_successful?: string };
+}) {
+  const {
+    searchParams: { query, is_successful },
+  } = props;
+
+  const handleQueryParams = () => {
+    return {
+      is_successful:
+        is_successful === "false"
+          ? false
+          : is_successful === "true"
+          ? true
+          : undefined,
+      query: query ?? "",
+    };
+  };
+
+  const autoTestLog = await findAllAutoTestLog(handleQueryParams());
 
   return (
     <div>
@@ -16,9 +35,9 @@ export default async function Example() {
           </p>
         </div>
       </div>
-      {/* <div className="mt-5 flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
-        <SearchLogForm data={autoTestLog} />
-      </div> */}
+      <div className="mt-5 flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
+        <SearchAutoTestLogForm data={autoTestLog} />
+      </div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8 space-y-12">
         <AutoTestLogTable data={autoTestLog} />
       </div>
