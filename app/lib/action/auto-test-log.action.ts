@@ -35,7 +35,7 @@ export async function findOneAutoTestLog(input: Partial<IAutoTestLog>) {
   return await repository.findOne(input)
 }
 
-export async function findAllAutoTestLog(): Promise<(IAutoTestLog & { user: IUser })[]> {
+export async function findAllAutoTestLog(props: { is_successful?: boolean, query?: string }): Promise<(IAutoTestLog & { user: IUser })[]> {
   const aggregate = await repository.aggregate([
     {
       $lookup: {
@@ -45,7 +45,32 @@ export async function findAllAutoTestLog(): Promise<(IAutoTestLog & { user: IUse
         as: "user"
       }
     },
-    { $match: {} },
+    {
+      $match: {
+        $and: [
+          ...(typeof props.is_successful !== "undefined" ? [{ is_successful: props.is_successful }] : []),
+          {
+            $or: [
+              {
+                imei: { $regex: props?.query, $options: "i" }
+              },
+              {
+                iccid: {
+                  $regex: props?.query,
+                  $options: "i"
+                }
+              },
+              {
+                "user.name": {
+                  $regex: props?.query,
+                  $options: "i"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
     {
       $addFields: {
         user: { $first: "$user" }
