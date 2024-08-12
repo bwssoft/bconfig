@@ -1,4 +1,4 @@
-import { TestMetadata } from "@/app/lib/definition";
+import { IUser, TestMetadata } from "@/app/lib/definition";
 import { cn } from "@/app/lib/util";
 import { ColumnDef } from "@tanstack/react-table";
 
@@ -17,6 +17,7 @@ export const columns: ColumnDef<{
   is_successful: boolean;
   created_at: Date;
   metadata: TestMetadata;
+  user: IUser;
 }>[] = [
   {
     header: "Status",
@@ -48,6 +49,7 @@ export const columns: ColumnDef<{
       return `${(end - init) / 1000} s`;
     },
   },
+  { header: "User", accessorKey: "user.name" },
   {
     header: "Created At",
     accessorKey: "created_at",
