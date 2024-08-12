@@ -81,7 +81,7 @@ export function AutoTestPanel() {
             <>
               {testLog.map((log) => {
                 const current_test = test.find((el) => el.imei === log.imei);
-                if (!current_test || log.progress !== 100) {
+                if (log.progress !== 100) {
                   return (
                     <div
                       className="flex flex-col p-4 max-w-96 bg-white shadow-lg rounded-lg"
@@ -111,7 +111,7 @@ export function AutoTestPanel() {
                               </dd>
                             </div>
                           </div>
-                          <div className="mt-4">
+                          {/* <div className="mt-4">
                             <div className="w-full">
                               <dt className="text-sm font-medium leading-6 text-gray-900">
                                 Progress
@@ -119,6 +119,38 @@ export function AutoTestPanel() {
                               <dd className="mt-1 text-sm leading-6 text-gray-700">
                                 {log.progress}%
                               </dd>
+                            </div>
+                          </div> */}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                }
+
+                if (!current_test) {
+                  return (
+                    <div
+                      className="flex flex-col p-4 max-w-96 bg-white shadow-lg rounded-lg"
+                      key={log.imei}
+                    >
+                      <div className="grid grid-cols-1 gap-4">
+                        <div className="p-4 pb-0 rounded-lg">
+                          <div className="flex items-center gap-1">
+                            <div
+                              className={cn(
+                                statuses["fail"],
+                                "flex-none rounded-full p-1 w-fit"
+                              )}
+                            >
+                              <div className="h-1.5 w-1.5 rounded-full bg-current" />
+                            </div>
+                            <div
+                              className={cn(
+                                "hidden font-semibold sm:block",
+                                text["fail"]
+                              )}
+                            >
+                              Failed
                             </div>
                           </div>
                         </div>
