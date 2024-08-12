@@ -54,9 +54,18 @@ const navigation: NavItem[] = [
   { name: "Dashboard", icon: HomeIcon, pathname: "/" },
   { name: "Configuration Profile", pathname: "/profile", icon: UsersIcon },
   {
-    name: "Configuration Logs",
-    pathname: "/configuration-log",
+    name: "Logs",
     icon: Bars3Icon,
+    children: [
+      {
+        name: "Configuration Logs",
+        pathname: "/configuration-log",
+      },
+      {
+        name: "Auto Test Logs",
+        pathname: "/auto-test-log",
+      },
+    ],
   },
   {
     name: "Tools",

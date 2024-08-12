@@ -12,7 +12,7 @@ export async function createOneConfigurationLog(input: Omit<IConfigurationLog
     ...input,
     created_at: new Date()
   })
-  revalidatePath("/log")
+  revalidatePath("/configuration-log")
   return input
 }
 
@@ -22,7 +22,7 @@ export async function createManyConfigurationLog(input: Omit<IConfigurationLog
     ...i,
     created_at: new Date()
   })))
-  revalidatePath("/log")
+  revalidatePath("/configuration-log")
   return input
 }
 
@@ -32,13 +32,13 @@ export async function findOneConfigurationLog(input: Partial<IConfigurationLog>)
 
 export async function updateOneConfigurationLogById(query: { id: string }, value: Omit<IConfigurationLog, "id" | "created_at">) {
   const result = await repository.updateOne(query, value)
-  revalidatePath("/log")
+  revalidatePath("/configuration-log")
   return result
 }
 
 export async function deleteOneConfigurationLogById(query: { id: string }) {
   const result = await repository.deleteOne(query)
-  revalidatePath("/log")
+  revalidatePath("/configuration-log")
   return result
 }
 
