@@ -20,19 +20,23 @@ export function useSearchAutoTestLogForm() {
   const handleExport = (data: (IAutoTestLog & { user: IUser })[]) => {
     jsonToXlsx({
       data: data.map((c) => ({
-        Sucesso: c.is_successful ? "Sucesso" : "Falha",
-        Usuarui: c.user.name,
-        Inicio: new Date(c.metadata.init_time_configuration).toLocaleString(),
-        Fim: new Date(c.metadata.end_time_configuration).toLocaleString(),
-        "Tempo Total": `${
+        Status: c.is_successful ? "Success" : "Failed",
+        User: c.user.name,
+        "Init Time": new Date(
+          c.metadata.init_time_configuration
+        ).toLocaleString(),
+        "End Time": new Date(
+          c.metadata.end_time_configuration
+        ).toLocaleString(),
+        "Duration Time": `${
           (c.metadata.end_time_configuration -
             c.metadata.init_time_configuration) /
           1000
         }S`,
         Imei: c.imei,
         Iccid: c.iccid,
-        et: c.et,
-        "Comandos Enviados": c.metadata.commands_sent
+        Firmware: c.et,
+        "Commands sent": c.metadata.commands_sent
           .map((c) => c.response)
           .join("|"),
       })),
