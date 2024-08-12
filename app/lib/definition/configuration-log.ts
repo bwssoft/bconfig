@@ -16,6 +16,7 @@ export interface IConfigurationLog {
   profile_id: string
   profile_name: string
   created_at: Date
+  user_id: string
 }
 
 

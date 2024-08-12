@@ -3,13 +3,16 @@
 import { revalidatePath } from "next/cache"
 import { IConfigurationLog, IProfile } from "../definition"
 import configurationLogRepository from "../repository/mongodb/configuration-log.repository"
+import { auth } from "@/auth"
 
 const repository = configurationLogRepository
 
 export async function createOneConfigurationLog(input: Omit<IConfigurationLog
-  , "created_at">) {
+  , "created_at" | "user_id">) {
+  const session = await auth()
   await repository.create({
     ...input,
+    user_id: session?.user?.id!,
     created_at: new Date()
   })
   revalidatePath("/configuration-log")
@@ -17,9 +20,11 @@ export async function createOneConfigurationLog(input: Omit<IConfigurationLog
 }
 
 export async function createManyConfigurationLog(input: Omit<IConfigurationLog
-  , "created_at">[]) {
+  , "created_at" | "user_id">[]) {
+  const session = await auth()
   await repository.createMany(input.map(i => ({
     ...i,
+    user_id: session?.user?.id!,
     created_at: new Date()
   })))
   revalidatePath("/configuration-log")
@@ -28,18 +33,6 @@ export async function createManyConfigurationLog(input: Omit<IConfigurationLog
 
 export async function findOneConfigurationLog(input: Partial<IConfigurationLog>) {
   return await repository.findOne(input)
-}
-
-export async function updateOneConfigurationLogById(query: { id: string }, value: Omit<IConfigurationLog, "id" | "created_at">) {
-  const result = await repository.updateOne(query, value)
-  revalidatePath("/configuration-log")
-  return result
-}
-
-export async function deleteOneConfigurationLogById(query: { id: string }) {
-  const result = await repository.deleteOne(query)
-  revalidatePath("/configuration-log")
-  return result
 }
 
 export async function findAllConfigurationLog(props: { is_configured?: boolean, query?: string }): Promise<(IConfigurationLog & { profile: IProfile })[]> {

@@ -13,6 +13,7 @@ export interface IAutoTestLog {
   auto_test_hints: AutoTestHints
   last_auto_test_result: AutoTest
   created_at: Date
+  user_id: string
 }
 
 export interface AutoTestAnalysis {

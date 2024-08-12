@@ -3,43 +3,36 @@
 import { revalidatePath } from "next/cache"
 import { IAutoTestLog } from "../definition"
 import autoTestLogRepository from "../repository/mongodb/auto-test-log.repository"
+import { auth } from "@/auth"
 
 const repository = autoTestLogRepository
 
 export async function createOneAutoTestLog(input: Omit<IAutoTestLog
-  , "created_at">) {
+  , "created_at" | "user_id">) {
+  const session = await auth()
   await repository.create({
     ...input,
+    user_id: session?.user?.id!,
     created_at: new Date()
   })
-  revalidatePath("/log")
+  revalidatePath("/auto-test-log")
   return input
 }
 
 export async function createManyAutoTestLog(input: Omit<IAutoTestLog
-  , "created_at">[]) {
+  , "created_at" | "user_id">[]) {
+  const session = await auth()
   await repository.createMany(input.map(i => ({
     ...i,
+    user_id: session?.user?.id!,
     created_at: new Date()
   })))
-  revalidatePath("/log")
+  revalidatePath("/auto-test-log")
   return input
 }
 
 export async function findOneAutoTestLog(input: Partial<IAutoTestLog>) {
   return await repository.findOne(input)
-}
-
-export async function updateOneAutoTestLogById(query: { id: string }, value: Omit<IAutoTestLog, "id" | "created_at">) {
-  const result = await repository.updateOne(query, value)
-  revalidatePath("/log")
-  return result
-}
-
-export async function deleteOneAutoTestLogById(query: { id: string }) {
-  const result = await repository.deleteOne(query)
-  revalidatePath("/log")
-  return result
 }
 
 export async function findAllAutoTestLog(): Promise<IAutoTestLog[]> {
