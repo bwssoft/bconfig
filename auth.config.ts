@@ -21,6 +21,16 @@ export const authConfig = {
       if (isLoggedIn && isLoginPage) return Response.redirect(new URL("/", nextUrl))
       return true;
     },
+    jwt({ user, token }) {
+      if (user) {
+        token = Object.assign(token, { id: user.id })
+      }
+      return token;
+    },
+    session({ session, token }) {
+      session.user.id = String(token.id)
+      return session;
+    }
   },
   providers: [], // Add providers with an empty array for now
 } satisfies NextAuthConfig;
