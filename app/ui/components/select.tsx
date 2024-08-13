@@ -45,14 +45,14 @@ export function Select<T>(props: {
   return (
     <Listbox value={selected} onChange={handleOnChange} name={name}>
       {({ open }) => (
-        <>
+        <div className="w-full">
           {label && (
             <Label className="block text-sm font-medium leading-6 text-gray-900">
               {label}
             </Label>
           )}
           <div className={cn("relative", label && "mt-2")}>
-            <ListboxButton className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
+            <ListboxButton className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600 sm:text-sm sm:leading-6">
               <span className="block truncate">
                 {selected
                   ? valueExtractor(selected)
@@ -78,7 +78,7 @@ export function Select<T>(props: {
                     key={keyExtractor(person)}
                     className={({ focus }) =>
                       cn(
-                        focus ? "bg-indigo-600 text-white" : "",
+                        focus ? "bg-blue-600 text-white" : "",
                         !focus ? "text-gray-900" : "",
                         "relative cursor-default select-none py-2 pl-8 pr-4"
                       )
@@ -99,7 +99,7 @@ export function Select<T>(props: {
                         {selected ? (
                           <span
                             className={cn(
-                              focus ? "text-white" : "text-indigo-600",
+                              focus ? "text-white" : "text-blue-600",
                               "absolute inset-y-0 left-0 flex items-center pl-1.5"
                             )}
                           >
@@ -114,7 +114,7 @@ export function Select<T>(props: {
             </Transition>
           </div>
           {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
-        </>
+        </div>
       )}
     </Listbox>
   );
