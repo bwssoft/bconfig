@@ -159,9 +159,6 @@ export function AutoTestPanel() {
                     </div>
                   );
                 }
-                const test_result_status = current_test.is_successful
-                  ? "success"
-                  : "fail";
                 return (
                   <div
                     className="flex flex-col p-4 max-w-96 bg-white shadow-lg rounded-lg"
