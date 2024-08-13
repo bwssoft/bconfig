@@ -1,5 +1,3 @@
-import CommandLogTable from "@/app/ui/tables/command-log/table";
-import { cn } from "@/app/lib/util";
 import { IAutoTestLog } from "@/app/lib/definition";
 import { StatusBadge } from "../../components/status-badge";
 
@@ -90,6 +88,46 @@ export function E34GViewAutoTestForm(props: Props) {
                       label={label}
                       iconClassname="h-3 w-3"
                     />
+                  </dd>
+                </div>
+              </div>
+              <div className="sm:col-span-full">
+                <div className="px-4 sm:px-0">
+                  <dt className="text-sm font-medium leading-6 text-gray-900">
+                    Tempo de duração
+                  </dt>
+                  <dd className="mt-1 text-sm leading-6 text-gray-700 flex gap-2">
+                    <div className="w-full">
+                      <dt className="text-sm font-medium leading-6 text-gray-900">
+                        Tempos de execução
+                      </dt>
+                      <dd className="mt-1 text-sm leading-6 text-gray-700">
+                        {new Date(
+                          auto_test.metadata.init_time_configuration
+                        ).toLocaleTimeString()}
+                      </dd>
+                    </div>
+                    <div className="w-full">
+                      <dt className="text-sm font-medium leading-6 text-gray-900">
+                        Tempo de fim
+                      </dt>
+                      <dd className="mt-1 text-sm leading-6 text-gray-700">
+                        {new Date(
+                          auto_test.metadata.end_time_configuration
+                        ).toLocaleTimeString()}
+                      </dd>
+                    </div>
+                    <div className="w-full">
+                      <dt className="text-sm font-medium leading-6 text-gray-900">
+                        Tempo de duração
+                      </dt>
+                      <dd className="mt-1 text-sm leading-6 text-gray-700">
+                        {(auto_test.metadata.end_time_configuration -
+                          auto_test.metadata.init_time_configuration) /
+                          1000}{" "}
+                        s
+                      </dd>
+                    </div>
                   </dd>
                 </div>
               </div>
