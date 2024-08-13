@@ -1,12 +1,18 @@
 import { findAllConfigurationLog } from "@/app/lib/action/configuration-log.action";
-import { SearchLogForm } from "@/app/ui/forms/log/search-log.form";
+import { SearchConfigurationLogForm } from "@/app/ui/forms/configuration-log/search-configuration-log.form";
 import ConfigurationLogTable from "@/app/ui/tables/configuration-log/table";
 
 export default async function Example(props: {
-  searchParams: { query?: string; is_configured?: string };
+  searchParams: {
+    query?: string;
+    is_configured?: string;
+    modal_is_open?: string;
+    from?: string;
+    to?: string;
+  };
 }) {
   const {
-    searchParams: { query, is_configured },
+    searchParams: { query, is_configured, modal_is_open, from, to },
   } = props;
 
   const handleQueryParams = () => {
@@ -18,6 +24,8 @@ export default async function Example(props: {
           ? true
           : undefined,
       query: query ?? "",
+      from: from ? new Date(from) : undefined,
+      to: to ? new Date(to) : undefined,
     };
   };
 
@@ -36,7 +44,10 @@ export default async function Example(props: {
         </div>
       </div>
       <div className="mt-5 flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
-        <SearchLogForm data={configurationLogs} />
+        <SearchConfigurationLogForm
+          data={configurationLogs}
+          modal_is_open={modal_is_open === "true" ? true : false}
+        />
       </div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8 space-y-12">
         <ConfigurationLogTable data={configurationLogs} />

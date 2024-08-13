@@ -35,7 +35,12 @@ export async function findOneConfigurationLog(input: Partial<IConfigurationLog>)
   return await repository.findOne(input)
 }
 
-export async function findAllConfigurationLog(props: { is_configured?: boolean, query?: string }): Promise<(IConfigurationLog & { profile: IProfile, user: IUser })[]> {
+export async function findAllConfigurationLog(props: {
+  is_configured?: boolean,
+  query?: string,
+  from?: Date,
+  to?: Date
+}): Promise<(IConfigurationLog & { profile: IProfile, user: IUser })[]> {
   const aggregate = await repository.aggregate([
     {
       $lookup: {
@@ -57,6 +62,7 @@ export async function findAllConfigurationLog(props: { is_configured?: boolean, 
       $match: {
         $and: [
           ...(typeof props.is_configured !== "undefined" ? [{ is_configured: props.is_configured }] : []),
+          ...(typeof props.from !== "undefined" && typeof props.to !== "undefined" ? [{ created_at: { $lte: new Date(props.to), $gte: new Date(props.from) } }] : []),
           {
             $or: [
               {
