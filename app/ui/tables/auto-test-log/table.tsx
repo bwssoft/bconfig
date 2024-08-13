@@ -7,6 +7,7 @@ import { IUser, TestMetadata } from "@/app/lib/definition";
 
 interface Props {
   data: {
+    id: string;
     imei: string;
     is_successful: boolean;
     created_at: Date;

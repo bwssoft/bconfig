@@ -1,6 +1,9 @@
 import { IUser, TestMetadata } from "@/app/lib/definition";
 import { cn } from "@/app/lib/util";
 import { ColumnDef } from "@tanstack/react-table";
+import Link from "next/link";
+import { Button } from "../../components/button";
+import { DocumentMagnifyingGlassIcon } from "@heroicons/react/24/outline";
 
 const statuses = {
   success: "text-green-500 bg-green-800/20",
@@ -13,6 +16,7 @@ const text = {
 };
 
 export const columns: ColumnDef<{
+  id: string;
   imei: string;
   is_successful: boolean;
   created_at: Date;
@@ -56,6 +60,30 @@ export const columns: ColumnDef<{
     cell: ({ row }) => {
       const device = row.original;
       return device.created_at.toLocaleString();
+    },
+  },
+  {
+    header: "Ações",
+    accessorKey: "port",
+    cell: ({ row }) => {
+      const log = row.original;
+      return (
+        <div className="flex gap-2">
+          <Link href={`/auto-test/E3+4G/review?id=${log.id}`} target="_blank">
+            <Button
+              variant="outlined"
+              className="p-2"
+              title="Verificar logs do auto teste"
+            >
+              <DocumentMagnifyingGlassIcon
+                width={16}
+                height={16}
+                title="Verificar logs do auto teste"
+              />
+            </Button>
+          </Link>
+        </div>
+      );
     },
   },
 ];
