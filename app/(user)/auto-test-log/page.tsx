@@ -6,11 +6,13 @@ export default async function Example(props: {
   searchParams: {
     query?: string;
     is_successful?: string;
-    modal_is_open: string;
+    modal_is_open?: string;
+    from?: string;
+    to?: string;
   };
 }) {
   const {
-    searchParams: { query, is_successful, modal_is_open },
+    searchParams: { query, is_successful, modal_is_open, from, to },
   } = props;
 
   const handleQueryParams = () => {
@@ -22,6 +24,8 @@ export default async function Example(props: {
           ? true
           : undefined,
       query: query ?? "",
+      from: from ? new Date(from) : undefined,
+      to: to ? new Date(to) : undefined,
     };
   };
 
