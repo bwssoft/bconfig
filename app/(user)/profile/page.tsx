@@ -1,7 +1,7 @@
 import { findAllProfile } from "@/app/lib/action";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
-import ProfileTable from "../ui/tables/profile/table";
+import ProfileTable from "@/app/ui/tables/profile/table";
 
 export default async function Example() {
   const profiles = await findAllProfile();

@@ -6,11 +6,11 @@ import { Input } from "../../components/input";
 import { Select } from "../../components/select";
 import { formatSearchParams } from "@/app/lib/util/format-search-params";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { IConfigurationLog, IProfile } from "@/app/lib/definition";
+import { IConfigurationLog, IProfile, IUser } from "@/app/lib/definition";
 import { jsonToXlsx } from "@/app/lib/util/json-to-xlsx";
 
 type Props = {
-  data: (IConfigurationLog & { profile: IProfile })[];
+  data: (IConfigurationLog & { profile: IProfile; user: IUser })[];
 };
 
 export function SearchLogForm(props: Props) {
@@ -33,6 +33,7 @@ export function SearchLogForm(props: Props) {
     jsonToXlsx({
       data: data.map((c) => ({
         Configurado: c.is_configured ? "Sucesso" : "Falha",
+        Usuario: c.user.name,
         Perfil: c.profile.name,
         Data: new Date(c.metadata.init_time_configuration).toLocaleString(),
         Imei: c.imei,
@@ -75,7 +76,7 @@ export function SearchLogForm(props: Props) {
       <Input
         id="Nome"
         label=""
-        placeholder="Busque por imei, iccid ou nome do perfil"
+        placeholder="Busque por imei, iccid, nome do perfil, nome do usuário"
         onChange={(e) => handleInputChange({ query: e.target.value })}
       />
       <Button variant="outlined" className="flex gap-2" onClick={handleExport}>

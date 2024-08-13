@@ -55,6 +55,26 @@ type PanicButton = boolean
 
 type WorkMode = string
 
+export type AutoTest = {
+  SN: string,
+  IC: string,
+  FW: string,
+  GPS: string,
+  GPSf: string,
+  GSM: string,
+  LTE: string,
+  IN1: string,
+  IN2: string,
+  OUT: string,
+  ACEL: string,
+  VCC: string
+  ACELC: string //"MC3632"
+  ACELP: string //"1"
+  CHARGER: string //"OK"
+  ID_ACEL: string //"71"
+  ID_MEM: string //"C22536"
+}
+
 interface Check extends Object {
   apn?: APN
   timezone?: Timezone
@@ -178,12 +198,14 @@ export class E34G {
 
   static imei(input: string) {
     if (!input.includes("IMEI=")) return undefined
-    return input.split("IMEI=")?.[1].trim() ?? undefined
+    const imei = input.split("IMEI=")?.[1].replace(/\s+/g, '')
+    return imei.length ? imei : undefined
   }
 
   static iccid(input: string) {
     if (!input.includes("ICCID=")) return undefined
-    return input.split("ICCID=")?.[1].trim() ?? undefined
+    const iccid = input.split("ICCID=")?.[1].replace(/\s+/g, '')
+    return iccid.length ? iccid : undefined
   }
 
   static et(input: string) {
@@ -369,8 +391,21 @@ export class E34G {
     return Number(gs)
   }
 
+  static auto_test(input: string): AutoTest | undefined {
+    if (!input.startsWith("SN:")) return undefined
+    const splited = input.split(",")
+    return splited.reduce((acc, cur) => {
+      const [key, value] = cur.split(":")
+      acc[key as keyof AutoTest] = value
+      return acc
+    }, {} as AutoTest)
+  }
+
 }
 
 // const check = "Sim=89883030000101192190 SOS= APN=bws.br,bws,bws TZ=W0 HB=60,1800 MG=0 TX=180 BJ=0 ACCMODE=1 TDET=0 WKMODE=0 DD=0 OD=0 ZD=7 AC=0,0 SDMS=2 TUR=1 PR=1 DK=1726 JD=48 LBS=* MODE=1 LED=1 IV=1 ACC=1 GPRS:4G E_UTRAN GPS:V PROT=E3+ DC:100,2000 Voltage:13.40,12.90 AF:OFF GS:80";
 
 // const status = "BATTERY EXTERNAL:11.49V;BATT_INT:0%;ACC:ON;GPRS:Ok;GPS:0;GSM:20;HR: ;Buffer Memory:0;Tech:4G E_UTRAN;IP:143.198.247.1;Port:2000;ENGINE MODE1"
+
+
+// const autotest SN:869671070546377,IC:89551805400523770076,FW:BWSiot_E3+4GW_V1.51 (DIV=100k+68k) (EG915U-LA) (Aug  9 2024 10:13:13),GPS:OK,GPSf:NOK,GSM:OK,LTE:OK,IN1:OK,IN2:NOK,OUT:NOK,ACELC:MC3632,ACELP:1,VCC:OK,CHARGER:OK,ID_ACEL:71,ID_MEM:C22536:BATT_VOLT:5.61V

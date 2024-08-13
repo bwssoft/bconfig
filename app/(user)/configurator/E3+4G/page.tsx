@@ -1,6 +1,6 @@
-import { findAllProfile, findOneProfile } from "../../lib/action";
-import { IProfile } from "../../lib/definition";
-import { Panel } from "../E3+4G/@components/panel";
+import { findOneProfile } from "@/app/lib/action";
+import { IProfile } from "@/app/lib/definition";
+import { ConfigPanel } from "./@components/config-panel";
 
 interface Props {
   searchParams: {
@@ -74,7 +74,7 @@ export default async function Page(props: Props) {
         profiles={[nullProfile, ...profiles]}
         currentProfileIdSelected={id}
       /> */}
-      <Panel config={profileSelected?.config} />
+      <ConfigPanel config={profileSelected?.config} />
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { findAllProfile, findOneProfile } from "../../lib/action";
+import { findAllProfile, findOneProfile } from "@/app/lib/action";
 import { Panel } from "./@components/panel";
 import { ProfileSelect } from "./@components/porfile-select";
 

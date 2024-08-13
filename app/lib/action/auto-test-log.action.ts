@@ -1,13 +1,13 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { IConfigurationLog, IProfile, IUser } from "../definition"
-import configurationLogRepository from "../repository/mongodb/configuration-log.repository"
+import { IAutoTestLog, IUser } from "../definition"
+import autoTestLogRepository from "../repository/mongodb/auto-test-log.repository"
 import { auth } from "@/auth"
 
-const repository = configurationLogRepository
+const repository = autoTestLogRepository
 
-export async function createOneConfigurationLog(input: Omit<IConfigurationLog
+export async function createOneAutoTestLog(input: Omit<IAutoTestLog
   , "created_at" | "user_id">) {
   const session = await auth()
   await repository.create({
@@ -15,11 +15,11 @@ export async function createOneConfigurationLog(input: Omit<IConfigurationLog
     user_id: session?.user?.id!,
     created_at: new Date()
   })
-  revalidatePath("/configuration-log")
+  revalidatePath("/auto-test-log")
   return input
 }
 
-export async function createManyConfigurationLog(input: Omit<IConfigurationLog
+export async function createManyAutoTestLog(input: Omit<IAutoTestLog
   , "created_at" | "user_id">[]) {
   const session = await auth()
   await repository.createMany(input.map(i => ({
@@ -27,24 +27,16 @@ export async function createManyConfigurationLog(input: Omit<IConfigurationLog
     user_id: session?.user?.id!,
     created_at: new Date()
   })))
-  revalidatePath("/configuration-log")
+  revalidatePath("/auto-test-log")
   return input
 }
 
-export async function findOneConfigurationLog(input: Partial<IConfigurationLog>) {
+export async function findOneAutoTestLog(input: Partial<IAutoTestLog>) {
   return await repository.findOne(input)
 }
 
-export async function findAllConfigurationLog(props: { is_configured?: boolean, query?: string }): Promise<(IConfigurationLog & { profile: IProfile, user: IUser })[]> {
+export async function findAllAutoTestLog(props: { is_successful?: boolean, query?: string }): Promise<(IAutoTestLog & { user: IUser })[]> {
   const aggregate = await repository.aggregate([
-    {
-      $lookup: {
-        from: "profile",
-        localField: "profile_id",
-        foreignField: "id",
-        as: "profile"
-      }
-    },
     {
       $lookup: {
         from: "user",
@@ -56,7 +48,7 @@ export async function findAllConfigurationLog(props: { is_configured?: boolean, 
     {
       $match: {
         $and: [
-          ...(typeof props.is_configured !== "undefined" ? [{ is_configured: props.is_configured }] : []),
+          ...(typeof props.is_successful !== "undefined" ? [{ is_successful: props.is_successful }] : []),
           {
             $or: [
               {
@@ -64,12 +56,6 @@ export async function findAllConfigurationLog(props: { is_configured?: boolean, 
               },
               {
                 iccid: {
-                  $regex: props?.query,
-                  $options: "i"
-                }
-              },
-              {
-                "profile.name": {
                   $regex: props?.query,
                   $options: "i"
                 }
@@ -87,20 +73,18 @@ export async function findAllConfigurationLog(props: { is_configured?: boolean, 
     },
     {
       $addFields: {
-        profile: { $first: "$profile" },
         user: { $first: "$user" }
       }
     },
     {
       $project: {
         _id: 0,
-        "profile._id": 0,
         "user._id": 0,
         "user.password": 0,
       }
     }
   ])
-  return await aggregate.toArray() as (IConfigurationLog & { profile: IProfile, user: IUser })[]
+  return await aggregate.toArray() as (IAutoTestLog & { user: IUser })[]
 }
 
 

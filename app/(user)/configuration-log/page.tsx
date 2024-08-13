@@ -1,6 +1,6 @@
-import DeviceConfiguredTable from "../ui/tables/devices-configured/table";
-import { findAllConfigurationLog } from "../lib/action/configuration-log.action";
-import { SearchLogForm } from "../ui/forms/log/search-log.form";
+import { findAllConfigurationLog } from "@/app/lib/action/configuration-log.action";
+import { SearchLogForm } from "@/app/ui/forms/log/search-log.form";
+import ConfigurationLogTable from "@/app/ui/tables/configuration-log/table";
 
 export default async function Example(props: {
   searchParams: { query?: string; is_configured?: string };
@@ -39,7 +39,7 @@ export default async function Example(props: {
         <SearchLogForm data={configurationLogs} />
       </div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8 space-y-12">
-        <DeviceConfiguredTable data={configurationLogs} />
+        <ConfigurationLogTable data={configurationLogs} />
       </div>
     </div>
   );
