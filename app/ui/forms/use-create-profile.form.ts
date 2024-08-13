@@ -34,8 +34,8 @@ const sensitivity_adjustment = z
   .coerce
   .number()
   .positive({ message: "O valor deve ser positivo" })
-  .min(60, { message: "O valor deve ser no mínimo 60" })
-  .max(2000, { message: "O valor deve ser no máximo 2000" })
+  .min(30, { message: "O valor deve ser no mínimo 30" })
+  .max(1000, { message: "O valor deve ser no máximo 1000" })
   .optional()
 
 const keep_alive = z
