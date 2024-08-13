@@ -10,8 +10,10 @@ export const authConfig = {
       const isLoginPage = nextUrl.pathname.startsWith("/login")
       const isAuthRoutes =
         nextUrl.pathname === "/" ||
+        nextUrl.pathname.startsWith("/auto-test") ||
+        nextUrl.pathname.startsWith("/auto-test-log") ||
         nextUrl.pathname.startsWith("/configurator") ||
-        nextUrl.pathname.startsWith("/log") ||
+        nextUrl.pathname.startsWith("/configuration-log") ||
         nextUrl.pathname.startsWith("/profile")
 
       if (!isAuthRoutes && !isLoggedIn) return true
