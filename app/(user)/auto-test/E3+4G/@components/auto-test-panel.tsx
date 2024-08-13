@@ -6,6 +6,7 @@ import { useE34GAutoTest } from "@/app/hook/use-E34G-auto-test";
 import DevicesToAutoTest from "@/app/ui/tables/devices-to-auto-test/table";
 import { cn } from "@/app/lib/util";
 import { Spinner } from "@/app/ui/components/spinner";
+import { StatusBadge } from "@/app/ui/components/status-badge";
 
 export function AutoTestPanel() {
   const {
@@ -168,24 +169,14 @@ export function AutoTestPanel() {
                   >
                     <div className="grid grid-cols-1 gap-4">
                       <div className="p-4 pb-0 rounded-lg">
-                        <div className="flex items-center gap-1">
-                          <div
-                            className={cn(
-                              statuses[test_result_status],
-                              "flex-none rounded-full p-1 w-fit"
-                            )}
-                          >
-                            <div className="h-1.5 w-1.5 rounded-full bg-current" />
-                          </div>
-                          <div
-                            className={cn(
-                              "hidden font-semibold sm:block",
-                              text[test_result_status]
-                            )}
-                          >
-                            {current_test.is_successful ? "Success" : "Failed"}
-                          </div>
-                        </div>
+                        <StatusBadge
+                          status={
+                            current_test.is_successful ? "success" : "error"
+                          }
+                          label={
+                            current_test.is_successful ? "Success" : "Failed"
+                          }
+                        />
                       </div>
                     </div>
 
