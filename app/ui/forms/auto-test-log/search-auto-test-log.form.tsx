@@ -12,6 +12,7 @@ import { Select } from "../../components/select";
 import { IAutoTestLog, IUser } from "@/app/lib/definition";
 import { useSearchAutoTestLogForm } from "./use-search-auto-test-log.form";
 import { Dialog } from "../../components/dialog";
+import { DateRange } from "../../components/date-range";
 
 type Props = {
   data: (IAutoTestLog & { user: IUser })[];
@@ -46,7 +47,12 @@ export function SearchAutoTestLogForm(props: Props) {
           variant="outlined"
           title="Clear filters"
           onClick={() =>
-            handleQueryChange({ is_successful: undefined, query: undefined })
+            handleQueryChange({
+              is_successful: undefined,
+              query: undefined,
+              from: undefined,
+              to: undefined,
+            })
           }
         >
           <ArrowPathIcon width={16} height={16} />
@@ -98,6 +104,23 @@ export function SearchAutoTestLogForm(props: Props) {
                 onChange={(e) => handleQueryChange({ query: e.target.value })}
                 containerClassname="w-full"
                 defaultValue={searchParams.get("query") ?? ""}
+              />
+              <DateRange
+                label="Selecione o periodo de tempo"
+                onChange={(range) => {
+                  handleQueryChange({
+                    from: range.from.toISOString(),
+                    to: range.to.toISOString(),
+                  });
+                }}
+                range={{
+                  from: searchParams.get("from")
+                    ? new Date(searchParams.get("from")!)
+                    : new Date(),
+                  to: searchParams.get("to")
+                    ? new Date(searchParams.get("to")!)
+                    : new Date(),
+                }}
               />
             </div>
             <div className="mt-6">

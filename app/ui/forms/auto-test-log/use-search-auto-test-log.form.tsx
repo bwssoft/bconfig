@@ -11,6 +11,8 @@ export function useSearchAutoTestLogForm() {
   const handleQueryChange = (input: {
     is_successful?: string;
     query?: string;
+    from?: string;
+    to?: string;
   }) => {
     const old_params = new URLSearchParams(searchParams);
     const params = formatSearchParams(input, old_params);
