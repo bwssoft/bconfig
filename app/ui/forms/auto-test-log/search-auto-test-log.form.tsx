@@ -1,53 +1,57 @@
 "use client";
 
-import { ArrowDownOnSquareIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowDownOnSquareIcon,
+  ArrowPathIcon,
+  FunnelIcon,
+  XCircleIcon,
+} from "@heroicons/react/24/outline";
 import { Button } from "../../components/button";
 import { Input } from "../../components/input";
 import { Select } from "../../components/select";
 import { IAutoTestLog, IUser } from "@/app/lib/definition";
 import { useSearchAutoTestLogForm } from "./use-search-auto-test-log.form";
+import { Dialog } from "../../components/dialog";
 
 type Props = {
   data: (IAutoTestLog & { user: IUser })[];
+  modal_is_open: boolean;
 };
 
 export function SearchAutoTestLogForm(props: Props) {
-  const { data } = props;
+  const { data, modal_is_open } = props;
 
-  const { handleInputChange, handleExport } = useSearchAutoTestLogForm();
+  const { handleQueryChange, handleExport, handleModalOpening, searchParams } =
+    useSearchAutoTestLogForm();
 
   return (
     <>
-      <Select
-        data={[
-          {
-            id: "null",
-            name: "Nenhum",
-            value: "null",
-          },
-          {
-            id: "success",
-            name: "Sucesso",
-            value: "true",
-          },
-          {
-            id: "error",
-            name: "Falha",
-            value: "false",
-          },
-        ]}
-        keyExtractor={(i) => i.id}
-        valueExtractor={(i) => i.name}
-        name=""
-        placeholder="Status do teste"
-        onChange={({ value }) => handleInputChange({ is_successful: value })}
-      />
-      <Input
-        id="Nome"
-        label=""
-        placeholder="Busque por imei, iccid, nome do usuário"
-        onChange={(e) => handleInputChange({ query: e.target.value })}
-      />
+      <div className="flex gap-2 w-full">
+        <Input
+          id="Nome"
+          label=""
+          placeholder="Busque por imei ou nome do usuário"
+          onChange={(e) => handleQueryChange({ query: e.target.value })}
+          containerClassname="max-w-sm"
+          defaultValue={searchParams.get("query") ?? ""}
+        />
+        <Button
+          variant="outlined"
+          title="Filter"
+          onClick={() => handleModalOpening(!modal_is_open)}
+        >
+          <FunnelIcon width={16} height={16} />
+        </Button>
+        <Button
+          variant="outlined"
+          title="Clear filters"
+          onClick={() =>
+            handleQueryChange({ is_successful: undefined, query: undefined })
+          }
+        >
+          <ArrowPathIcon width={16} height={16} />
+        </Button>
+      </div>
       <Button
         variant="outlined"
         className="flex gap-2"
@@ -55,6 +59,76 @@ export function SearchAutoTestLogForm(props: Props) {
       >
         <ArrowDownOnSquareIcon height={16} width={16} /> Exportar
       </Button>
+      {modal_is_open && (
+        <Dialog
+          open={modal_is_open}
+          setOpen={() => handleModalOpening(!modal_is_open)}
+        >
+          <div className="h-fit flex flex-col gap-4">
+            <div className="w-full flex justify-between items-center">
+              <p className="block text-sm font-medium leading-6 text-gray-900">
+                Modal para filtrar os logs do auto test
+              </p>
+              <Button
+                variant="outlined"
+                onClick={() => handleModalOpening(false)}
+              >
+                <XCircleIcon width={16} height={16} />
+              </Button>
+            </div>
+            <div className="flex flex-col gap-2">
+              <Select
+                data={statusOptions}
+                keyExtractor={(i) => i.id}
+                valueExtractor={(i) => i.name}
+                name="test_status"
+                label="Status do teste"
+                placeholder="Selecione um status"
+                onChange={({ value }) =>
+                  handleQueryChange({ is_successful: value })
+                }
+                value={statusOptions.find(
+                  (el) => el.value === searchParams.get("is_successful")
+                )}
+              />
+              <Input
+                id="Nome"
+                label="Serial ou nome do usuário"
+                placeholder="Busque pelo número serial ou nome do usuário"
+                onChange={(e) => handleQueryChange({ query: e.target.value })}
+                containerClassname="w-full"
+                defaultValue={searchParams.get("query") ?? ""}
+              />
+            </div>
+            <div className="mt-6">
+              <Button
+                variant="primary"
+                onClick={() => handleModalOpening(false)}
+              >
+                Aplicar Filtros
+              </Button>
+            </div>
+          </div>
+        </Dialog>
+      )}
     </>
   );
 }
+
+const statusOptions = [
+  {
+    id: "null",
+    name: "Nenhum",
+    value: "null",
+  },
+  {
+    id: "success",
+    name: "Sucesso",
+    value: "true",
+  },
+  {
+    id: "error",
+    name: "Falha",
+    value: "false",
+  },
+];

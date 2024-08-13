@@ -3,10 +3,14 @@ import { SearchAutoTestLogForm } from "@/app/ui/forms/auto-test-log/search-auto-
 import AutoTestLogTable from "@/app/ui/tables/auto-test-log/table";
 
 export default async function Example(props: {
-  searchParams: { query?: string; is_successful?: string };
+  searchParams: {
+    query?: string;
+    is_successful?: string;
+    modal_is_open: string;
+  };
 }) {
   const {
-    searchParams: { query, is_successful },
+    searchParams: { query, is_successful, modal_is_open },
   } = props;
 
   const handleQueryParams = () => {
@@ -35,8 +39,11 @@ export default async function Example(props: {
           </p>
         </div>
       </div>
-      <div className="mt-5 flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
-        <SearchAutoTestLogForm data={autoTestLog} />
+      <div className="mt-5 flex justify-between items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
+        <SearchAutoTestLogForm
+          data={autoTestLog}
+          modal_is_open={modal_is_open === "true" ? true : false}
+        />
       </div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8 space-y-12">
         <AutoTestLogTable data={autoTestLog} />

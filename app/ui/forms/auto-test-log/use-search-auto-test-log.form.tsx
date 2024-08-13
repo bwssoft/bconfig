@@ -8,7 +8,7 @@ export function useSearchAutoTestLogForm() {
   const pathname = usePathname();
   const router = useRouter();
 
-  const handleInputChange = (input: {
+  const handleQueryChange = (input: {
     is_successful?: string;
     query?: string;
   }) => {
@@ -45,11 +45,18 @@ export function useSearchAutoTestLogForm() {
     });
   };
 
+  const handleModalOpening = (open: boolean) => {
+    const old_params = new URLSearchParams(searchParams);
+    const params = formatSearchParams({ modal_is_open: open }, old_params);
+    router.push(`${pathname}?${params}`);
+  };
+
   return {
     searchParams,
     pathname,
     router,
-    handleInputChange,
+    handleQueryChange,
     handleExport,
+    handleModalOpening,
   };
 }
