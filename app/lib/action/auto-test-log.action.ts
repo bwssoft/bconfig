@@ -41,55 +41,6 @@ export async function findAllAutoTestLog(props: {
   from?: Date,
   to?: Date
 }): Promise<(IAutoTestLog & { user: IUser })[]> {
-  console.log(JSON.stringify([
-    {
-      $lookup: {
-        from: "user",
-        localField: "user_id",
-        foreignField: "id",
-        as: "user"
-      }
-    },
-    {
-      $match: {
-        $and: [
-          ...(typeof props.is_successful !== "undefined" ? [{ is_successful: props.is_successful }] : []),
-          ...(typeof props.from !== "undefined" && typeof props.to !== "undefined" ? [{ created_at: { $lte: new Date(props.to), $gte: new Date(props.from) } }] : []),
-          {
-            $or: [
-              {
-                imei: { $regex: props?.query, $options: "i" }
-              },
-              {
-                iccid: {
-                  $regex: props?.query,
-                  $options: "i"
-                }
-              },
-              {
-                "user.name": {
-                  $regex: props?.query,
-                  $options: "i"
-                }
-              }
-            ]
-          }
-        ]
-      }
-    },
-    {
-      $addFields: {
-        user: { $first: "$user" }
-      }
-    },
-    {
-      $project: {
-        _id: 0,
-        "user._id": 0,
-        "user.password": 0,
-      }
-    }
-  ], null, 2))
   const aggregate = await repository.aggregate([
     {
       $lookup: {
@@ -129,6 +80,11 @@ export async function findAllAutoTestLog(props: {
     {
       $addFields: {
         user: { $first: "$user" }
+      }
+    },
+    {
+      $sort: {
+        _id: -1
       }
     },
     {

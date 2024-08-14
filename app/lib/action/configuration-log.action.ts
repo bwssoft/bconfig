@@ -98,6 +98,11 @@ export async function findAllConfigurationLog(props: {
       }
     },
     {
+      $sort: {
+        _id: -1
+      }
+    },
+    {
       $project: {
         _id: 0,
         "profile._id": 0,
