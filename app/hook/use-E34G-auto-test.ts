@@ -155,26 +155,21 @@ export function useE34GAutoTest() {
     try {
       callback.onOpenPort()
       await openPort(port);
+      await sleep(3000)
       callback.onPortOpened()
-      // let attempts = 0
-      // const max_retries = 3
-      // Main loop to gather device info
-      // while (attempts < max_retries && (!imei || !iccid || !et)) {
       callback.onReg()
-      // await sendCommandWithRetries(port, "REG000000#");
       callback.onSms()
-      // await sendCommandWithRetries(port, "SMS1");
       callback.onEn()
-      // await sendCommandWithRetries(port, "EN");
 
       callback.onImei()
       let imei = await sendCommandWithRetries(port, "IMEI");
+      await sleep(100)
       callback.onIccid()
       let iccid = await sendCommandWithRetries(port, "ICCID");
+      await sleep(100)
       callback.onEt()
       let et = await sendCommandWithRetries(port, "ET");
-      //   attempts++
-      // }
+      await sleep(100)
 
       iccid = iccid ? E34G.iccid(iccid) : undefined
       imei = imei ? E34G.imei(imei) : undefined
