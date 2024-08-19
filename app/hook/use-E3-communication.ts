@@ -527,6 +527,19 @@ export function useE3Communication(props: { profile?: IProfile }) {
           setConfiguration(prev => prev.concat(configuration_result))
         }
         await createOneConfigurationLog(JSON.parse(JSON.stringify(configuration_result)))
+        if (is_configured) {
+          toast({
+            title: "Configurado!",
+            description: `Equipamento configurado com sucesso! (${imei})`,
+            variant: "success"
+          })
+        } else {
+          toast({
+            title: "Não Configurado!",
+            description: `Equipamento não foi configurado! (${imei})`,
+            variant: "error"
+          })
+        }
       }
       setInConfiguration(false)
     } catch (e) {
