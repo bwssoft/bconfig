@@ -156,10 +156,6 @@ export function useE34GAutoTest() {
       callback.onOpenPort()
       await openPort(port);
       await sleep(3000)
-      callback.onPortOpened()
-      callback.onReg()
-      callback.onSms()
-      callback.onEn()
 
       callback.onImei()
       let imei = await sendCommandWithRetries(port, "IMEI");
@@ -471,7 +467,7 @@ export function useE34GAutoTest() {
   const autoTestAnalysis = (autoTest: AutoTest[]) => {
     return autoTest.reduce((acc, cur) => {
 
-      acc["SIMHW"] = /^\d{19,20}$/.test(cur["IC"])
+      acc["SIMHW"] = /^[a-zA-Z0-9]{19,20}$/.test(cur["IC"])
       acc["GPS"] = cur["GPS"] === "OK" ? true : false
       // acc["GPSf"] = cur["GPSf"] === "OK" ? true : false
       // acc["GSM"] = cur["GSM"] === "OK" ? true : false
