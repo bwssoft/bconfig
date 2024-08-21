@@ -52,8 +52,8 @@ const odometer = z
   .positive({ message: "O valor deve ser positivo" })
   .optional()
 
-const removePropByOptionalFunctions = (schema: any) => {
-  const optional_functions = schema.optional_functions
+const removePropByOptionalFunctions = <T>(schema: T) => {
+  const optional_functions = (schema as any).optional_functions
   if (!optional_functions) return schema
   const parsed = JSON.parse(JSON.stringify(schema))
   Object.entries(optional_functions).forEach(([key, value]) => {
@@ -61,7 +61,7 @@ const removePropByOptionalFunctions = (schema: any) => {
       delete parsed[key]
     }
   })
-  return parsed
+  return parsed as T
 }
 
 const schema = z.preprocess(removeEmptyValues, z
