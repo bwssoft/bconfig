@@ -32,7 +32,7 @@ export async function logout() {
     await updateOneUserByEmail({ email }, { connected: false })
     await signOut({ redirect: false });
   } catch (error) {
-    console.log("error", error)
+    console.error("error", error)
     throw error;
   }
 }

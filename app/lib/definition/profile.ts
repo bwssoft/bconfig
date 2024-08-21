@@ -2,8 +2,9 @@ export interface IProfile {
   id: string
   name: string
   model: Model
-  created_at: Date
   config: Config
+  optional_functions?: Record<string, boolean>
+  created_at: Date
 }
 
 enum Model {
@@ -53,4 +54,5 @@ type Config = {
   virtual_ignition?: boolean
   sensitivity_adjustment?: number
   work_mode?: string
+  operation_mode?: boolean
 }

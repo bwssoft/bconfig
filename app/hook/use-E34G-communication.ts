@@ -235,7 +235,6 @@ export function useE34GCommunication() {
       //   attempts++
       // }
       await closePort(port);
-      console.log("check", check)
       const _check = check ? E34G.check(check) : undefined;
       return {
         profile: {

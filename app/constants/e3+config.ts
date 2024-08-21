@@ -35,6 +35,14 @@ export const functions = [
   }
 ];
 
+export const optional_functions = [
+  {
+    label: "Modo de Operação",
+    name: "operation_mode",
+    data: [{ label: "Ligado", value: true }, { label: "Desligado", value: false }]
+  },
+];
+
 export const lockType = [{ label: "Progressivo", value: 1 }, { label: "Instantâneo", value: 2 }, { label: "Inverso", value: 3 }]
 
 export const timezones = [
@@ -117,5 +125,6 @@ export const configMapped: { [key in keyof IProfile["config"]]: string } = {
   password: "Senha",
   timezone: "Fuso horário",
   virtual_ignition: "Ignição Virtual",
-  sensitivity_adjustment: "Ajuste de sensibilidade"
+  sensitivity_adjustment: "Ajuste de sensibilidade",
+  operation_mode: "Modo de Operação"
 }

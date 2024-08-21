@@ -71,7 +71,7 @@ export function ConfigPanel(props: Props) {
                 />
               </>
             ) : (
-              <Alert label="Você não tem nenhuma porta." />
+              <Alert variant="info" title="Você não tem nenhuma porta." />
             )}
           </div>
           <div className="flex justify-between gap-2">

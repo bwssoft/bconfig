@@ -52,6 +52,18 @@ const odometer = z
   .positive({ message: "O valor deve ser positivo" })
   .optional()
 
+const removePropByOptionalFunctions = (schema: any) => {
+  const optional_functions = schema.optional_functions
+  if (!optional_functions) return schema
+  const parsed = JSON.parse(JSON.stringify(schema))
+  Object.entries(optional_functions).forEach(([key, value]) => {
+    if (!value) {
+      delete parsed[key]
+    }
+  })
+  return parsed
+}
+
 const schema = z.preprocess(removeEmptyValues, z
   .object({
     name: z.string({ message: "O nome é orbigatório" }),
@@ -102,11 +114,14 @@ const schema = z.preprocess(removeEmptyValues, z
     led: z.coerce.boolean().optional().default(false),
     virtual_ignition: z.coerce.boolean().optional().default(false),
     work_mode: z.string().optional(),
+    operation_mode: z.coerce.boolean().optional(),
+    optional_functions: z.record(z.string(), z.boolean()).optional(),
     // panic_button: z.coerce.boolean().optional().default(false),
     // module_violation: z.coerce.boolean().optional().default(false),
-  })).transform(removeUndefined)
+  })).transform(removeUndefined).transform(removePropByOptionalFunctions)
 
 export type Schema = z.infer<typeof schema>;
+
 
 export function useProfileCreateForm() {
   const {
@@ -128,10 +143,11 @@ export function useProfileCreateForm() {
   const handleSubmit = hookFormSubmit(
     async (data) => {
       try {
-        const { name, model, ...config } = data;
+        const { name, model, optional_functions, ...config } = data;
         await createOneProfile({
           name,
           config,
+          optional_functions,
           model: model as IProfile["model"]
         });
         toast({
@@ -140,6 +156,7 @@ export function useProfileCreateForm() {
           variant: "success",
         })
       } catch (e) {
+        console.error(e)
         toast({
           title: "Falha!",
           description: "Falha ao registrar o perfil!",

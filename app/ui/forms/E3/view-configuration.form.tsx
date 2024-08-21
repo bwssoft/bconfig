@@ -132,7 +132,8 @@ export function ViewConfigurationForm(props: Props) {
               <div className="sm:col-span-full">
                 <div className="px-4 sm:px-0">
                   <dt className="text-sm font-medium leading-6 text-gray-900">
-                    Campos que não foram configurados
+                    Campos que não tiveram confirmação na consulta pós
+                    configuração
                   </dt>
                   <dd className="mt-1 text-sm leading-6 text-gray-700">
                     {not_configured_mapped.length > 0

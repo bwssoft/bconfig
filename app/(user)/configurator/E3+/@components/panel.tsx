@@ -64,7 +64,7 @@ export function Panel(props: Props) {
                 />
               </>
             ) : (
-              <Alert label="Você não tem nenhuma porta." />
+              <Alert variant="info" title="Você não tem nenhuma porta." />
             )}
           </div>
           <div className="flex justify-between gap-2">
@@ -74,7 +74,9 @@ export function Panel(props: Props) {
                 className="h-fit"
                 disabled={inConfiguration}
                 onClick={() =>
-                  config && handleDeviceConfiguration(identified, config)
+                  profile &&
+                  Object.keys(profile).length > 0 &&
+                  handleDeviceConfiguration(identified, profile)
                 }
               >
                 Configurar

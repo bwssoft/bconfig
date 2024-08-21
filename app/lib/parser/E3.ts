@@ -57,6 +57,8 @@ type PanicButton = boolean
 
 type WorkMode = string
 
+type OperationMode = boolean
+
 interface Check extends Object {
   apn?: APN
   timezone?: Timezone
@@ -74,6 +76,7 @@ interface Check extends Object {
   virtual_ignition?: VirtualIgnition
   panic_button?: PanicButton
   work_mode?: WorkMode
+  operation_mode?: OperationMode
 }
 
 interface Status {
@@ -151,6 +154,9 @@ export class E3 {
         }
         if (key === "ACCMODE") {
           parsed["work_mode"] = this.work_mode(value)
+        }
+        if (key === "WKMODE") {
+          parsed["operation_mode"] = this.operation_mode(value)
         }
       })
     }
@@ -362,6 +368,11 @@ export class E3 {
       return undefined
     }
     return input
+  }
+
+  static operation_mode(input: string): OperationMode | undefined {
+    if (!input || (input !== "1" && input !== "0")) return undefined
+    return input === "1" ? true : false
   }
 
   static sensitivity_adjustment(input: string): SensitivityAdjustment | undefined {

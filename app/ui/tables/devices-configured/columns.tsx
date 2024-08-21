@@ -87,27 +87,27 @@ export const columns: ColumnDef<{
   //     return <p className="w-[200px]">{step_label}</p>;
   //   },
   // },
-  {
-    header: "Campos não configurados",
-    accessorKey: "not_configured",
-    cell: ({ row }) => {
-      const device = row.original;
-      const fields = Object.keys(
-        device.not_configured
-      ) as (keyof IProfile["config"])[];
-      const displayedFields = fields.slice(0, 2);
-      const remainingCount = fields.length - displayedFields.length;
+  // {
+  //   header: "Campos não configurados",
+  //   accessorKey: "not_configured",
+  //   cell: ({ row }) => {
+  //     const device = row.original;
+  //     const fields = Object.keys(
+  //       device.not_configured
+  //     ) as (keyof IProfile["config"])[];
+  //     const displayedFields = fields.slice(0, 2);
+  //     const remainingCount = fields.length - displayedFields.length;
 
-      return fields.length ? (
-        <div>
-          {displayedFields.map((i) => configMapped[i]).join(", ")}
-          {remainingCount > 0 && <span> +{remainingCount}</span>}
-        </div>
-      ) : (
-        <p>Nenhum</p>
-      );
-    },
-  },
+  //     return fields.length ? (
+  //       <div>
+  //         {displayedFields.map((i) => configMapped[i]).join(", ")}
+  //         {remainingCount > 0 && <span> +{remainingCount}</span>}
+  //       </div>
+  //     ) : (
+  //       <p>Nenhum</p>
+  //     );
+  //   },
+  // },
   {
     header: "Ações",
     accessorKey: "port",

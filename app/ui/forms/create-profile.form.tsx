@@ -6,6 +6,7 @@ import {
   economyMode,
   functions,
   lockType,
+  optional_functions,
   timezones,
   workMode,
 } from "@/app/constants/e3+config";
@@ -16,6 +17,7 @@ import { useProfileCreateForm } from "./use-create-profile.form";
 import { Controller } from "react-hook-form";
 import Toggle from "../components/toggle";
 import { Button } from "../components/button";
+import Alert from "../components/alert";
 
 export function ProfileCreateForm() {
   const {
@@ -394,11 +396,79 @@ export function ProfileCreateForm() {
               Detalhes do equipamento e suas configurações.
             </p>
           </div>
+          <Alert
+            title="Essas funções SEMPRE gerarão um comando no momento de configurar."
+            variant="ghost"
+          />
           <div className="border-t border-gray-200 py-5">
             <div className="divide-y divide-gray-200 border-b border-t border-gray-200">
               {functions.map((func, id) => (
                 <div key={id} className="relative flex items-center py-4">
                   <div className="min-w-0 flex-1 text-sm leading-6">
+                    <label
+                      htmlFor={`functions-${func.name}`}
+                      className="select-none font-medium text-gray-900"
+                    >
+                      {func.label}
+                    </label>
+                  </div>
+                  <div className="ml-3 flex h-6 items-center gap-2">
+                    <Controller
+                      control={control}
+                      name={func.name as any}
+                      render={({ field }) => (
+                        <Toggle onChange={field.onChange} value={field.value} />
+                      )}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="additional-functions">
+        <div className="bg-white sm:rounded-lg">
+          <div className="py-5">
+            <h1
+              id="applicant-information-title"
+              className="text-base font-semibold leading-7 text-gray-900"
+            >
+              Funções
+            </h1>
+            <p className="mt-2 text-sm text-gray-700">
+              Detalhes do equipamento e suas configurações.
+            </p>
+          </div>
+          <Alert
+            title="Essas funções APENAS gerarão comandos no momento de configurar se forem habilitadas."
+            variant="ghost"
+          />
+          <div className="border-t border-gray-200 py-5">
+            <div className="divide-y divide-gray-200 border-b border-t border-gray-200">
+              {optional_functions.map((func, id) => (
+                <div key={id} className="relative flex items-center py-4">
+                  <div className="flex">
+                    <div className="flex h-6 items-center">
+                      <input
+                        id={func.name}
+                        {...register(`optional_functions.${func.name}`)}
+                        type="checkbox"
+                        aria-describedby="id-description"
+                        className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600"
+                      />
+                    </div>
+                    <div className="ml-3 text-sm leading-6">
+                      <label
+                        htmlFor={func.name}
+                        className="font-medium text-gray-600"
+                      >
+                        Ativar comando
+                      </label>
+                    </div>
+                  </div>
+                  <div className="ml-3 min-w-0 flex-1 text-sm leading-6">
                     <label
                       htmlFor={`functions-${func.name}`}
                       className="select-none font-medium text-gray-900"

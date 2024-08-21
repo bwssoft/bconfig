@@ -195,12 +195,18 @@ export class E3Encoder {
     return `IV${props ? "ON" : "OFF"}`
   }
 
-
   static work_mode(props: string): string | undefined {
     if (!["SLAVE", "MASTER", "NEGATIVE"].includes(props)) {
       return undefined
     }
     return props
+  }
+
+  static operation_mode(props: boolean): string | undefined {
+    if (typeof props !== "boolean") {
+      return undefined
+    }
+    return `WKMODE${props ? "1" : "0"}`
   }
 
   static commands() {
@@ -224,6 +230,7 @@ export class E3Encoder {
       led: E3Encoder.led,
       virtual_ignition: E3Encoder.virtual_ignition,
       work_mode: E3Encoder.work_mode,
+      operation_mode: E3Encoder.operation_mode,
     }
   }
 

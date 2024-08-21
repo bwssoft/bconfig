@@ -249,6 +249,7 @@ export function useE3Communication(props: { profile?: IProfile }) {
           led: _check?.led ?? undefined,
           virtual_ignition: _check?.virtual_ignition ?? undefined,
           work_mode: _check?.work_mode ?? undefined,
+          operation_mode: _check?.operation_mode ?? undefined,
           sensitivity_adjustment: gs ? E3.sensitivity_adjustment(gs) : undefined,
         },
         native_profile: {
@@ -415,7 +416,7 @@ export function useE3Communication(props: { profile?: IProfile }) {
       console.error("[handleDeviceIdentification]", e)
     }
   }
-  const handleDeviceConfiguration = async (devices: Identified[], desired_profile: DeviceProfile) => {
+  const handleDeviceConfiguration = async (devices: Identified[], desired_profile: IProfile) => {
     try {
       setInConfiguration(true)
       const commands = parseCommands(desired_profile)
@@ -484,12 +485,13 @@ export function useE3Communication(props: { profile?: IProfile }) {
           total_steps
         })
 
-        delete desired_profile?.password;
+        delete desired_profile.config?.password;
         const {
-          isEqual: is_configured,
-          difference: not_configured
-        } = checkWithDifference(desired_profile, actual_profile)
+          isEqual: all_fields_have_been_checked,
+          difference: fields_not_configured
+        } = checkWithDifference(desired_profile.config, actual_profile)
 
+        const is_configured = configured_device.commands_sent.every(c => typeof c.response !== "undefined")
         const id = crypto.randomUUID()
 
         const configuration_result = {
@@ -500,9 +502,9 @@ export function useE3Communication(props: { profile?: IProfile }) {
           et,
           actual_profile: actual_profile ?? undefined,
           actual_native_profile: native_profile ?? undefined,
-          desired_profile,
+          desired_profile: desired_profile.config,
           is_configured,
-          not_configured,
+          not_configured: fields_not_configured,
           metadata: configured_device,
           profile_id: profile?.id!,
           profile_name: profile?.name!
@@ -548,9 +550,13 @@ export function useE3Communication(props: { profile?: IProfile }) {
   }
 
   //util function
-  const parseCommands = (config: IProfile["config"]) => {
+  const parseCommands = (profile: IProfile) => {
     const configure_commands: string[] = [];
-    Object.entries(config).forEach(([command, args]) => {
+    Object.entries(profile.config).forEach(([command, args]) => {
+
+      const optional_functions_to_remove = profile.optional_functions ? Object.entries(profile.optional_functions).filter(([_, value]) => value === false).map(([key]) => key) : []
+      if (optional_functions_to_remove.includes(command)) return
+
       const _command = E3Encoder.encoder({ command, args } as any);
       if (_command) {
         configure_commands.push(...(Array.isArray(_command) ? _command : [_command]));

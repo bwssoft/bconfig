@@ -43,7 +43,7 @@ export function AutoTestPanel() {
                 }))}
               />
             ) : (
-              <Alert label="You have no serial ports sync." />
+              <Alert variant="info" title="You have no serial ports sync." />
             )}
           </div>
           <div className="flex justify-between gap-2">
@@ -356,7 +356,7 @@ export function AutoTestPanel() {
               })}
             </>
           ) : (
-            <Alert label="You have no results." />
+            <Alert variant="info" title="You have no results." />
           )}
         </div>
       </div>
