@@ -435,7 +435,7 @@ export function ProfileCreateForm() {
               id="applicant-information-title"
               className="text-base font-semibold leading-7 text-gray-900"
             >
-              Funções
+              Funções Opcionais
             </h1>
             <p className="mt-2 text-sm text-gray-700">
               Detalhes do equipamento e suas configurações.
