@@ -9,18 +9,16 @@ import {
 import { Button } from "../../components/button";
 import { Input } from "../../components/input";
 import { Select } from "../../components/select";
-import { IConfigurationLog, IProfile, IUser } from "@/app/lib/definition";
 import { useSearchConfigurationLogForm } from "./use-search-configuration-log.form";
 import { Dialog } from "../../components/dialog";
 import { DateRange } from "../../components/date-range";
 
 type Props = {
-  data: (IConfigurationLog & { profile: IProfile; user: IUser })[];
   modal_is_open: boolean;
 };
 
 export function SearchConfigurationLogForm(props: Props) {
-  const { data, modal_is_open } = props;
+  const { modal_is_open } = props;
 
   const { handleQueryChange, handleExport, handleModalOpening, searchParams } =
     useSearchConfigurationLogForm();
@@ -52,19 +50,18 @@ export function SearchConfigurationLogForm(props: Props) {
               query: undefined,
               from: undefined,
               to: undefined,
+              page: undefined,
             })
           }
         >
           <ArrowPathIcon width={16} height={16} />
         </Button>
       </div>
-      <Button
-        variant="outlined"
-        className="flex gap-2"
-        onClick={() => handleExport(data)}
-      >
-        <ArrowDownOnSquareIcon height={16} width={16} /> Exportar
-      </Button>
+      <form action={() => handleExport()}>
+        <Button variant="outlined" className="flex gap-2" type="submit">
+          <ArrowDownOnSquareIcon height={16} width={16} /> Exportar
+        </Button>
+      </form>
       {modal_is_open && (
         <Dialog
           open={modal_is_open}

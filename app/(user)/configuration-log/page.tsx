@@ -1,4 +1,5 @@
 import { findAllConfigurationLog } from "@/app/lib/action/configuration-log.action";
+import { Pagination } from "@/app/ui/components/pagination";
 import { SearchConfigurationLogForm } from "@/app/ui/forms/configuration-log/search-configuration-log.form";
 import ConfigurationLogTable from "@/app/ui/tables/configuration-log/table";
 
@@ -9,10 +10,11 @@ export default async function Example(props: {
     modal_is_open?: string;
     from?: string;
     to?: string;
+    page?: string;
   };
 }) {
   const {
-    searchParams: { query, is_configured, modal_is_open, from, to },
+    searchParams: { query, is_configured, modal_is_open, from, to, page },
   } = props;
 
   const handleQueryParams = () => {
@@ -26,10 +28,13 @@ export default async function Example(props: {
       query: query ?? "",
       from: from ? new Date(from) : undefined,
       to: to ? new Date(to) : undefined,
+      page: page ? Number(page) : undefined,
     };
   };
 
-  const configurationLogs = await findAllConfigurationLog(handleQueryParams());
+  const { data: configurationLogs, total } = await findAllConfigurationLog(
+    handleQueryParams()
+  );
 
   return (
     <div>
@@ -45,12 +50,14 @@ export default async function Example(props: {
       </div>
       <div className="mt-5 flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
         <SearchConfigurationLogForm
-          data={configurationLogs}
           modal_is_open={modal_is_open === "true" ? true : false}
         />
       </div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8 space-y-12">
         <ConfigurationLogTable data={configurationLogs} />
+      </div>
+      <div className="mt-5 flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8 space-y-12">
+        <Pagination total={Math.round(total / 20)} />
       </div>
     </div>
   );

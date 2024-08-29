@@ -40,10 +40,12 @@ export function DataTableDesktop<TData, TValue>({
 
   delete (rest as any).mobileKeyExtractor;
   delete (rest as any).mobileDisplayValue;
-
   return (
-    <div {...rest} className={cn("rounded-md bg-white", className)}>
-      <div className="relative w-full overflow-auto">
+    <div
+      {...rest}
+      className={cn("flex flex-col h-full rounded-md bg-white", className)}
+    >
+      <div className="flex-grow overflow-auto max-h-[400px]">
         <table className="w-full caption-bottom text-sm">
           <thead className={cn(theadClassName)}>
             {table.getHeaderGroups().map((headerGroup) => (
