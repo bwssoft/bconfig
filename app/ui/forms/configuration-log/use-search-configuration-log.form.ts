@@ -36,9 +36,11 @@ export function useSearchConfigurationLogForm() {
           params[key] = new Date(value);
         }
         if (key === "is_configured") {
-          params[key] = value === "true"
+          params[key] = value === "true" ? true : false
         }
-        params[key as 'query'] = value
+        if (key === 'query') {
+          params[key] = value
+        }
       }
     });
 
