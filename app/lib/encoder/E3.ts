@@ -49,7 +49,7 @@ export class E3Encoder {
 
   //comands
   static apn(props: APN): string | undefined {
-    if (!props?.address || !props?.user || !props?.password) {
+    if (!props?.address) {
       return undefined
     }
     return `APN*${props.address}*${props.user}*${props.password}`
