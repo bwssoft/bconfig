@@ -55,4 +55,6 @@ type Config = {
   sensitivity_adjustment?: number
   work_mode?: string
   operation_mode?: boolean
+  sleep?: number
+  max_speed?: number
 }

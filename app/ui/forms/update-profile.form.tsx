@@ -385,6 +385,26 @@ export function ProfileUpdateForm(props: Props) {
                   )}
                 />
               </div>
+              <div className="sm:col-span-1">
+                <Input
+                  {...register("max_speed")}
+                  id="max_speed"
+                  label="Velocidade Máxima"
+                  placeholder="150"
+                  type="number"
+                  error={errors.max_speed?.message}
+                />
+              </div>
+              <div className="sm:col-span-1">
+                <Input
+                  {...register("sleep")}
+                  id="sleep"
+                  label="Sleep"
+                  placeholder="2"
+                  type="number"
+                  error={errors.sleep?.message}
+                />
+              </div>
             </dl>
           </div>
         </div>

@@ -251,6 +251,8 @@ export function useE3Communication(props: { profile?: IProfile }) {
           work_mode: _check?.work_mode ?? undefined,
           operation_mode: _check?.operation_mode ?? undefined,
           sensitivity_adjustment: gs ? E3.sensitivity_adjustment(gs) : undefined,
+          max_speed: _check?.max_speed ?? undefined,
+          sleep: _check?.sleep ?? undefined,
         },
         native_profile: {
           cxip,

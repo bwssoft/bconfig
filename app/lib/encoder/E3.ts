@@ -52,7 +52,7 @@ export class E3Encoder {
     if (!props?.address) {
       return undefined
     }
-    return `APN*${props.address}*${props.user}*${props.password}`
+    return `APN*${props.address}*${props.user ?? ""}*${props.password ?? ""}`
   }
 
   static ip(props: IP): string[] | undefined {
@@ -209,6 +209,20 @@ export class E3Encoder {
     return `WKMODE${props ? "1" : "0"}`
   }
 
+  static sleep(props: number): string | undefined {
+    if (typeof props !== "number" || Number.isNaN(props)) {
+      return undefined
+    }
+    return `SLEEP${props}`
+  }
+
+  static max_speed(props: number): string | undefined {
+    if (typeof props !== "number" || Number.isNaN(props)) {
+      return undefined
+    }
+    return `SPEED${props}`
+  }
+
   static commands() {
     return {
       apn: E3Encoder.apn,
@@ -231,6 +245,8 @@ export class E3Encoder {
       virtual_ignition: E3Encoder.virtual_ignition,
       work_mode: E3Encoder.work_mode,
       operation_mode: E3Encoder.operation_mode,
+      sleep: E3Encoder.sleep,
+      max_speed: E3Encoder.max_speed,
     }
   }
 

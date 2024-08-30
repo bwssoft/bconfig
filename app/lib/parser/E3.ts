@@ -59,6 +59,10 @@ type WorkMode = string
 
 type OperationMode = boolean
 
+type MaxSpeed = number
+
+type Sleep = number
+
 interface Check extends Object {
   apn?: APN
   timezone?: Timezone
@@ -77,6 +81,8 @@ interface Check extends Object {
   panic_button?: PanicButton
   work_mode?: WorkMode
   operation_mode?: OperationMode
+  sleep?: Sleep
+  max_speed?: MaxSpeed
 }
 
 interface Status {
@@ -158,6 +164,12 @@ export class E3 {
         if (key === "WKMODE") {
           parsed["operation_mode"] = this.operation_mode(value)
         }
+        if (key === "AC") {
+          parsed["sleep"] = this.sleep(value)
+        }
+        if (key === "OD") {
+          parsed["max_speed"] = this.max_speed(value)
+        }
       })
     }
     return parsed;
@@ -203,14 +215,14 @@ export class E3 {
   * @example: www.bws.com,bws,bws
   */
   static apn(input: string): APN | undefined {
-    const values = input.split(',')
-    if (values.length !== 3) {
+    const [address, user, password] = input.split(',')
+    if (!address) {
       return undefined
     }
     return {
-      address: values?.[0],
-      user: values?.[1],
-      password: values?.[2]
+      address,
+      user,
+      password
     }
   }
 
@@ -381,6 +393,23 @@ export class E3 {
     gs = gs.split(",")?.[0]
     if (Number.isNaN(gs)) return undefined
     return Number(gs)
+  }
+
+  /*
+  * @example 30
+  */
+  static max_speed(input: string): MaxSpeed | undefined {
+    if (!input || Number.isNaN(input)) return undefined
+    return Number(input)
+  }
+
+  /*
+  * @example 0,0
+  */
+  static sleep(input: string): Sleep | undefined {
+    const [sleep, _] = input.split(',')
+    if (!sleep || Number.isNaN(sleep)) return undefined
+    return Number(sleep)
   }
 
 }

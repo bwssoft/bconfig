@@ -52,6 +52,22 @@ const odometer = z
   .positive({ message: "O valor deve ser positivo" })
   .optional()
 
+const max_speed = z
+  .coerce
+  .number()
+  .positive({ message: "O valor deve ser positivo" })
+  .min(0, { message: "O valor deve ser no mínimo 0" })
+  .max(255, { message: "O valor deve ser no máximo 255" })
+  .optional()
+
+const sleep = z
+  .coerce
+  .number()
+  .positive({ message: "O valor deve ser positivo" })
+  .min(1, { message: "O valor deve ser no mínimmo 1" })
+  .max(5, { message: "O valor deve ser no máximo 5" })
+  .optional()
+
 const removePropByOptionalFunctions = <T>(schema: T) => {
   const optional_functions = (schema as any).optional_functions
   if (!optional_functions) return schema
@@ -116,6 +132,8 @@ const schema = z.preprocess(removeEmptyValues, z
     work_mode: z.string().optional(),
     operation_mode: z.coerce.boolean().optional().default(false),
     optional_functions: z.record(z.string(), z.boolean()).optional(),
+    max_speed: max_speed,
+    sleep: sleep,
     // panic_button: z.coerce.boolean().optional().default(false),
     // module_violation: z.coerce.boolean().optional().default(false),
   })).transform(removeUndefined).transform(removePropByOptionalFunctions)
