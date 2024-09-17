@@ -204,9 +204,6 @@ export async function exportConfigurationLog(props: {
       }
     },
     {
-      $sort: { created_at: 1 } // Add this line to sort by created_at ascending
-    },
-    {
       $project: {
         _id: 0,
         "profile._id": 0,
@@ -227,7 +224,7 @@ export async function exportConfigurationLog(props: {
         doc.is_configured ? "Sucesso" : "Falha",
         doc.user.name,
         doc.profile.name,
-        new Date(doc.metadata.init_time_configuration).toLocaleString(),
+        new Date(doc.metadata.init_time_configuration).toLocaleString("pt-BR"),
         doc.imei,
         doc.iccid,
         doc.et,
