@@ -65,7 +65,6 @@ const sleep = z
   .number()
   .positive({ message: "O valor deve ser positivo" })
   .min(1, { message: "O valor deve ser no mínimmo 1" })
-  .max(5, { message: "O valor deve ser no máximo 5" })
   .optional()
 
 const removePropByOptionalFunctions = <T>(schema: T) => {
