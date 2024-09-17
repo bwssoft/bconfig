@@ -223,7 +223,7 @@ export async function exportConfigurationLog(props: {
         doc.is_configured ? "Sucesso" : "Falha",
         doc.user.name,
         doc.profile.name,
-        new Date(doc.metadata.init_time_configuration).toLocaleString("pt-BR"),
+        new Date(doc.metadata.init_time_configuration).toLocaleString(),
         doc.imei,
         doc.iccid,
         doc.et,
