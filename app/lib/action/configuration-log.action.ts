@@ -5,7 +5,6 @@ import { revalidatePath } from "next/cache"
 import * as XLSX from 'xlsx'
 import { IConfigurationLog, IProfile, IUser } from "../definition"
 import configurationLogRepository from "../repository/mongodb/configuration-log.repository"
-import { xlsxFitToColumn } from "../util/xlsx-fit-to-column"
 
 const repository = configurationLogRepository
 
@@ -232,7 +231,6 @@ export async function exportConfigurationLog(props: {
         doc.actual_native_profile?.cxip,
         doc.actual_native_profile?.dns
       ];
-      worksheet['!cols'] = xlsxFitToColumn([row]);
       XLSX.utils.sheet_add_aoa(worksheet, [row], { origin: -1 });
     }
   }
