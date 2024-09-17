@@ -1,10 +1,11 @@
 "use server"
 
+import { auth } from "@/auth"
 import { revalidatePath } from "next/cache"
+import * as XLSX from 'xlsx'
 import { IConfigurationLog, IProfile, IUser } from "../definition"
 import configurationLogRepository from "../repository/mongodb/configuration-log.repository"
-import { auth } from "@/auth"
-import * as XLSX from 'xlsx'
+import { xlsxFitToColumn } from "../util/xlsx-fit-to-column"
 
 const repository = configurationLogRepository
 
@@ -203,6 +204,9 @@ export async function exportConfigurationLog(props: {
       }
     },
     {
+      $sort: { created_at: 1 } // Add this line to sort by created_at ascending
+    },
+    {
       $project: {
         _id: 0,
         "profile._id": 0,
@@ -231,9 +235,11 @@ export async function exportConfigurationLog(props: {
         doc.actual_native_profile?.cxip,
         doc.actual_native_profile?.dns
       ];
+      worksheet['!cols'] = xlsxFitToColumn([row]);
       XLSX.utils.sheet_add_aoa(worksheet, [row], { origin: -1 });
     }
   }
+
   return workbook;
 }
 
