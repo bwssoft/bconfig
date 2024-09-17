@@ -1,10 +1,10 @@
 "use server"
 
+import { auth } from "@/auth"
 import { revalidatePath } from "next/cache"
+import * as XLSX from 'xlsx'
 import { IConfigurationLog, IProfile, IUser } from "../definition"
 import configurationLogRepository from "../repository/mongodb/configuration-log.repository"
-import { auth } from "@/auth"
-import * as XLSX from 'xlsx'
 
 const repository = configurationLogRepository
 
@@ -223,7 +223,7 @@ export async function exportConfigurationLog(props: {
         doc.is_configured ? "Sucesso" : "Falha",
         doc.user.name,
         doc.profile.name,
-        new Date(doc.metadata.init_time_configuration).toLocaleString(),
+        new Date(doc.metadata.init_time_configuration).toLocaleString("pt-BR"),
         doc.imei,
         doc.iccid,
         doc.et,
@@ -234,6 +234,7 @@ export async function exportConfigurationLog(props: {
       XLSX.utils.sheet_add_aoa(worksheet, [row], { origin: -1 });
     }
   }
+
   return workbook;
 }
 
