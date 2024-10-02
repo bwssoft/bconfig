@@ -80,6 +80,7 @@ const navigation: NavItem[] = [
         children: [
           { name: "Configurator", pathname: "/configurator/E3+4G" },
           { name: "AUTO Test", pathname: "/auto-test/E3+4G" },
+          { name: "Imei Writer", pathname: "/imei-writer/E3+4G" },
         ],
       },
     ],

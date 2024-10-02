@@ -16,7 +16,7 @@ interface Props {
     label: string;
   }[];
 }
-export default function DevicesToWriteImei(props: Props) {
+export default function DevicesToAutoTest(props: Props) {
   const { data } = props;
   return (
     <DataTable

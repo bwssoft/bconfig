@@ -93,6 +93,9 @@ export async function findAllAutoTestLog(props: {
         "user._id": 0,
         "user.password": 0,
       }
+    },
+    {
+      $limit: 20
     }
   ])
   return await aggregate.toArray() as (IAutoTestLog & { user: IUser })[]
