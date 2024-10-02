@@ -5,7 +5,9 @@ if (!process.env.MONGODB_URI) {
 }
 
 const uri = process.env.MONGODB_URI
-const options = {}
+const options = {
+  maxPoolSize: 10,
+}
 
 let client
 let clientPromise: Promise<MongoClient>
