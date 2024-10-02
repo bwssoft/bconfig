@@ -31,7 +31,7 @@ const Input = forwardRef<HTMLInputElement, Props>(
             {label}
           </label>
         )}
-        <div className={cn(label && "mt-2")}>
+        <div className={cn(label && "mt-2 relative")}>
           <input
             type="text"
             name={name}
@@ -45,7 +45,7 @@ const Input = forwardRef<HTMLInputElement, Props>(
             {...rest}
           />
         </div>
-        {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+        {error && <p className="mt-2 text-sm text-red-600 absolute">{error}</p>}
       </div>
     );
   }

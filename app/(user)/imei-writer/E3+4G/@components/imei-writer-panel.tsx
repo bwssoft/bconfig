@@ -6,6 +6,7 @@ import { useE34GImeiWriter } from "@/app/hook/use-E34G-imei-writer";
 import { Input } from "@/app/ui/components/input";
 import DevicesToWriteImei from "@/app/ui/tables/devices-to-auto-test/table";
 import DeviceConfiguredImeiTable from "@/app/ui/tables/devices-configured-imei/table";
+import { ImeiWriterForm } from "@/app/ui/forms/imei-writer/imie-writer.form";
 
 export function ImeiWriterPanel() {
   const {
@@ -17,9 +18,6 @@ export function ImeiWriterPanel() {
     inConfiguration,
     identifiedLog,
     handleDeviceIdentification,
-    handleImeiForWriting,
-    imeiForWriting,
-    inputImeiRef,
   } = useE34GImeiWriter();
 
   return (
@@ -49,29 +47,14 @@ export function ImeiWriterPanel() {
             )}
           </div>
           <div className="flex justify-between gap-2">
-            <div className="flex gap-2 items-end w-fit">
-              <Input
-                label="Enter imei for writing"
-                onChange={(e) => handleImeiForWriting(e.target.value)}
-                placeholder="Field to insert imei"
-                ref={inputImeiRef}
-              />
-              <Button
-                disabled={inConfiguration}
-                variant="primary"
-                className="h-fit whitespace-nowrap"
-                onClick={async () => {
-                  if (!imeiForWriting || !identified?.[0]) return;
-                  await handleDeviceConfiguration(
-                    identified[0],
-                    imeiForWriting
-                  );
-                  await handleDeviceIdentification([identified[0].port]);
-                }}
-              >
-                Write Imei
-              </Button>
-            </div>
+            <ImeiWriterForm
+              disabled={inConfiguration}
+              onSubmit={async (imeiForWriting) => {
+                if (!identified?.[0]) return;
+                await handleDeviceConfiguration(identified[0], imeiForWriting);
+                await handleDeviceIdentification([identified[0].port]);
+              }}
+            />
 
             <Button
               variant="outlined"

@@ -13,6 +13,9 @@ interface Props {
     desired_imei: string;
     iccid?: string;
     is_configured: boolean;
+    metadata: {
+      end_time_configuration: number;
+    };
   }[];
 }
 export default function DeviceConfiguredImeiTable(props: Props) {

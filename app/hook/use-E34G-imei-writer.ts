@@ -58,33 +58,6 @@ export function useE34GImeiWriter() {
   const [configurationLog, setConfigurationLog] = useState<ConfigurationLog[]>([])
   const [inConfiguration, setInConfiguration] = useState<boolean>(false)
 
-  // estado e função para lidar com o input que contém o imei que deseja ser gravado no equipamento
-  const [imeiForWriting, setImeiForWriting] = useState<string>()
-  const handleImeiForWriting = (input: string) => {
-    setImeiForWriting(input)
-  }
-
-  // estado, função e use effect para lidar com o auto focus no input a partir de dois apertos na tecla espaço
-  const [lastPressTime, setLastPressTime] = useState<number | null>(null);
-  const inputImeiRef = useRef<HTMLInputElement | null>(null);
-  const handleKeyDown = (event: KeyboardEvent) => {
-    if (event.code === 'Space') {
-      const currentTime = new Date().getTime();
-      if (lastPressTime && currentTime - lastPressTime < 300) { // Verifica se o tempo entre dois apertos é menor que 300ms
-        event.preventDefault()
-        inputImeiRef.current?.focus() // Foca no input
-        inputImeiRef.current && (inputImeiRef.current.value = "")
-      }
-      setLastPressTime(currentTime);
-    }
-  };
-  useEffect(() => {
-    window.addEventListener('keydown', handleKeyDown);
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [lastPressTime]);
-
   const previousPorts = useRef<ISerialPort[]>([])
   const disconnectedPorts = useRef<ISerialPort[]>([])
 
@@ -535,9 +508,6 @@ export function useE34GImeiWriter() {
     identifiedLog,
     inConfiguration,
     inIdentification,
-    imeiForWriting,
-    handleImeiForWriting,
     handleDeviceIdentification,
-    inputImeiRef
   }
 }

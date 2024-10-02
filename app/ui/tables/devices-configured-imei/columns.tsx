@@ -24,6 +24,9 @@ export const columns: ColumnDef<{
   desired_imei: string;
   iccid?: string;
   is_configured: boolean;
+  metadata: {
+    end_time_configuration: number;
+  };
 }>[] = [
   {
     header: "Configurado",
@@ -58,6 +61,17 @@ export const columns: ColumnDef<{
     cell: ({ row }) => {
       const device = row.original;
       return device.desired_imei ?? "--";
+    },
+  },
+  {
+    header: "Configurado em",
+    accessorKey: "metadata",
+    cell: ({ row }) => {
+      const device = row.original;
+      return (
+        new Date(device.metadata.end_time_configuration).toLocaleString() ??
+        "--"
+      );
     },
   },
 ];
