@@ -10,14 +10,14 @@ import {
   timezones,
   workMode,
 } from "@/app/constants/e3+config";
-import { Input } from "../components/input";
-import { Select } from "../components/select";
-import { Radio } from "../components/radio";
+import { Input } from "../../../components/input";
+import { Select } from "../../../components/select";
+import { Radio } from "../../../components/radio";
 import { useProfileCreateForm } from "./use-create-profile.form";
 import { Controller } from "react-hook-form";
-import Toggle from "../components/toggle";
-import { Button } from "../components/button";
-import Alert from "../components/alert";
+import Toggle from "../../../components/toggle";
+import { Button } from "../../../components/button";
+import Alert from "../../../components/alert";
 
 export function ProfileCreateForm() {
   const {
@@ -35,7 +35,7 @@ export function ProfileCreateForm() {
       className="flex flex-col gap-6 mt-6"
       onSubmit={handleSubmit}
     >
-      <section aria-labelledby="communication">
+      <section aria-labelledby="general">
         <div className="bg-white sm:rounded-lg">
           <div className="py-5">
             <h1
@@ -448,7 +448,7 @@ export function ProfileCreateForm() {
         </div>
       </section>
 
-      <section aria-labelledby="additional-functions">
+      <section aria-labelledby="additional-functions-optional">
         <div className="bg-white sm:rounded-lg">
           <div className="py-5">
             <h1

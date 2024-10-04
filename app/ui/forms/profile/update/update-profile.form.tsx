@@ -10,15 +10,15 @@ import {
   timezones,
   workMode,
 } from "@/app/constants/e3+config";
-import { Input } from "../components/input";
-import { Select } from "../components/select";
-import { Radio } from "../components/radio";
+import { Input } from "../../../components/input";
+import { Select } from "../../../components/select";
+import { Radio } from "../../../components/radio";
 import { Controller } from "react-hook-form";
-import Toggle from "../components/toggle";
-import { Button } from "../components/button";
+import Toggle from "../../../components/toggle";
+import { Button } from "../../../components/button";
 import { IProfile } from "@/app/lib/definition";
 import { useProfileUpdateForm } from "./use-update-profile.form";
-import Alert from "../components/alert";
+import Alert from "../../../components/alert";
 
 interface Props {
   config: IProfile;
@@ -42,7 +42,7 @@ export function ProfileUpdateForm(props: Props) {
       className="flex flex-col gap-6 mt-6"
       onSubmit={handleSubmit}
     >
-      <section aria-labelledby="communication">
+      <section aria-labelledby="general">
         <div className="bg-white sm:rounded-lg">
           <div className="py-5">
             <h1
@@ -455,7 +455,7 @@ export function ProfileUpdateForm(props: Props) {
         </div>
       </section>
 
-      <section aria-labelledby="additional-functions">
+      <section aria-labelledby="additional-functions-optional">
         <div className="bg-white sm:rounded-lg">
           <div className="py-5">
             <h1

@@ -1,5 +1,5 @@
 import { findOneAutoTestLog } from "@/app/lib/action/auto-test-log.action";
-import { E34GViewAutoTestForm } from "@/app/ui/forms/E34G/view-auto-test-log.form";
+import { E34GViewAutoTestForm } from "@/app/ui/forms/E34G-view/view-auto-test-log.form";
 
 interface Props {
   searchParams: {

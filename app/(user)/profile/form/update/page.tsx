@@ -1,5 +1,5 @@
 import { findOneProfile } from "@/app/lib/action";
-import { ProfileUpdateForm } from "@/app/ui/forms/update-profile.form";
+import { ProfileUpdateForm } from "@/app/ui/forms/profile/update/update-profile.form";
 
 interface Props {
   searchParams: { id: string };

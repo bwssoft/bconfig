@@ -1,7 +1,7 @@
 "use client";
 
 import { IProfile } from "@/app/lib/definition";
-import { ViewActualProfileForm } from "@/app/ui/forms/E3/view-actual-profile.form";
+import { ViewActualProfileForm } from "@/app/ui/forms/E3-view/view-actual-profile.form";
 
 interface Props {
   searchParams: {

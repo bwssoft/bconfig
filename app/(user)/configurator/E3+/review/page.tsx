@@ -1,5 +1,5 @@
 import { findOneConfigurationLog } from "@/app/lib/action/configuration-log.action";
-import { ViewConfigurationForm } from "@/app/ui/forms/E3/view-configuration.form";
+import { ViewConfigurationForm } from "@/app/ui/forms/E3-view/view-configuration.form";
 
 interface Props {
   searchParams: {
