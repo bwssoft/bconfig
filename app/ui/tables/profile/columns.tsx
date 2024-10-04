@@ -18,10 +18,13 @@ export const columns: ColumnDef<{
     accessorKey: "name",
     cell: ({ row }) => {
       const profile = row.original;
+      const model = profile.model;
       return (
         <td className="flex gap-2 relative whitespace-nowrap pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
           <Link
-            href={`/profile/form/update?id=${profile.id}`}
+            href={`/profile/form/update/${model.toLowerCase()}?id=${
+              profile.id
+            }`}
             className="text-indigo-600 hover:text-indigo-900"
           >
             Editar

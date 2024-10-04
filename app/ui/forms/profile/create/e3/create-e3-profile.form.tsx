@@ -2,7 +2,6 @@
 
 import {
   accelerometerSensitivity,
-  deviceModel,
   economyMode,
   functions,
   lockType,
@@ -10,16 +9,16 @@ import {
   timezones,
   workMode,
 } from "@/app/constants/e3+config";
-import { Input } from "../../../components/input";
-import { Select } from "../../../components/select";
-import { Radio } from "../../../components/radio";
-import { useProfileCreateForm } from "./use-create-profile.form";
+import { Input } from "../../../../components/input";
+import { Select } from "../../../../components/select";
+import { Radio } from "../../../../components/radio";
+import { useProfileCreateForm } from "./use-create-e3-profile.form";
 import { Controller } from "react-hook-form";
-import Toggle from "../../../components/toggle";
-import { Button } from "../../../components/button";
-import Alert from "../../../components/alert";
+import Toggle from "../../../../components/toggle";
+import { Button } from "../../../../components/button";
+import Alert from "../../../../components/alert";
 
-export function ProfileCreateForm() {
+export function E3ProfileCreateForm() {
   const {
     register,
     ipdns,
@@ -57,24 +56,6 @@ export function ProfileCreateForm() {
                   label="Nome"
                   placeholder="Perfil#00"
                   error={errors?.name?.message}
-                />
-              </div>
-              <div className="sm:col-span-1">
-                <Controller
-                  control={control}
-                  name="model"
-                  render={({ field }) => (
-                    <Select
-                      name="model"
-                      data={deviceModel}
-                      keyExtractor={(d) => d.value}
-                      valueExtractor={(d) => d.label}
-                      label="Modelo"
-                      value={deviceModel.find((d) => d.value === field.value)}
-                      onChange={(d) => field.onChange(d.value)}
-                      error={errors?.model?.message}
-                    />
-                  )}
                 />
               </div>
             </dl>

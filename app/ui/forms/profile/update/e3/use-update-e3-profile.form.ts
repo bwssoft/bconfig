@@ -1,9 +1,9 @@
 import { toast } from "@/app/hook/use-toast";
-import { createOneProfile } from "@/app/lib/action";
+import { updateOneProfileById } from "@/app/lib/action";
 import { IProfile } from "@/app/lib/definition";
 import { removeEmptyValues, removeUndefined } from "@/app/lib/util";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -65,7 +65,6 @@ const sleep = z
   .number()
   .positive({ message: "O valor deve ser positivo" })
   .min(1, { message: "O valor deve ser no mínimmo 1" })
-  .max(5, { message: "O valor deve ser no máximo 5" })
   .optional()
 
 const removePropByOptionalFunctions = <T>(schema: T) => {
@@ -83,7 +82,6 @@ const removePropByOptionalFunctions = <T>(schema: T) => {
 const schema = z.preprocess(removeEmptyValues, z
   .object({
     name: z.string({ message: "O nome é orbigatório" }),
-    model: z.enum(["E3+", "E3+4G"], { message: "O modelo deve ser E3+ ou E3+4G" }),
     password: z.object({ old: password, new: password }).optional(),
     apn: z
       .object({
@@ -130,7 +128,7 @@ const schema = z.preprocess(removeEmptyValues, z
     led: z.coerce.boolean().optional().default(false),
     virtual_ignition: z.coerce.boolean().optional().default(false),
     work_mode: z.string().optional(),
-    operation_mode: z.coerce.boolean().optional(),
+    operation_mode: z.coerce.boolean().optional().default(false),
     optional_functions: z.record(z.string(), z.boolean()).optional(),
     max_speed: max_speed,
     sleep: sleep,
@@ -140,17 +138,21 @@ const schema = z.preprocess(removeEmptyValues, z
 
 export type Schema = z.infer<typeof schema>;
 
-
-export function useProfileCreateForm() {
+interface Props {
+  defaultValues?: IProfile;
+}
+export function useE3ProfileUpdateForm(props: Props) {
+  const { defaultValues } = props;
   const {
     register,
     handleSubmit: hookFormSubmit,
     formState: { errors },
     control,
     setValue,
-    reset: hookFormReset
+    reset: hookFormReset,
   } = useForm<Schema>({
     resolver: zodResolver(schema),
+    defaultValues,
   });
 
   const [ipdns, setIpdns] = useState<"IP" | "DNS">("IP");
@@ -161,23 +163,25 @@ export function useProfileCreateForm() {
   const handleSubmit = hookFormSubmit(
     async (data) => {
       try {
-        const { name, model, optional_functions, ...config } = data;
-        await createOneProfile({
-          name,
-          config,
-          optional_functions,
-          model: model as IProfile["model"]
-        });
+        const { name, optional_functions, ...config } = data;
+        await updateOneProfileById(
+          { id: defaultValues?.id! },
+          {
+            name,
+            config,
+            optional_functions,
+            model: "E3" as IProfile["model"]
+          }
+        );
         toast({
           title: "Sucesso!",
-          description: "Perfil registrado com sucesso!",
+          description: "Perfil atualizado com sucesso!",
           variant: "success",
         })
       } catch (e) {
-        console.error(e)
         toast({
           title: "Falha!",
-          description: "Falha ao registrar o perfil!",
+          description: "Falha ao atualizar o perfil!",
           variant: "error",
         })
       }
@@ -188,7 +192,19 @@ export function useProfileCreateForm() {
         description: "Por favor, corrija os erros no formulário antes de submeter.",
         variant: "error",
       });
-    });
+    }
+  );
+
+  useEffect(() => {
+    console.log('errors', errors)
+  }, [errors])
+
+  useEffect(() => {
+    if (defaultValues) {
+      const { name, config, optional_functions } = defaultValues
+      hookFormReset({ name, optional_functions, ...config });
+    }
+  }, [defaultValues, hookFormReset]);
 
   return {
     register,

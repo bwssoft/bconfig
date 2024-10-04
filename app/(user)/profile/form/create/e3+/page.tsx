@@ -1,4 +1,4 @@
-import { ProfileCreateForm } from "@/app/ui/forms/profile/create/create-profile.form";
+import { E3ProfileCreateForm } from "@/app/ui/forms/profile/create/e3/create-e3-profile.form";
 
 export default function ProfileCreate() {
   return (
@@ -14,7 +14,7 @@ export default function ProfileCreate() {
         </div>
       </div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
-        <ProfileCreateForm />
+        <E3ProfileCreateForm />
       </div>
     </div>
   );
