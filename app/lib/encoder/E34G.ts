@@ -167,20 +167,6 @@ export class E34GEncoder {
     return `TURNDET${props ? "ON" : "OFF"}`
   }
 
-  static ignition_alert_power_cut(props: boolean): string | undefined {
-    if (typeof props !== "boolean") {
-      return undefined
-    }
-    return `BJ${props ? 1 : 0}`
-  }
-
-  static gprs_failure_alert(props: boolean): string | undefined {
-    if (typeof props !== "boolean") {
-      return undefined
-    }
-    return `JD${props ? 1 : 0}`
-  }
-
   static led(props: boolean): string | undefined {
     if (typeof props !== "boolean") {
       return undefined
@@ -195,13 +181,98 @@ export class E34GEncoder {
     return `IV${props ? "ON" : "OFF"}`
   }
 
+  static accel(props: boolean): string | undefined {
+    if (typeof props !== "boolean") {
+      return undefined
+    }
+    return `ACCEL${props ? "ON" : "OFF"}`
+  }
 
-  static work_mode(props: string): string | undefined {
-    if (!["SLAVE", "MASTER", "NEGATIVE"].includes(props)) {
+  static communication_type(props: string): string | undefined {
+    if (!["TCP", "UDP"].includes(props)) {
       return undefined
     }
     return props
   }
+
+  static protocol_type(props: string): string | undefined {
+    if (!["E3", "GT06"].includes(props)) {
+      return undefined
+    }
+    return props
+  }
+
+  static anti_theft(props: boolean): string | undefined {
+    if (typeof props !== "boolean") {
+      return undefined
+    }
+    return `AF${props ? "ON" : "OFF"}`
+  }
+
+  static horimeter(props: number): string | undefined {
+    if (typeof props !== "number" || Number.isNaN(props) || props === 0) {
+      return undefined
+    }
+    return `HR${props}`
+  }
+
+  static jammer_detection(props: boolean): string | undefined {
+    if (typeof props !== "boolean") {
+      return undefined
+    }
+    return `JD${props ? 1 : 0}`
+  }
+
+  static clear_buffer(props: boolean): string | undefined {
+    if (typeof props !== "boolean" || props === false) {
+      return undefined
+    }
+    return "CLEARBUFFER"
+  }
+
+  static clear_horimeter(props: boolean): string | undefined {
+    if (typeof props !== "boolean" || props === false) {
+      return undefined
+    }
+    return "CLEARHORIMETER"
+  }
+
+  static input_1(props: number): string | undefined {
+    if (props !== 0 && props !== 1) {
+      return undefined
+    }
+    if (props === 0) {
+      return "MASTER1"
+    }
+    if (props === 1) {
+      return "SLAVE1"
+    }
+    return undefined
+  }
+
+  static input_2(props: number): string | undefined {
+    if (props !== 0 && props !== 1 && props !== 2) {
+      return undefined
+    }
+    if (props === 0) {
+      return "NEGATIVE2"
+    }
+    if (props === 1) {
+      return "SLAVE2"
+    }
+    if (props === 2) {
+      return "MASTER2"
+    }
+    return undefined
+  }
+
+  static angle_adjustment(props: number): string | undefined {
+    if (typeof props !== "number" || Number.isNaN(props)) {
+      return undefined
+    }
+    return `TDET${props}`
+  }
+
 
   static commands() {
     return {
@@ -219,16 +290,25 @@ export class E34GEncoder {
       sensitivity_adjustment: E34GEncoder.sensitivity_adjustment,
       lbs_position: E34GEncoder.lbs_position,
       cornering_position_update: E34GEncoder.cornering_position_update,
-      ignition_alert_power_cut: E34GEncoder.ignition_alert_power_cut,
-      gprs_failure_alert: E34GEncoder.gprs_failure_alert,
       led: E34GEncoder.led,
       virtual_ignition: E34GEncoder.virtual_ignition,
-      work_mode: E34GEncoder.work_mode,
+
+      accel: E34GEncoder.accel,
+      communication_type: E34GEncoder.communication_type,
+      protocol_type: E34GEncoder.protocol_type,
+      anti_theft: E34GEncoder.anti_theft,
+      horimeter: E34GEncoder.horimeter,
+      jammer_detection: E34GEncoder.jammer_detection,
+      clear_buffer: E34GEncoder.clear_buffer,
+      clear_horimeter: E34GEncoder.clear_horimeter,
+      input_1: E34GEncoder.input_1,
+      input_2: E34GEncoder.input_2,
+      angle_adjustment: E34GEncoder.angle_adjustment
     }
   }
 
 }
 
-// const check = "Sim=89883030000101192190 SOS= APN=bws.br,bws,bws TZ=W0 HB=60,1800 MG=0 TX=180 BJ=0 ACCMODE=1 TDET=0 WKMODE=0 DD=0 OD=0 ZD=7 AC=0,0 SDMS=2 TUR=1 PR=1 DK=1726 JD=48 LBS=* MODE=1 LED=1 IV=1 ACC=1 GPRS:4G E_UTRAN GPS:V PROT=E3+ DC:100,2000 Voltage:13.40,12.90 AF:OFF GS:80";
-
 // const status = "BATTERY EXTERNAL:11.49V;BATT_INT:0%;ACC:ON;GPRS:Ok;GPS:0;GSM:20;HR: ;Buffer Memory:0;Tech:4G E_UTRAN;IP:143.198.247.1;Port:2000;ENGINE MODE1"
+
+// const check =  "Sim=VAZIO SOS=PANIC APN=bws.br,bws,bws TZ=W0 HB=60,7200 MG=0 TX=300 BJ=0 ACCMODE=1 TDET=20 WKMODE=0 DD=0 OD=120 SDMS=2 TUR=1 PROT_COM=TCP DK=0 JD=1 LBS=ON OUT_MODE=2 LED=1 IV=1 ACC=1 GPRS=2G GPS=V PROT=E3+ DC=1500,8000 Voltage=13.50,12.50 AF=OFF GS=120 ACK=30 IN2_MODE=1 MQ=OFF"

@@ -1,24 +1,27 @@
 "use client";
 
 import {
-  accelerometerSensitivity,
+  communicationType,
+  protocolType,
   economyMode,
   functions,
   lockType,
   optional_functions,
   timezones,
-  workMode,
-} from "@/app/constants/e3+config";
+  jammerDetection,
+  input1,
+  input2,
+} from "@/app/constants/e3+4gconfig";
 import { Input } from "../../../../components/input";
 import { Select } from "../../../../components/select";
 import { Radio } from "../../../../components/radio";
-import { useE3ProfileCreateForm } from "./use-create-e3-profile.form";
+import { useE34GProfileCreateForm } from "./use-create-e34g-profile.form";
 import { Controller } from "react-hook-form";
 import Toggle from "../../../../components/toggle";
 import { Button } from "../../../../components/button";
 import Alert from "../../../../components/alert";
 
-export function E3ProfileCreateForm() {
+export function E34GProfileCreateForm() {
   const {
     register,
     ipdns,
@@ -27,13 +30,20 @@ export function E3ProfileCreateForm() {
     control,
     errors,
     reset,
-  } = useE3ProfileCreateForm();
+  } = useE34GProfileCreateForm();
   return (
     <form
       autoComplete="off"
       className="flex flex-col gap-6 mt-6"
       onSubmit={handleSubmit}
     >
+      {/* 
+        1. falta o tipo de bloqueido "Definir progressão" quando for mode1 
+        2. falta "ignição por tensão" quando for igniniçaõ virtual 
+        3. não exibir ajuste de sensibilidade se a função acelerometro for false
+        4. não exibir ajuste de angulo se a função atualização da posição em curva
+        for false  
+      */}
       <section aria-labelledby="general">
         <div className="bg-white sm:rounded-lg">
           <div className="py-5">
@@ -62,7 +72,6 @@ export function E3ProfileCreateForm() {
           </div>
         </div>
       </section>
-
       <section aria-labelledby="communication">
         <div className="bg-white sm:rounded-lg">
           <div className="py-5">
@@ -204,7 +213,6 @@ export function E3ProfileCreateForm() {
           </div>
         </div>
       </section>
-
       <section aria-labelledby="general-config">
         <div className="bg-white sm:rounded-lg">
           <div className="py-5">
@@ -242,25 +250,6 @@ export function E3ProfileCreateForm() {
                     error={errors.data_transmission?.off?.message}
                   />
                 </div>
-              </div>
-              <div className="sm:col-span-1">
-                <Controller
-                  control={control}
-                  name="accelerometer_sensitivity"
-                  render={({ field }) => (
-                    <Select
-                      name="accelerometer_sensitivity"
-                      data={accelerometerSensitivity}
-                      keyExtractor={(d) => d.value}
-                      valueExtractor={(d) => d.label}
-                      label="Sensibilidade do acelerômetro"
-                      value={accelerometerSensitivity.find(
-                        (d) => d.value === field.value
-                      )}
-                      onChange={(d) => field.onChange(d.value)}
-                    />
-                  )}
-                />
               </div>
               <div className="sm:col-span-1">
                 <Controller
@@ -345,15 +334,32 @@ export function E3ProfileCreateForm() {
               <div className="sm:col-span-1">
                 <Controller
                   control={control}
-                  name="work_mode"
+                  name="input_1"
                   render={({ field }) => (
                     <Select
-                      name="work_mode"
-                      data={workMode}
+                      name="input_1"
+                      data={input1}
                       keyExtractor={(d) => d.value}
                       valueExtractor={(d) => d.label}
-                      label="Modo de trabalho"
-                      value={workMode.find((d) => d.value === field.value)}
+                      label="Entrada 1"
+                      value={input1.find((d) => d.value === field.value)}
+                      onChange={(d) => field.onChange(d.value)}
+                    />
+                  )}
+                />
+              </div>
+              <div className="sm:col-span-1">
+                <Controller
+                  control={control}
+                  name="input_2"
+                  render={({ field }) => (
+                    <Select
+                      name="input_2"
+                      data={input2}
+                      keyExtractor={(d) => d.value}
+                      valueExtractor={(d) => d.label}
+                      label="Entrada 2"
+                      value={input2.find((d) => d.value === field.value)}
                       onChange={(d) => field.onChange(d.value)}
                     />
                   )}
@@ -370,20 +376,65 @@ export function E3ProfileCreateForm() {
                 />
               </div>
               <div className="sm:col-span-1">
+                <Controller
+                  control={control}
+                  name="communication_type"
+                  render={({ field }) => (
+                    <Select
+                      name="communication_type"
+                      data={communicationType}
+                      keyExtractor={(d) => d.value}
+                      valueExtractor={(d) => d.label}
+                      label="Tipo de comunicação"
+                      value={communicationType.find(
+                        (d) => d.value === field.value
+                      )}
+                      onChange={(d) => field.onChange(d.value)}
+                    />
+                  )}
+                />
+              </div>
+              <div className="sm:col-span-1">
+                <Controller
+                  control={control}
+                  name="protocol_type"
+                  render={({ field }) => (
+                    <Select
+                      name="protocol_type"
+                      data={protocolType}
+                      keyExtractor={(d) => d.value}
+                      valueExtractor={(d) => d.label}
+                      label="Tipo do protocolo"
+                      value={protocolType.find((d) => d.value === field.value)}
+                      onChange={(d) => field.onChange(d.value)}
+                    />
+                  )}
+                />
+              </div>
+              <div className="sm:col-span-1">
                 <Input
-                  {...register("sleep")}
-                  id="sleep"
-                  label="Sleep"
-                  placeholder="2"
+                  {...register("horimeter")}
+                  id="horimeter"
+                  label="Horímetro em milissegundos"
+                  placeholder="3600"
                   type="number"
-                  error={errors.sleep?.message}
+                  error={errors.horimeter?.message}
+                />
+              </div>
+              <div className="sm:col-span-1">
+                <Input
+                  {...register("angle_adjustment")}
+                  id="angle_adjustment"
+                  label="Ajuste de ângulo"
+                  placeholder="45"
+                  type="number"
+                  error={errors.angle_adjustment?.message}
                 />
               </div>
             </dl>
           </div>
         </div>
       </section>
-
       <section aria-labelledby="additional-functions">
         <div className="bg-white sm:rounded-lg">
           <div className="py-5">
@@ -428,7 +479,6 @@ export function E3ProfileCreateForm() {
           </div>
         </div>
       </section>
-
       <section aria-labelledby="additional-functions-optional">
         <div className="bg-white sm:rounded-lg">
           <div className="py-5">
@@ -492,7 +542,6 @@ export function E3ProfileCreateForm() {
           </div>
         </div>
       </section>
-
       <div className="mt-6 flex items-center justify-end gap-x-6">
         <button
           type="button"

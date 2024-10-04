@@ -52,6 +52,12 @@ const odometer = z
   .positive({ message: "O valor deve ser positivo" })
   .optional()
 
+const horimeter = z
+  .coerce
+  .number()
+  .positive({ message: "O valor deve ser positivo" })
+  .optional()
+
 const max_speed = z
   .coerce
   .number()
@@ -60,12 +66,12 @@ const max_speed = z
   .max(255, { message: "O valor deve ser no máximo 255" })
   .optional()
 
-const sleep = z
+const angle_adjustment = z
   .coerce
   .number()
   .positive({ message: "O valor deve ser positivo" })
-  .min(1, { message: "O valor deve ser no mínimmo 1" })
-  .max(5, { message: "O valor deve ser no máximo 5" })
+  .min(5, { message: "O valor deve ser no mínimmo 5" })
+  .max(90, { message: "O valor deve ser no máximo 90" })
   .optional()
 
 const removePropByOptionalFunctions = <T>(schema: T) => {
@@ -119,28 +125,31 @@ const schema = z.preprocess(removeEmptyValues, z
       .optional(),
     odometer: odometer,
     keep_alive: keep_alive,
-    accelerometer_sensitivity: z.coerce.number().optional(),
     economy_mode: z.coerce.number().optional(),
     sensitivity_adjustment: sensitivity_adjustment,
     lbs_position: z.coerce.boolean().optional().default(false),
     cornering_position_update: z.coerce.boolean().optional().default(false),
-    ignition_alert_power_cut: z.coerce.boolean().optional().default(false),
-    gprs_failure_alert: z.coerce.boolean().optional().default(false),
     led: z.coerce.boolean().optional().default(false),
     virtual_ignition: z.coerce.boolean().optional().default(false),
-    work_mode: z.string().optional(),
-    operation_mode: z.coerce.boolean().optional(),
     optional_functions: z.record(z.string(), z.boolean()).optional(),
     max_speed: max_speed,
-    sleep: sleep,
-    // panic_button: z.coerce.boolean().optional().default(false),
-    // module_violation: z.coerce.boolean().optional().default(false),
+
+    accel: z.coerce.boolean().optional().default(false),
+    communication_type: z.string().optional(),
+    protocol_type: z.string().optional(),
+    anti_theft: z.coerce.boolean().optional().default(false),
+    horimeter: horimeter,
+    jammer_detection: z.coerce.number().optional(),
+    clear_buffer: z.coerce.boolean().optional(),
+    clear_horimeter: z.coerce.boolean().optional(),
+    input_1: z.number().optional(),
+    input_2: z.number().optional(),
+    angle_adjustment: angle_adjustment
   })).transform(removeUndefined).transform(removePropByOptionalFunctions)
 
 export type Schema = z.infer<typeof schema>;
 
-
-export function useE3ProfileCreateForm() {
+export function useE34GProfileCreateForm() {
   const {
     register,
     handleSubmit: hookFormSubmit,
@@ -165,7 +174,7 @@ export function useE3ProfileCreateForm() {
           name,
           config,
           optional_functions,
-          model: "E3" as IProfile["model"]
+          model: "E3+4G" as IProfile["model"]
         });
         toast({
           title: "Sucesso!",
