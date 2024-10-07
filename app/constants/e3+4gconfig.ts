@@ -158,5 +158,6 @@ export const configMapped: { [key in keyof IProfile["config"]]: string } = {
   clear_horimeter: "Resetar Horímetro",
   input_1: "Entrada 1",
   input_2: "Entrada 2",
-  angle_adjustment: "Ajuste de ângulo"
+  angle_adjustment: "Ajuste de ângulo",
+  lock_type_progression: "Definir progressão"
 }

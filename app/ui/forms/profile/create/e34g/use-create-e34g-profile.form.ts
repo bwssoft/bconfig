@@ -74,6 +74,12 @@ const angle_adjustment = z
   .max(90, { message: "O valor deve ser no máximo 90" })
   .optional()
 
+const lock_type_progression = z
+  .coerce
+  .number()
+  .positive({ message: "O valor deve ser positivo" })
+  .max(60000, { message: "O valor deve ser no máximo 60000" })
+
 const removePropByOptionalFunctions = <T>(schema: T) => {
   const optional_functions = (schema as any).optional_functions
   if (!optional_functions) return schema
@@ -102,11 +108,17 @@ const schema = z.preprocess(removeEmptyValues, z
         primary: z.object({
           ip: ip,
           port: port,
-        }).optional(),
+        }).optional().refine(
+          (data) => (!data?.ip?.length && !data?.port) || (data?.ip && data.port),
+          { message: "Ambos 'ip' e 'port' devem estar preenchidos ou ambos devem estar ausentes." }
+        ),
         secondary: z.object({
           ip: ip,
           port: port,
-        }).optional(),
+        }).optional().refine(
+          (data) => (!data?.ip?.length && !data?.port) || (data?.ip && data.port),
+          { message: "Ambos 'ip' e 'port' devem estar preenchidos ou ambos devem estar ausentes." }
+        ),
       })
       .optional(),
     dns: z
@@ -144,7 +156,13 @@ const schema = z.preprocess(removeEmptyValues, z
     clear_horimeter: z.coerce.boolean().optional(),
     input_1: z.number().optional(),
     input_2: z.number().optional(),
-    angle_adjustment: angle_adjustment
+    angle_adjustment: angle_adjustment,
+    lock_type_progression: z
+      .object({
+        n1: lock_type_progression,
+        n2: lock_type_progression,
+      })
+      .optional(),
   })).transform(removeUndefined).transform(removePropByOptionalFunctions)
 
 export type Schema = z.infer<typeof schema>;
@@ -156,6 +174,7 @@ export function useE34GProfileCreateForm() {
     formState: { errors },
     control,
     setValue,
+    watch,
     reset: hookFormReset
   } = useForm<Schema>({
     resolver: zodResolver(schema),
@@ -165,6 +184,8 @@ export function useE34GProfileCreateForm() {
   const handleChangeIpDns = (value: "IP" | "DNS") => {
     setIpdns(value);
   };
+
+  const lockType = watch("lock_type")
 
   const handleSubmit = hookFormSubmit(
     async (data) => {
@@ -207,5 +228,6 @@ export function useE34GProfileCreateForm() {
     reset: hookFormReset,
     handleChangeIpDns,
     ipdns,
+    lockType,
   };
 }

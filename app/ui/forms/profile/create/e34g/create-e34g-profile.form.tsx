@@ -5,7 +5,7 @@ import {
   protocolType,
   economyMode,
   functions,
-  lockType,
+  lockType as lockTypeConstant,
   optional_functions,
   timezones,
   jammerDetection,
@@ -30,6 +30,7 @@ export function E34GProfileCreateForm() {
     control,
     errors,
     reset,
+    lockType,
   } = useE34GProfileCreateForm();
   return (
     <form
@@ -152,39 +153,49 @@ export function E34GProfileCreateForm() {
               {ipdns === "IP" && (
                 <div className="sm:col-span-full">
                   <div className="flex gap-2">
-                    <div className="flex gap-2">
-                      <Input
-                        id="primary_ip"
-                        label="IP"
-                        placeholder="124.451.451.12"
-                        {...register("ip.primary.ip")}
-                        error={errors?.ip?.primary?.ip?.message}
-                      />
-                      <Input
-                        id="primary_ip_port"
-                        label="Porta"
-                        placeholder="2000"
-                        type="number"
-                        {...register("ip.primary.port")}
-                        error={errors?.ip?.primary?.port?.message}
-                      />
+                    <div className="relative">
+                      <div className="flex gap-2">
+                        <Input
+                          id="primary_ip"
+                          label="IP"
+                          placeholder="124.451.451.12"
+                          {...register("ip.primary.ip")}
+                          error={errors?.ip?.primary?.ip?.message}
+                        />
+                        <Input
+                          id="primary_ip_port"
+                          label="Porta"
+                          placeholder="2000"
+                          type="number"
+                          {...register("ip.primary.port")}
+                          error={errors?.ip?.primary?.port?.message}
+                        />
+                      </div>
+                      <p className="mt-2 text-sm text-red-600 absolute">
+                        {errors?.ip?.primary?.root?.message}
+                      </p>
                     </div>
-                    <div className="flex gap-2">
-                      <Input
-                        id="secondary_ip"
-                        label="IP"
-                        placeholder="124.451.451.12"
-                        {...register("ip.secondary.ip")}
-                        error={errors?.ip?.secondary?.ip?.message}
-                      />
-                      <Input
-                        id="secondary_ip_port"
-                        label="Porta"
-                        placeholder="2000"
-                        type="number"
-                        {...register("ip.secondary.port")}
-                        error={errors?.ip?.secondary?.port?.message}
-                      />
+                    <div className="relative">
+                      <div className="flex gap-2">
+                        <Input
+                          id="secondary_ip"
+                          label="IP"
+                          placeholder="124.451.451.12"
+                          {...register("ip.secondary.ip")}
+                          error={errors?.ip?.secondary?.ip?.message}
+                        />
+                        <Input
+                          id="secondary_ip_port"
+                          label="Porta"
+                          placeholder="2000"
+                          type="number"
+                          {...register("ip.secondary.port")}
+                          error={errors?.ip?.secondary?.port?.message}
+                        />
+                      </div>
+                      <p className="mt-2 text-sm text-red-600 absolute">
+                        {errors?.ip?.secondary?.root?.message}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -258,16 +269,45 @@ export function E34GProfileCreateForm() {
                   render={({ field }) => (
                     <Select
                       name="lock_type"
-                      data={lockType}
+                      data={lockTypeConstant}
                       keyExtractor={(d) => d.value}
                       valueExtractor={(d) => d.label}
-                      label="Tipo de bloqueio"
-                      value={lockType.find((d) => d.value === field.value)}
+                      label="Tipo do bloqueio"
+                      value={lockTypeConstant.find(
+                        (d) => d.value === field.value
+                      )}
                       onChange={(d) => field.onChange(d.value)}
                     />
                   )}
                 />
               </div>
+              {lockType === 1 ? (
+                <div className="sm:col-span-full">
+                  <dt className="text-sm font-medium text-gray-400">
+                    Definir Progressão
+                  </dt>
+                  <div className="flex gap-2 mt-2">
+                    <Input
+                      {...register("lock_type_progression.n1")}
+                      id="lock_type_progression_n1"
+                      label="N1"
+                      placeholder="60"
+                      type="number"
+                      error={errors.lock_type_progression?.n1?.message}
+                    />
+                    <Input
+                      {...register("lock_type_progression.n2")}
+                      id="lock_type_progression_n2"
+                      label="n2"
+                      placeholder="180"
+                      type="number"
+                      error={errors.lock_type_progression?.n2?.message}
+                    />
+                  </div>
+                </div>
+              ) : (
+                <></>
+              )}
               <div className="sm:col-span-1">
                 <Controller
                   control={control}

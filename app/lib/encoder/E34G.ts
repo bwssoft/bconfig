@@ -32,6 +32,11 @@ type DataTransmission = {
 
 type Timezone = number
 
+type LockTypeProgression = {
+  n1: number
+  n2: number
+}
+
 type Encoder =
   | { command: "apn"; args: APN }
   | { command: "ip"; args: IP }
@@ -273,6 +278,13 @@ export class E34GEncoder {
     return `TDET${props}`
   }
 
+  static lock_type_progression(props: LockTypeProgression): string | undefined {
+    if (!props?.n1 || !props?.n2) {
+      return undefined
+    }
+    return `DC*${props.n1}*${props.n2}`
+  }
+
 
   static commands() {
     return {
@@ -303,7 +315,8 @@ export class E34GEncoder {
       clear_horimeter: E34GEncoder.clear_horimeter,
       input_1: E34GEncoder.input_1,
       input_2: E34GEncoder.input_2,
-      angle_adjustment: E34GEncoder.angle_adjustment
+      angle_adjustment: E34GEncoder.angle_adjustment,
+      lock_type_progression: E34GEncoder.lock_type_progression
     }
   }
 
