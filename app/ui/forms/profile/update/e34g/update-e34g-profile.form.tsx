@@ -15,13 +15,18 @@ import {
 import { Input } from "../../../../components/input";
 import { Select } from "../../../../components/select";
 import { Radio } from "../../../../components/radio";
-import { useE34GProfileCreateForm } from "./use-create-e34g-profile.form";
+import { useE34GProfileUpdateForm } from "./use-update-e34g-profile.form";
 import { Controller } from "react-hook-form";
 import Toggle from "../../../../components/toggle";
 import { Button } from "../../../../components/button";
 import Alert from "../../../../components/alert";
+import { IProfile } from "@/app/lib/definition";
 
-export function E34GProfileCreateForm() {
+interface Props {
+  config: IProfile;
+}
+export function E34GProfileUpdateForm(props: Props) {
+  const { config } = props;
   const {
     register,
     ipdns,
@@ -32,7 +37,7 @@ export function E34GProfileCreateForm() {
     reset,
     lockType,
     watch,
-  } = useE34GProfileCreateForm();
+  } = useE34GProfileUpdateForm({ defaultValues: config });
   return (
     <form
       autoComplete="off"
