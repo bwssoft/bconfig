@@ -69,4 +69,12 @@ type Config = {
   input_1?: number
   input_2?: number
   angle_adjustment?: number
+  lock_type_progression?: {
+    n1: number
+    n2: number
+  }
+  ignition_by_voltage?: {
+    t1: number
+    t2: number
+  }
 }

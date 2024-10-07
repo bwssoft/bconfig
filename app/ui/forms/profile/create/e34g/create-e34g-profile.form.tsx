@@ -31,6 +31,7 @@ export function E34GProfileCreateForm() {
     errors,
     reset,
     lockType,
+    watch,
   } = useE34GProfileCreateForm();
   return (
     <form
@@ -344,16 +345,6 @@ export function E34GProfileCreateForm() {
               </div>
               <div className="sm:col-span-1">
                 <Input
-                  {...register("sensitivity_adjustment")}
-                  id="sensibility"
-                  label="Ajuste de Sensibilidade"
-                  placeholder="500"
-                  type="number"
-                  error={errors.sensitivity_adjustment?.message}
-                />
-              </div>
-              <div className="sm:col-span-1">
-                <Input
                   {...register("keep_alive")}
                   id="keep_alive"
                   label="Tempo Keep Alive (Segundos)"
@@ -461,21 +452,11 @@ export function E34GProfileCreateForm() {
                   error={errors.horimeter?.message}
                 />
               </div>
-              <div className="sm:col-span-1">
-                <Input
-                  {...register("angle_adjustment")}
-                  id="angle_adjustment"
-                  label="Ajuste de ângulo"
-                  placeholder="45"
-                  type="number"
-                  error={errors.angle_adjustment?.message}
-                />
-              </div>
             </dl>
           </div>
         </div>
       </section>
-      <section aria-labelledby="additional-functions">
+      <section aria-labelledby="functions">
         <div className="bg-white sm:rounded-lg">
           <div className="py-5">
             <h1
@@ -515,11 +496,132 @@ export function E34GProfileCreateForm() {
                   </div>
                 </div>
               ))}
+
+              <div>
+                <div className="relative flex items-center py-4">
+                  <div className="min-w-0 flex-1 text-sm leading-6">
+                    <label
+                      htmlFor={"functions-accel"}
+                      className="select-none font-medium text-gray-900"
+                    >
+                      Acelerômetro
+                    </label>
+                  </div>
+                  <div className="ml-3 flex h-6 items-center gap-2">
+                    <Controller
+                      control={control}
+                      name={"accel"}
+                      render={({ field }) => (
+                        <Toggle onChange={field.onChange} value={field.value} />
+                      )}
+                    />
+                  </div>
+                </div>
+                {watch("accel") ? (
+                  <div className="sm:col-span-1">
+                    <Input
+                      {...register("sensitivity_adjustment")}
+                      id="sensibility"
+                      label="Ajuste de Sensibilidade"
+                      placeholder="500"
+                      type="number"
+                      error={errors.sensitivity_adjustment?.message}
+                    />
+                  </div>
+                ) : (
+                  <></>
+                )}
+              </div>
+
+              <div>
+                <div className="relative flex items-center py-4">
+                  <div className="min-w-0 flex-1 text-sm leading-6">
+                    <label
+                      htmlFor={"functions-cornering_position_update"}
+                      className="select-none font-medium text-gray-900"
+                    >
+                      Atualização da posição em curva
+                    </label>
+                  </div>
+                  <div className="ml-3 flex h-6 items-center gap-2">
+                    <Controller
+                      control={control}
+                      name={"cornering_position_update"}
+                      render={({ field }) => (
+                        <Toggle onChange={field.onChange} value={field.value} />
+                      )}
+                    />
+                  </div>
+                </div>
+                {watch("cornering_position_update") ? (
+                  <div className="sm:col-span-1">
+                    <Input
+                      {...register("angle_adjustment")}
+                      id="angle_adjustment"
+                      label="Ajuste de ângulo"
+                      placeholder="45"
+                      type="number"
+                      error={errors.angle_adjustment?.message}
+                    />
+                  </div>
+                ) : (
+                  <></>
+                )}
+              </div>
+
+              <div>
+                <div className="relative flex items-center py-4">
+                  <div className="min-w-0 flex-1 text-sm leading-6">
+                    <label
+                      htmlFor={"functions-virtual_ignition"}
+                      className="select-none font-medium text-gray-900"
+                    >
+                      Ignição Virtual
+                    </label>
+                  </div>
+                  <div className="ml-3 flex h-6 items-center gap-2">
+                    <Controller
+                      control={control}
+                      name={"virtual_ignition"}
+                      render={({ field }) => (
+                        <Toggle onChange={field.onChange} value={field.value} />
+                      )}
+                    />
+                  </div>
+                </div>
+                {watch("virtual_ignition") ? (
+                  <div className="sm:col-span-full">
+                    <dt className="text-sm font-medium text-gray-400">
+                      Definir Ignição por voltagem
+                    </dt>
+                    <div className="flex gap-2 mt-2">
+                      <Input
+                        {...register("ignition_by_voltage")}
+                        id="ignition_by_voltage_t1"
+                        label="t1"
+                        placeholder="60"
+                        type="number"
+                        error={errors.ignition_by_voltage?.t1?.message}
+                      />
+                      <Input
+                        {...register("ignition_by_voltage.t2")}
+                        id="ignition_by_voltage_t2"
+                        label="t2"
+                        placeholder="180"
+                        type="number"
+                        error={errors.ignition_by_voltage?.t2?.message}
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <></>
+                )}
+              </div>
             </div>
           </div>
         </div>
       </section>
-      <section aria-labelledby="additional-functions-optional">
+      <section aria-labelledby="functions-optional">
         <div className="bg-white sm:rounded-lg">
           <div className="py-5">
             <h1

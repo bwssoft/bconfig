@@ -12,18 +12,8 @@ export const functions = [
     data: [{ label: "Ligado", value: true }, { label: "Desligado", value: false }]
   },
   {
-    label: "Acelerômetro",
-    name: "accel",
-    data: [{ label: "Ligado", value: true }, { label: "Desligado", value: false }]
-  },
-  {
     label: "Posição de LBS",
     name: "lbs_position",
-    data: [{ label: "Ligado", value: true }, { label: "Desligado", value: false }]
-  },
-  {
-    label: "Atualização da posição em curva",
-    name: "cornering_position_update",
     data: [{ label: "Ligado", value: true }, { label: "Desligado", value: false }]
   },
   {
@@ -31,11 +21,6 @@ export const functions = [
     name: "led",
     data: [{ label: "Ligado", value: true }, { label: "Desligado", value: false }]
   },
-  {
-    label: "Ignição Virtual",
-    name: "virtual_ignition",
-    data: [{ label: "Ligado", value: true }, { label: "Desligado", value: false }]
-  }
 ];
 
 export const optional_functions = [
@@ -159,5 +144,6 @@ export const configMapped: { [key in keyof IProfile["config"]]: string } = {
   input_1: "Entrada 1",
   input_2: "Entrada 2",
   angle_adjustment: "Ajuste de ângulo",
-  lock_type_progression: "Definir progressão"
+  lock_type_progression: "Definir progressão",
+  ignition_by_voltage: "Ignição por voltagem"
 }

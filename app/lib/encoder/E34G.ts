@@ -37,6 +37,11 @@ type LockTypeProgression = {
   n2: number
 }
 
+type IgnitionByVoltage = {
+  t1: number
+  t2: number
+}
+
 type Encoder =
   | { command: "apn"; args: APN }
   | { command: "ip"; args: IP }
@@ -286,6 +291,15 @@ export class E34GEncoder {
   }
 
 
+  static ignition_by_voltage(props: IgnitionByVoltage): string | undefined {
+    if (!props?.t1 || !props?.t2) {
+      return undefined
+    }
+    return `VOLTAGE*${props.t1}*${props.t2}`
+  }
+
+
+
   static commands() {
     return {
       apn: E34GEncoder.apn,
@@ -316,7 +330,8 @@ export class E34GEncoder {
       input_1: E34GEncoder.input_1,
       input_2: E34GEncoder.input_2,
       angle_adjustment: E34GEncoder.angle_adjustment,
-      lock_type_progression: E34GEncoder.lock_type_progression
+      lock_type_progression: E34GEncoder.lock_type_progression,
+      ignition_by_voltage: E34GEncoder.ignition_by_voltage
     }
   }
 

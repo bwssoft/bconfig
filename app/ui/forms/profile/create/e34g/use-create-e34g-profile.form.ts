@@ -80,6 +80,12 @@ const lock_type_progression = z
   .positive({ message: "O valor deve ser positivo" })
   .max(60000, { message: "O valor deve ser no máximo 60000" })
 
+const ignition_by_voltage = z
+  .coerce
+  .number()
+  .positive({ message: "O valor deve ser positivo" })
+  .max(90, { message: "O valor deve ser no máximo 90" })
+
 const removePropByOptionalFunctions = <T>(schema: T) => {
   const optional_functions = (schema as any).optional_functions
   if (!optional_functions) return schema
@@ -163,6 +169,12 @@ const schema = z.preprocess(removeEmptyValues, z
         n2: lock_type_progression,
       })
       .optional(),
+    ignition_by_voltage: z
+      .object({
+        t1: ignition_by_voltage,
+        t2: ignition_by_voltage,
+      })
+      .optional(),
   })).transform(removeUndefined).transform(removePropByOptionalFunctions)
 
 export type Schema = z.infer<typeof schema>;
@@ -175,7 +187,7 @@ export function useE34GProfileCreateForm() {
     control,
     setValue,
     watch,
-    reset: hookFormReset
+    reset: hookFormReset,
   } = useForm<Schema>({
     resolver: zodResolver(schema),
   });
@@ -229,5 +241,6 @@ export function useE34GProfileCreateForm() {
     handleChangeIpDns,
     ipdns,
     lockType,
+    watch,
   };
 }
