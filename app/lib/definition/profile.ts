@@ -63,7 +63,7 @@ type Config = {
   protocol_type?: string
   anti_theft?: boolean
   horimeter?: number
-  jammer_detection?: number
+  jammer_detection?: boolean
   clear_buffer?: boolean
   clear_horimeter?: boolean
   input_1?: number

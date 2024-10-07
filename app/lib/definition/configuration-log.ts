@@ -17,6 +17,7 @@ export interface IConfigurationLog {
   profile_name: string
   created_at: Date
   user_id: string
+  model: "E3+" | "E3+4G"
 }
 
 

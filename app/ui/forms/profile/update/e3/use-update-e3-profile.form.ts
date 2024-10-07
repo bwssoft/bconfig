@@ -170,7 +170,7 @@ export function useE3ProfileUpdateForm(props: Props) {
             name,
             config,
             optional_functions,
-            model: "E3" as IProfile["model"]
+            model: "E3+" as IProfile["model"]
           }
         );
         toast({
@@ -194,10 +194,6 @@ export function useE3ProfileUpdateForm(props: Props) {
       });
     }
   );
-
-  useEffect(() => {
-    console.log('errors', errors)
-  }, [errors])
 
   useEffect(() => {
     if (defaultValues) {

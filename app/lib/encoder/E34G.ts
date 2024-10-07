@@ -150,7 +150,7 @@ export class E34GEncoder {
   }
 
   static economy_mode(props: string): string | undefined {
-    if (typeof props !== "number" || Number.isNaN(props) || (props < 0 || props > 1)) {
+    if (typeof props !== "number" || Number.isNaN(props) || (props < 0 || props > 2)) {
       return undefined
     }
     return `SDMS${props}`
@@ -206,7 +206,7 @@ export class E34GEncoder {
   }
 
   static protocol_type(props: string): string | undefined {
-    if (!["E3", "GT06"].includes(props)) {
+    if (!["E3+", "GT06"].includes(props)) {
       return undefined
     }
     return props
@@ -298,6 +298,13 @@ export class E34GEncoder {
     return `VOLTAGE*${props.t1}*${props.t2}`
   }
 
+  static max_speed(props: number): string | undefined {
+    if (typeof props !== "number" || Number.isNaN(props)) {
+      return undefined
+    }
+    return `SPEED${props}`
+  }
+
 
 
   static commands() {
@@ -331,7 +338,8 @@ export class E34GEncoder {
       input_2: E34GEncoder.input_2,
       angle_adjustment: E34GEncoder.angle_adjustment,
       lock_type_progression: E34GEncoder.lock_type_progression,
-      ignition_by_voltage: E34GEncoder.ignition_by_voltage
+      ignition_by_voltage: E34GEncoder.ignition_by_voltage,
+      max_speed: E34GEncoder.max_speed
     }
   }
 

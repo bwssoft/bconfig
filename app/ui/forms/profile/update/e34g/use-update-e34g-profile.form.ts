@@ -157,7 +157,7 @@ const schema = z.preprocess(removeEmptyValues, z
     protocol_type: z.string().optional(),
     anti_theft: z.coerce.boolean().optional().default(false),
     horimeter: horimeter,
-    jammer_detection: z.coerce.number().optional(),
+    jammer_detection: z.coerce.boolean().optional().default(false),
     clear_buffer: z.coerce.boolean().optional(),
     clear_horimeter: z.coerce.boolean().optional(),
     input_1: z.number().optional(),
@@ -214,7 +214,7 @@ export function useE34GProfileUpdateForm(props: Props) {
             name,
             config,
             optional_functions,
-            model: "E3" as IProfile["model"]
+            model: "E3+4G" as IProfile["model"]
           }
         );
         toast({

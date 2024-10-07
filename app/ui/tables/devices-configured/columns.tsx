@@ -27,6 +27,7 @@ export const columns: ColumnDef<{
   is_configured: boolean;
   not_configured: any;
   profile_name: string;
+  model: string;
 }>[] = [
   {
     header: "Configurado",
@@ -116,7 +117,7 @@ export const columns: ColumnDef<{
       return (
         <div className="flex gap-2">
           <Link
-            href={`/configurator/E3+/review?id=${configuration.id}`}
+            href={`/configurator/${configuration.model}/review?id=${configuration.id}`}
             target="_blank"
           >
             <Button

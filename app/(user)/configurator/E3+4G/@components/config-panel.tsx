@@ -11,11 +11,12 @@ import { ConfigurationProgress } from "@/app/ui/components/configuration-progres
 import { useE34GCommunication } from "@/app/hook/use-E34G-communication";
 
 interface Props {
-  config?: IProfile["config"];
+  profile?: IProfile;
 }
 
 export function ConfigPanel(props: Props) {
-  const { config } = props;
+  const { profile } = props;
+  const { config } = profile ?? {};
   const {
     configuration,
     identified,
@@ -27,7 +28,7 @@ export function ConfigPanel(props: Props) {
     ports,
     inIdentification,
     inConfiguration,
-  } = useE34GCommunication();
+  } = useE34GCommunication({ profile });
 
   const handleExport = (input: typeof configuration) => {
     jsonToXlsx({
@@ -66,8 +67,13 @@ export function ConfigPanel(props: Props) {
                   inIdentification={inIdentification}
                 />
                 <DevicesToConfigureTable
-                  model={"E3+4G" as IProfile["model"]}
-                  data={identified.map((d) => ({ ...d, getDeviceProfile }))}
+                  model={"E3+" as IProfile["model"]}
+                  data={identified.map((d) => ({
+                    ...d,
+                    getDeviceProfile,
+                    progress: identifiedLog.find((el) => el.port === d.port)
+                      ?.progress,
+                  }))}
                 />
               </>
             ) : (
@@ -80,7 +86,9 @@ export function ConfigPanel(props: Props) {
                 variant="primary"
                 className="h-fit"
                 onClick={() =>
-                  config && handleDeviceConfiguration(identified, config)
+                  profile &&
+                  Object.keys(profile).length > 0 &&
+                  handleDeviceConfiguration(identified, profile)
                 }
               >
                 Configurar
