@@ -209,7 +209,7 @@ export class E34GEncoder {
     if (!["E3+", "GT06"].includes(props)) {
       return undefined
     }
-    return props
+    return `CHGPROT${props}`
   }
 
   static anti_theft(props: boolean): string | undefined {
@@ -248,30 +248,30 @@ export class E34GEncoder {
   }
 
   static input_1(props: number): string | undefined {
-    if (props !== 0 && props !== 1) {
+    if (props !== 1 && props !== 2) {
       return undefined
     }
-    if (props === 0) {
+    if (props === 1) {
       return "MASTER1"
     }
-    if (props === 1) {
+    if (props === 2) {
       return "SLAVE1"
     }
     return undefined
   }
 
   static input_2(props: number): string | undefined {
-    if (props !== 0 && props !== 1 && props !== 2) {
+    if (props !== 1 && props !== 2 && props !== 3) {
       return undefined
     }
-    if (props === 0) {
-      return "NEGATIVE2"
-    }
     if (props === 1) {
-      return "SLAVE2"
+      return "MASTER2"
     }
     if (props === 2) {
-      return "MASTER2"
+      return "SLAVE2"
+    }
+    if (props === 3) {
+      return "NEGATIVE2"
     }
     return undefined
   }

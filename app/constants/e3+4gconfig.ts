@@ -105,14 +105,14 @@ export const jammerDetection = [
 ]
 
 export const input1 = [
-  { value: 0, label: "Ignição" },
-  { value: 1, label: "SOS" },
+  { value: 1, label: "Ignição" },
+  { value: 2, label: "SOS" },
 ]
 
 export const input2 = [
-  { value: 0, label: "Módulo" },
-  { value: 1, label: "SOS" },
-  { value: 2, label: "Monitora" },
+  { value: 1, label: "Monitora" },
+  { value: 2, label: "SOS" },
+  { value: 3, label: "Módulo" },
 ]
 
 export const configMapped: { [key in keyof IProfile["config"]]: string } = {
