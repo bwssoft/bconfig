@@ -250,7 +250,7 @@ export function SideBar(props: Props) {
                       <ul role="list" className="flex flex-1 flex-col gap-y-7">
                         <li>
                           <ul role="list" className="-mx-2 space-y-1">
-                            {navigation[user.type].map((item) =>
+                            {navigation[user.type ?? "employee"].map((item) =>
                               renderNavItem(item)
                             )}
                           </ul>
@@ -279,7 +279,9 @@ export function SideBar(props: Props) {
               <ul role="list" className="flex flex-1 flex-col gap-y-7">
                 <li>
                   <ul role="list" className="-mx-2 space-y-1">
-                    {navigation[user.type].map((item) => renderNavItem(item))}
+                    {navigation[user.type ?? "external"].map((item) =>
+                      renderNavItem(item)
+                    )}
                   </ul>
                 </li>
                 <li className="-mx-6 mt-auto flex items-center justify-between">
