@@ -5,4 +5,5 @@ export interface IUser {
   name: string
   created_at: Date
   connected: boolean
+  type: "employee" | "external" | "client"
 }

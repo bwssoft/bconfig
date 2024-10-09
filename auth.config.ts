@@ -25,12 +25,13 @@ export const authConfig = {
     },
     jwt({ user, token }) {
       if (user) {
-        token = Object.assign(token, { id: user.id })
+        token = Object.assign(token, { id: user.id, type: user.type })
       }
-      return token;
+      return token
     },
     session({ session, token }) {
       session.user.id = String(token.id)
+      session.user.type = token.type as "external" | "client" | "employee"
       return session;
     }
   },

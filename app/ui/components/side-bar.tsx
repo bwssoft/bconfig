@@ -39,7 +39,7 @@ import { Button } from "./button";
 import { IUser } from "@/app/lib/definition";
 import { useRouter } from "next/navigation";
 
-type NavItem = {
+export type NavItem = {
   name: string;
   icon?: ForwardRefExoticComponent<
     Omit<SVGProps<SVGSVGElement>, "ref"> & {
@@ -50,7 +50,26 @@ type NavItem = {
   pathname?: string;
   children?: NavItem[];
 };
-const navigation: NavItem[] = [
+
+const getPaddingClass = (depth: number) => {
+  switch (depth) {
+    case 0:
+      return "";
+    case 1:
+      return "pl-5";
+    case 2:
+      return "pl-8";
+    default:
+      return `pl-${9 + (depth - 1) * 3}`;
+  }
+};
+
+interface Props {
+  user: Omit<IUser, "password">;
+  logout: () => Promise<void>;
+}
+
+const employeeNavigation: NavItem[] = [
   { name: "Dashboard", icon: HomeIcon, pathname: "/" },
   { name: "Configuration Profile", pathname: "/profile", icon: UsersIcon },
   {
@@ -87,23 +106,18 @@ const navigation: NavItem[] = [
   },
 ];
 
-const getPaddingClass = (depth: number) => {
-  switch (depth) {
-    case 0:
-      return "";
-    case 1:
-      return "pl-5";
-    case 2:
-      return "pl-8";
-    default:
-      return `pl-${9 + (depth - 1) * 3}`;
-  }
-};
+const clientNavigation: NavItem[] = [
+  { name: "Dashboard", icon: HomeIcon, pathname: "/" },
+  { name: "Configuration", pathname: "/configuration", icon: WrenchIcon },
+];
 
-interface Props {
-  user: Omit<IUser, "password">;
-  logout: () => Promise<void>;
-}
+const externalNavigation: NavItem[] = [];
+
+const navigation: { [key in "client" | "employee" | "external"]: NavItem[] } = {
+  client: clientNavigation,
+  employee: employeeNavigation,
+  external: externalNavigation,
+};
 
 export function SideBar(props: Props) {
   const { user, logout } = props;
@@ -236,7 +250,9 @@ export function SideBar(props: Props) {
                       <ul role="list" className="flex flex-1 flex-col gap-y-7">
                         <li>
                           <ul role="list" className="-mx-2 space-y-1">
-                            {navigation.map((item) => renderNavItem(item))}
+                            {navigation[user.type].map((item) =>
+                              renderNavItem(item)
+                            )}
                           </ul>
                         </li>
                       </ul>
@@ -263,7 +279,7 @@ export function SideBar(props: Props) {
               <ul role="list" className="flex flex-1 flex-col gap-y-7">
                 <li>
                   <ul role="list" className="-mx-2 space-y-1">
-                    {navigation.map((item) => renderNavItem(item))}
+                    {navigation[user.type].map((item) => renderNavItem(item))}
                   </ul>
                 </li>
                 <li className="-mx-6 mt-auto flex items-center justify-between">
