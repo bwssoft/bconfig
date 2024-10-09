@@ -14,6 +14,7 @@ interface Props {
     is_configured: boolean;
     not_configured: any;
     profile_name: string;
+    model: string;
   }[];
 }
 export default function DeviceConfiguredTable(props: Props) {
