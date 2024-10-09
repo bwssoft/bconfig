@@ -1,5 +1,6 @@
 import { findOneConfigurationLog } from "@/app/lib/action/configuration-log.action";
 import { ViewConfigurationForm } from "@/app/ui/forms/E3-view/view-configuration.form";
+import { E34GViewConfigurationForm } from "@/app/ui/forms/E34G-view/view-configuration.form";
 
 interface Props {
   searchParams: {
@@ -29,7 +30,7 @@ export default async function Page(props: Props) {
       </div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8 ">
         {configuration ? (
-          <ViewConfigurationForm config={configuration} />
+          <E34GViewConfigurationForm config={configuration} />
         ) : (
           <h1 className="text-base font-semibold leading-7 text-gray-900">
             Essa configuração não foi encontrada.

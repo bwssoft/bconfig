@@ -52,6 +52,12 @@ const odometer = z
   .positive({ message: "O valor deve ser positivo" })
   .optional()
 
+const horimeter = z
+  .coerce
+  .number()
+  .positive({ message: "O valor deve ser positivo" })
+  .optional()
+
 const max_speed = z
   .coerce
   .number()
@@ -60,13 +66,25 @@ const max_speed = z
   .max(255, { message: "O valor deve ser no máximo 255" })
   .optional()
 
-const sleep = z
+const angle_adjustment = z
   .coerce
   .number()
   .positive({ message: "O valor deve ser positivo" })
-  .min(1, { message: "O valor deve ser no mínimmo 1" })
-  .max(5, { message: "O valor deve ser no máximo 5" })
+  .min(5, { message: "O valor deve ser no mínimmo 5" })
+  .max(90, { message: "O valor deve ser no máximo 90" })
   .optional()
+
+const lock_type_progression = z
+  .coerce
+  .number()
+  .positive({ message: "O valor deve ser positivo" })
+  .max(60000, { message: "O valor deve ser no máximo 60000" })
+
+const ignition_by_voltage = z
+  .coerce
+  .number()
+  .positive({ message: "O valor deve ser positivo" })
+  .max(90, { message: "O valor deve ser no máximo 90" })
 
 const removePropByOptionalFunctions = <T>(schema: T) => {
   const optional_functions = (schema as any).optional_functions
@@ -83,7 +101,6 @@ const removePropByOptionalFunctions = <T>(schema: T) => {
 const schema = z.preprocess(removeEmptyValues, z
   .object({
     name: z.string({ message: "O nome é orbigatório" }),
-    model: z.enum(["E3+", "E3+4G"], { message: "O modelo deve ser E3+ ou E3+4G" }),
     password: z.object({ old: password, new: password }).optional(),
     apn: z
       .object({
@@ -97,11 +114,17 @@ const schema = z.preprocess(removeEmptyValues, z
         primary: z.object({
           ip: ip,
           port: port,
-        }).optional(),
+        }).optional().refine(
+          (data) => (!data?.ip?.length && !data?.port) || (data?.ip && data.port),
+          { message: "Ambos 'ip' e 'port' devem estar preenchidos ou ambos devem estar ausentes." }
+        ),
         secondary: z.object({
           ip: ip,
           port: port,
-        }).optional(),
+        }).optional().refine(
+          (data) => (!data?.ip?.length && !data?.port) || (data?.ip && data.port),
+          { message: "Ambos 'ip' e 'port' devem estar preenchidos ou ambos devem estar ausentes." }
+        ),
       })
       .optional(),
     dns: z
@@ -120,35 +143,51 @@ const schema = z.preprocess(removeEmptyValues, z
       .optional(),
     odometer: odometer,
     keep_alive: keep_alive,
-    accelerometer_sensitivity: z.coerce.number().optional(),
     economy_mode: z.coerce.number().optional(),
     sensitivity_adjustment: sensitivity_adjustment,
     lbs_position: z.coerce.boolean().optional().default(false),
     cornering_position_update: z.coerce.boolean().optional().default(false),
-    ignition_alert_power_cut: z.coerce.boolean().optional().default(false),
-    gprs_failure_alert: z.coerce.boolean().optional().default(false),
     led: z.coerce.boolean().optional().default(false),
     virtual_ignition: z.coerce.boolean().optional().default(false),
-    work_mode: z.string().optional(),
-    operation_mode: z.coerce.boolean().optional(),
     optional_functions: z.record(z.string(), z.boolean()).optional(),
     max_speed: max_speed,
-    sleep: sleep,
-    // panic_button: z.coerce.boolean().optional().default(false),
-    // module_violation: z.coerce.boolean().optional().default(false),
+
+    accel: z.coerce.boolean().optional().default(false),
+    communication_type: z.string().optional(),
+    protocol_type: z.string().optional(),
+    anti_theft: z.coerce.boolean().optional().default(false),
+    horimeter: horimeter,
+    jammer_detection: z.coerce.boolean().optional().default(false),
+    clear_buffer: z.coerce.boolean().optional(),
+    clear_horimeter: z.coerce.boolean().optional(),
+    input_1: z.number().optional(),
+    input_2: z.number().optional(),
+    angle_adjustment: angle_adjustment,
+    lock_type_progression: z
+      .object({
+        n1: lock_type_progression,
+        n2: lock_type_progression,
+      })
+      .optional(),
+    ignition_by_voltage: z
+      .object({
+        t1: ignition_by_voltage,
+        t2: ignition_by_voltage,
+      })
+      .optional(),
   })).transform(removeUndefined).transform(removePropByOptionalFunctions)
 
 export type Schema = z.infer<typeof schema>;
 
-
-export function useProfileCreateForm() {
+export function useE34GProfileCreateForm() {
   const {
     register,
     handleSubmit: hookFormSubmit,
     formState: { errors },
     control,
     setValue,
-    reset: hookFormReset
+    watch,
+    reset: hookFormReset,
   } = useForm<Schema>({
     resolver: zodResolver(schema),
   });
@@ -158,15 +197,17 @@ export function useProfileCreateForm() {
     setIpdns(value);
   };
 
+  const lockType = watch("lock_type")
+
   const handleSubmit = hookFormSubmit(
     async (data) => {
       try {
-        const { name, model, optional_functions, ...config } = data;
+        const { name, optional_functions, ...config } = data;
         await createOneProfile({
           name,
           config,
           optional_functions,
-          model: model as IProfile["model"]
+          model: "E3+4G" as IProfile["model"]
         });
         toast({
           title: "Sucesso!",
@@ -199,5 +240,7 @@ export function useProfileCreateForm() {
     reset: hookFormReset,
     handleChangeIpDns,
     ipdns,
+    lockType,
+    watch,
   };
 }

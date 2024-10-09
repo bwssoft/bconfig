@@ -2,7 +2,6 @@
 
 import {
   accelerometerSensitivity,
-  deviceModel,
   economyMode,
   functions,
   lockType,
@@ -10,16 +9,21 @@ import {
   timezones,
   workMode,
 } from "@/app/constants/e3+config";
-import { Input } from "../components/input";
-import { Select } from "../components/select";
-import { Radio } from "../components/radio";
-import { useProfileCreateForm } from "./use-create-profile.form";
+import { Input } from "../../../../components/input";
+import { Select } from "../../../../components/select";
+import { Radio } from "../../../../components/radio";
 import { Controller } from "react-hook-form";
-import Toggle from "../components/toggle";
-import { Button } from "../components/button";
-import Alert from "../components/alert";
+import Toggle from "../../../../components/toggle";
+import { Button } from "../../../../components/button";
+import { IProfile } from "@/app/lib/definition";
+import { useE3ProfileUpdateForm } from "./use-update-e3-profile.form";
+import Alert from "../../../../components/alert";
 
-export function ProfileCreateForm() {
+interface Props {
+  config: IProfile;
+}
+export function E3ProfileUpdateForm(props: Props) {
+  const { config } = props;
   const {
     register,
     ipdns,
@@ -28,14 +32,16 @@ export function ProfileCreateForm() {
     control,
     errors,
     reset,
-  } = useProfileCreateForm();
+  } = useE3ProfileUpdateForm({
+    defaultValues: config,
+  });
   return (
     <form
       autoComplete="off"
       className="flex flex-col gap-6 mt-6"
       onSubmit={handleSubmit}
     >
-      <section aria-labelledby="communication">
+      <section aria-labelledby="general">
         <div className="bg-white sm:rounded-lg">
           <div className="py-5">
             <h1
@@ -57,24 +63,6 @@ export function ProfileCreateForm() {
                   label="Nome"
                   placeholder="Perfil#00"
                   error={errors?.name?.message}
-                />
-              </div>
-              <div className="sm:col-span-1">
-                <Controller
-                  control={control}
-                  name="model"
-                  render={({ field }) => (
-                    <Select
-                      name="model"
-                      data={deviceModel}
-                      keyExtractor={(d) => d.value}
-                      valueExtractor={(d) => d.label}
-                      label="Modelo"
-                      value={deviceModel.find((d) => d.value === field.value)}
-                      onChange={(d) => field.onChange(d.value)}
-                      error={errors?.model?.message}
-                    />
-                  )}
                 />
               </div>
             </dl>
@@ -119,12 +107,12 @@ export function ProfileCreateForm() {
                 </div>
               </div>
               <div className="sm:col-span-full">
-                <dt className="text-sm font-medium text-gray-400">APN</dt>
+                <dt className="text-sm font-medium text-gray-400">Apn</dt>
                 <div className="flex gap-2 mt-2">
                   <Input
                     id="addres"
                     label="Endereço"
-                    placeholder="bws.br"
+                    placeholder="www.bws.com"
                     {...register("apn.address")}
                   />
                   <Input
@@ -151,7 +139,7 @@ export function ProfileCreateForm() {
                     keyExtractor={(d) => d.value}
                     valueExtractor={(d) => d.value}
                     name="ip_dns"
-                    label="IP ou DNS"
+                    label="Ip ou DNS"
                     onChange={({ value }) =>
                       handleChangeIpDns(value as "IP" | "DNS")
                     }
@@ -165,7 +153,7 @@ export function ProfileCreateForm() {
                     <div className="flex gap-2">
                       <Input
                         id="primary_ip"
-                        label="IP"
+                        label="Ip"
                         placeholder="124.451.451.12"
                         {...register("ip.primary.ip")}
                         error={errors?.ip?.primary?.ip?.message}
@@ -182,7 +170,7 @@ export function ProfileCreateForm() {
                     <div className="flex gap-2">
                       <Input
                         id="secondary_ip"
-                        label="IP"
+                        label="Ip"
                         placeholder="124.451.451.12"
                         {...register("ip.secondary.ip")}
                         error={errors?.ip?.secondary?.ip?.message}
@@ -327,7 +315,7 @@ export function ProfileCreateForm() {
                       valueExtractor={(d) => d.label}
                       label="Modo de Economia"
                       value={economyMode.find((d) => d.value === field.value)}
-                      onChange={(d) => field.onChange(d.value)}
+                      onChange={(d) => alert(JSON.stringify(d.value))}
                     />
                   )}
                 />
@@ -354,7 +342,7 @@ export function ProfileCreateForm() {
               <div className="sm:col-span-1">
                 <Input
                   {...register("odometer")}
-                  id="odometer"
+                  id="hodometer"
                   label="Hodômetro"
                   placeholder="5000"
                   type="number"
@@ -448,7 +436,7 @@ export function ProfileCreateForm() {
         </div>
       </section>
 
-      <section aria-labelledby="additional-functions">
+      <section aria-labelledby="additional-functions-optional">
         <div className="bg-white sm:rounded-lg">
           <div className="py-5">
             <h1
@@ -521,7 +509,7 @@ export function ProfileCreateForm() {
           Limpar
         </button>
         <Button variant="primary" type="submit">
-          Registrar
+          Atualizar
         </Button>
       </div>
     </form>

@@ -38,6 +38,7 @@ export interface Configuration {
   metadata: ConfigurationMetadata;
   profile_name: string
   profile_id: string
+  model: "E3+" | "E3+4G"
 }
 interface ConfigurationLog {
   imei: string
@@ -509,7 +510,8 @@ export function useE3Communication(props: { profile?: IProfile }) {
           not_configured: fields_not_configured,
           metadata: configured_device,
           profile_id: profile?.id!,
-          profile_name: profile?.name!
+          profile_name: profile?.name!,
+          model: "E3+" as Configuration["model"]
         }
 
         localStorage.setItem(`configuration_result_${id}`, JSON.stringify(configuration_result))

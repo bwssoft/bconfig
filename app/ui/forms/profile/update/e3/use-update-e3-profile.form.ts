@@ -82,7 +82,6 @@ const removePropByOptionalFunctions = <T>(schema: T) => {
 const schema = z.preprocess(removeEmptyValues, z
   .object({
     name: z.string({ message: "O nome é orbigatório" }),
-    model: z.enum(["E3+", "E3+4G"], { message: "O modelo deve ser E3+ ou E3+4G" }),
     password: z.object({ old: password, new: password }).optional(),
     apn: z
       .object({
@@ -142,7 +141,7 @@ export type Schema = z.infer<typeof schema>;
 interface Props {
   defaultValues?: IProfile;
 }
-export function useProfileUpdateForm(props: Props) {
+export function useE3ProfileUpdateForm(props: Props) {
   const { defaultValues } = props;
   const {
     register,
@@ -164,14 +163,14 @@ export function useProfileUpdateForm(props: Props) {
   const handleSubmit = hookFormSubmit(
     async (data) => {
       try {
-        const { name, model, optional_functions, ...config } = data;
+        const { name, optional_functions, ...config } = data;
         await updateOneProfileById(
           { id: defaultValues?.id! },
           {
             name,
             config,
             optional_functions,
-            model: model as IProfile["model"]
+            model: "E3+" as IProfile["model"]
           }
         );
         toast({
@@ -197,13 +196,9 @@ export function useProfileUpdateForm(props: Props) {
   );
 
   useEffect(() => {
-    console.log('errors', errors)
-  }, [errors])
-
-  useEffect(() => {
     if (defaultValues) {
-      const { name, model, config } = defaultValues
-      hookFormReset({ name, model, ...config });
+      const { name, config, optional_functions } = defaultValues
+      hookFormReset({ name, optional_functions, ...config });
     }
   }, [defaultValues, hookFormReset]);
 

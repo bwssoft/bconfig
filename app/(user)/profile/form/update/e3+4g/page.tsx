@@ -1,5 +1,6 @@
 import { findOneProfile } from "@/app/lib/action";
-import { ProfileUpdateForm } from "@/app/ui/forms/update-profile.form";
+import { E3ProfileUpdateForm } from "@/app/ui/forms/profile/update/e3/update-e3-profile.form";
+import { E34GProfileUpdateForm } from "@/app/ui/forms/profile/update/e34g/update-e34g-profile.form";
 
 interface Props {
   searchParams: { id: string };
@@ -26,7 +27,7 @@ export default async function ProfileUpdate(props: Props) {
       </div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
         {profile ? (
-          <ProfileUpdateForm config={profile} />
+          <E34GProfileUpdateForm config={profile} />
         ) : (
           <h1 className="text-base font-semibold leading-7 text-gray-900">
             Esse perfil de atualização não foi encontrado.

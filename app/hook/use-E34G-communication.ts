@@ -2,18 +2,12 @@ import { useEffect, useState, useRef, useCallback } from "react"
 import { useSerial } from "./use-serial"
 import { ISerialPort } from "../lib/definition/serial"
 import { sleep } from "../lib/util/sleep"
-import { E34G } from "../lib/parser/E34G"
-import { IProfile } from "../lib/definition"
-import { E34GEncoder } from "../lib/encoder/E34G"
+import { ConfigurationMetadata, DeviceNativeProfile, DeviceProfile, IProfile } from "../lib/definition"
 import { checkWithDifference } from "../lib/util"
 import { toast } from "./use-toast"
-
-type DeviceProfile = IProfile["config"]
-type DeviceNativeProfile = {
-  check?: string
-  dns?: string
-  cxip?: string
-}
+import { createOneConfigurationLog } from "../lib/action/configuration-log.action"
+import { E34G } from "../lib/parser/E34G"
+import { E34GEncoder } from "../lib/encoder/E34G"
 
 
 interface Identified {
@@ -23,6 +17,12 @@ interface Identified {
   iccid?: string
   et?: string
 }
+interface IdentifiedLog {
+  port: ISerialPort
+  label: string
+  progress: number
+}
+
 
 export interface Configuration {
   id: string
@@ -37,26 +37,8 @@ export interface Configuration {
   not_configured: { [key in keyof IProfile["config"]]: { value1: any; value2: any } };
   metadata: ConfigurationMetadata;
   profile_name: string
-}
-
-type ConfigurationMetadata = {
-  port: ISerialPort
-  init_time_configuration: number
-  end_time_configuration: number
-  commands_sent: {
-    init_time_command: number
-    end_time_command?: number
-    request: string
-    response?: string
-  }[]
-}
-
-type DeviceResponse = string | undefined
-
-interface IdentifiedLog {
-  port: ISerialPort
-  label: string
-  progress: number
+  profile_id: string
+  model: "E3+4G" | "E3+"
 }
 interface ConfigurationLog {
   imei: string
@@ -64,7 +46,10 @@ interface ConfigurationLog {
   progress: number
 }
 
-export function useE34GCommunication() {
+type DeviceResponse = string | undefined
+
+export function useE34GCommunication(props: { profile?: IProfile }) {
+  const { profile } = props
   const [identified, setIdentified] = useState<Identified[]>([])
   const [identifiedLog, setIdentifiedLog] = useState<IdentifiedLog[]>([])
   const [inIdentification, setInIdentification] = useState<boolean>(false)
@@ -164,9 +149,6 @@ export function useE34GCommunication() {
     callback: {
       onOpenPort: () => void
       onPortOpened: () => void
-      onReg: () => void
-      onSms: () => void
-      onEn: () => void
       onImei: () => void
       onIccid: () => void
       onEt: () => void
@@ -185,12 +167,6 @@ export function useE34GCommunication() {
       // const max_retries = 3
       // Main loop to gather device info
       // while (attempts < max_retries && (!imei || !iccid || !et)) {
-      callback.onReg()
-      await sendCommandWithRetries(port, "REG000000#");
-      callback.onSms()
-      await sendCommandWithRetries(port, "SMS1");
-      callback.onEn()
-      await sendCommandWithRetries(port, "EN");
       callback.onImei()
       const imei = await sendCommandWithRetries(port, "IMEI");
       callback.onIccid()
@@ -223,19 +199,19 @@ export function useE34GCommunication() {
       await openPort(port);
       // let attempts = 0
       // const max_retries = 3
-      let check: DeviceResponse, cxip: DeviceResponse, dns: DeviceResponse, gs: DeviceResponse;
+      let check: DeviceResponse, cxip: DeviceResponse, dns: DeviceResponse, status: DeviceResponse
       // while (attempts < max_retries && (!check || !cxip || !dns)) {
-      await sendCommandWithRetries(port, "REG000000#");
-      await sendCommandWithRetries(port, "SMS1");
-      await sendCommandWithRetries(port, "EN");
       if (!check) check = await sendCommandWithRetries(port, "CHECK");
       if (!cxip) cxip = await sendCommandWithRetries(port, "CXIP");
       if (!dns) dns = await sendCommandWithRetries(port, "DNS");
-      if (!gs) gs = await sendCommandWithRetries(port, "GS");
+      if (!status) status = await sendCommandWithRetries(port, "STATUS");
       //   attempts++
       // }
       await closePort(port);
       const _check = check ? E34G.check(check) : undefined;
+      console.log('status', status)
+      const _status = status ? E34G.status(status) : undefined;
+      console.log('_status', _status)
       return {
         profile: {
           ip: cxip ? E34G.ip(cxip) : undefined,
@@ -250,12 +226,21 @@ export function useE34GCommunication() {
           economy_mode: _check?.economy_mode ?? undefined,
           lbs_position: _check?.lbs_position ?? undefined,
           cornering_position_update: _check?.cornering_position_update ?? undefined,
-          ignition_alert_power_cut: _check?.ignition_alert_power_cut ?? undefined,
-          gprs_failure_alert: _check?.gprs_failure_alert ?? undefined,
           led: _check?.led ?? undefined,
           virtual_ignition: _check?.virtual_ignition ?? undefined,
-          work_mode: _check?.work_mode ?? undefined,
-          sensitivity_adjustment: gs ? E34G.sensitivity_adjustment(gs) : undefined,
+          max_speed: _check?.max_speed ?? undefined,
+          accel: _check?.accel ?? undefined,
+          communication_type: _check?.communication_type ?? undefined,
+          protocol_type: _check?.protocol_type ?? undefined,
+          anti_theft: _check?.anti_theft ?? undefined,
+          jammer_detection: _check?.jammer_detection ?? undefined,
+          angle_adjustment: _check?.angle_adjustment ?? undefined,
+          lock_type_progression: _check?.lock_type_progression ?? undefined,
+          ignition_by_voltage: _check?.ignition_by_voltage ?? undefined,
+          input_1: _check?.input_1 ?? undefined,
+          input_2: _check?.input_2 ?? undefined,
+          sensitivity_adjustment: _check?.sensitivity_adjustment ?? undefined,
+          horimeter: _status?.["HB"] ? E34G.horimeter(_status?.["HB"]) : undefined
         },
         native_profile: {
           cxip,
@@ -323,7 +308,7 @@ export function useE34GCommunication() {
     try {
       setInIdentification(true)
       for (let port of ports) {
-        const total_steps = 11
+        const total_steps = 8
         const identification = await getDeviceIdentification({
           port,
           callback: {
@@ -339,52 +324,34 @@ export function useE34GCommunication() {
               step_index: 2,
               total_steps
             }),
-            onReg: () => updateIdentifiedLog({
-              port,
-              step_label: "REG",
-              step_index: 3,
-              total_steps
-            }),
-            onSms: () => updateIdentifiedLog({
-              port,
-              step_label: "SMS",
-              step_index: 4,
-              total_steps
-            }),
-            onEn: () => updateIdentifiedLog({
-              port,
-              step_label: "EN",
-              step_index: 5,
-              total_steps
-            }),
             onImei: () => updateIdentifiedLog({
               port,
               step_label: "IMEI",
-              step_index: 6,
+              step_index: 3,
               total_steps
             }),
             onIccid: () => updateIdentifiedLog({
               port,
               step_label: "ICCID",
-              step_index: 7,
+              step_index: 4,
               total_steps
             }),
             onEt: () => updateIdentifiedLog({
               port,
               step_label: "ET",
-              step_index: 8,
+              step_index: 5,
               total_steps
             }),
             onClosePort: () => updateIdentifiedLog({
               port,
               step_label: "Fechando a porta",
-              step_index: 9,
+              step_index: 6,
               total_steps
             }),
             onFinished: () => updateIdentifiedLog({
               port,
               step_label: "Porta Fechada",
-              step_index: 10,
+              step_index: 7,
               total_steps
             }),
           }
@@ -392,7 +359,7 @@ export function useE34GCommunication() {
         updateIdentifiedLog({
           port,
           step_label: "Processo Finalizado",
-          step_index: 11,
+          step_index: 8,
           total_steps
         })
         const portHasDisconnected = disconnectedPorts.current.find(p => p === port)
@@ -404,8 +371,16 @@ export function useE34GCommunication() {
               return updatedIdentified;
             });
           } else if (!portHasDisconnected) {
-            setIdentified(prev => prev.concat(identification))
+            setIdentified(prev => {
+              const oldIdentifiers = prev.filter(el => el.port !== port);
+              return oldIdentifiers.concat(identification)
+            })
           }
+        } else {
+          setIdentified(prev => {
+            const oldIdentifiers = prev.filter(el => el.port !== port);
+            return oldIdentifiers.concat({ port, isIdentified: false })
+          })
         }
       }
       setInIdentification(false)
@@ -413,7 +388,7 @@ export function useE34GCommunication() {
       console.error("[handleDeviceIdentification]", e)
     }
   }
-  const handleDeviceConfiguration = async (devices: Identified[], desired_profile: DeviceProfile) => {
+  const handleDeviceConfiguration = async (devices: Identified[], desired_profile: IProfile) => {
     try {
       setInConfiguration(true)
       const commands = parseCommands(desired_profile)
@@ -482,13 +457,19 @@ export function useE34GCommunication() {
           total_steps
         })
 
-        delete desired_profile?.password;
+        delete desired_profile.config?.password;
         const {
-          isEqual: is_configured,
-          difference: not_configured
-        } = checkWithDifference(desired_profile, actual_profile)
+          isEqual: all_fields_have_been_checked,
+          difference: fields_not_configured
+        } = checkWithDifference(desired_profile.config, actual_profile)
 
+        const is_configured = configured_device.commands_sent.every(c => typeof c.response !== "undefined")
         const id = crypto.randomUUID()
+
+        console.log("actual")
+        console.log(JSON.stringify(actual_profile, null, 2))
+        console.log("desired")
+        console.log(JSON.stringify(desired_profile.config, null, 2))
 
         const configuration_result = {
           id,
@@ -498,12 +479,13 @@ export function useE34GCommunication() {
           et,
           actual_profile: actual_profile ?? undefined,
           actual_native_profile: native_profile ?? undefined,
-          desired_profile,
+          desired_profile: desired_profile.config,
           is_configured,
-          not_configured,
+          not_configured: fields_not_configured,
           metadata: configured_device,
-          profile_id: "configured_device",
-          profile_name: "configured_device",
+          profile_id: profile?.id!,
+          profile_name: profile?.name!,
+          model: "E3+4G" as Configuration["model"]
         }
 
         localStorage.setItem(`configuration_result_${id}`, JSON.stringify(configuration_result))
@@ -524,6 +506,20 @@ export function useE34GCommunication() {
         } else if (!portHasDisconnected) {
           setConfiguration(prev => prev.concat(configuration_result))
         }
+        await createOneConfigurationLog(JSON.parse(JSON.stringify(configuration_result)))
+        if (is_configured) {
+          toast({
+            title: "Configurado!",
+            description: `Equipamento configurado com sucesso! (${imei})`,
+            variant: "success"
+          })
+        } else {
+          toast({
+            title: "Não Configurado!",
+            description: `Equipamento não foi configurado! (${imei})`,
+            variant: "error"
+          })
+        }
       }
       setInConfiguration(false)
     } catch (e) {
@@ -532,15 +528,19 @@ export function useE34GCommunication() {
   }
 
   //util function
-  const parseCommands = (config: IProfile["config"]) => {
+  const parseCommands = (profile: IProfile) => {
     const configure_commands: string[] = [];
-    Object.entries(config).forEach(([command, args]) => {
+    Object.entries(profile.config).forEach(([command, args]) => {
+
+      const optional_functions_to_remove = profile.optional_functions ? Object.entries(profile.optional_functions).filter(([_, value]) => value === false).map(([key]) => key) : []
+      if (optional_functions_to_remove.includes(command)) return
+
       const _command = E34GEncoder.encoder({ command, args } as any);
       if (_command) {
         configure_commands.push(...(Array.isArray(_command) ? _command : [_command]));
       }
     });
-    const initialize_commands = ["REG000000#", "SMS1", "EN"]
+    const initialize_commands: string[] = []
     const all_commands = initialize_commands.concat(configure_commands)
     return all_commands
   }
@@ -594,7 +594,13 @@ export function useE34GCommunication() {
     previousPorts.current = ports
   }, [ports]);
 
-
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     if (inConfiguration) return
+  //     handleDeviceIdentification(ports)
+  //   }, 5000)
+  //   return () => clearInterval(interval)
+  // }, [ports, inConfiguration])
 
   return {
     identified,

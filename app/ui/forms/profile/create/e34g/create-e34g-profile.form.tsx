@@ -1,30 +1,27 @@
 "use client";
 
 import {
-  accelerometerSensitivity,
-  deviceModel,
+  communicationType,
+  protocolType,
   economyMode,
   functions,
-  lockType,
+  lockType as lockTypeConstant,
   optional_functions,
   timezones,
-  workMode,
-} from "@/app/constants/e3+config";
-import { Input } from "../components/input";
-import { Select } from "../components/select";
-import { Radio } from "../components/radio";
+  jammerDetection,
+  input1,
+  input2,
+} from "@/app/constants/e3+4gconfig";
+import { Input } from "../../../../components/input";
+import { Select } from "../../../../components/select";
+import { Radio } from "../../../../components/radio";
+import { useE34GProfileCreateForm } from "./use-create-e34g-profile.form";
 import { Controller } from "react-hook-form";
-import Toggle from "../components/toggle";
-import { Button } from "../components/button";
-import { IProfile } from "@/app/lib/definition";
-import { useProfileUpdateForm } from "./use-update-profile.form";
-import Alert from "../components/alert";
+import Toggle from "../../../../components/toggle";
+import { Button } from "../../../../components/button";
+import Alert from "../../../../components/alert";
 
-interface Props {
-  config: IProfile;
-}
-export function ProfileUpdateForm(props: Props) {
-  const { config } = props;
+export function E34GProfileCreateForm() {
   const {
     register,
     ipdns,
@@ -33,16 +30,23 @@ export function ProfileUpdateForm(props: Props) {
     control,
     errors,
     reset,
-  } = useProfileUpdateForm({
-    defaultValues: config,
-  });
+    lockType,
+    watch,
+  } = useE34GProfileCreateForm();
   return (
     <form
       autoComplete="off"
       className="flex flex-col gap-6 mt-6"
       onSubmit={handleSubmit}
     >
-      <section aria-labelledby="communication">
+      {/* 
+        1. falta o tipo de bloqueido "Definir progressão" quando for mode1 
+        2. falta "ignição por tensão" quando for igniniçaõ virtual 
+        3. não exibir ajuste de sensibilidade se a função acelerometro for false
+        4. não exibir ajuste de angulo se a função atualização da posição em curva
+        for false  
+      */}
+      <section aria-labelledby="general">
         <div className="bg-white sm:rounded-lg">
           <div className="py-5">
             <h1
@@ -66,29 +70,10 @@ export function ProfileUpdateForm(props: Props) {
                   error={errors?.name?.message}
                 />
               </div>
-              <div className="sm:col-span-1">
-                <Controller
-                  control={control}
-                  name="model"
-                  render={({ field }) => (
-                    <Select
-                      name="model"
-                      data={deviceModel}
-                      keyExtractor={(d) => d.value}
-                      valueExtractor={(d) => d.label}
-                      label="Modelo"
-                      value={deviceModel.find((d) => d.value === field.value)}
-                      onChange={(d) => field.onChange(d.value)}
-                      error={errors?.model?.message}
-                    />
-                  )}
-                />
-              </div>
             </dl>
           </div>
         </div>
       </section>
-
       <section aria-labelledby="communication">
         <div className="bg-white sm:rounded-lg">
           <div className="py-5">
@@ -126,12 +111,12 @@ export function ProfileUpdateForm(props: Props) {
                 </div>
               </div>
               <div className="sm:col-span-full">
-                <dt className="text-sm font-medium text-gray-400">Apn</dt>
+                <dt className="text-sm font-medium text-gray-400">APN</dt>
                 <div className="flex gap-2 mt-2">
                   <Input
                     id="addres"
                     label="Endereço"
-                    placeholder="www.bws.com"
+                    placeholder="bws.br"
                     {...register("apn.address")}
                   />
                   <Input
@@ -158,7 +143,7 @@ export function ProfileUpdateForm(props: Props) {
                     keyExtractor={(d) => d.value}
                     valueExtractor={(d) => d.value}
                     name="ip_dns"
-                    label="Ip ou DNS"
+                    label="IP ou DNS"
                     onChange={({ value }) =>
                       handleChangeIpDns(value as "IP" | "DNS")
                     }
@@ -169,39 +154,49 @@ export function ProfileUpdateForm(props: Props) {
               {ipdns === "IP" && (
                 <div className="sm:col-span-full">
                   <div className="flex gap-2">
-                    <div className="flex gap-2">
-                      <Input
-                        id="primary_ip"
-                        label="Ip"
-                        placeholder="124.451.451.12"
-                        {...register("ip.primary.ip")}
-                        error={errors?.ip?.primary?.ip?.message}
-                      />
-                      <Input
-                        id="primary_ip_port"
-                        label="Porta"
-                        placeholder="2000"
-                        type="number"
-                        {...register("ip.primary.port")}
-                        error={errors?.ip?.primary?.port?.message}
-                      />
+                    <div className="relative">
+                      <div className="flex gap-2">
+                        <Input
+                          id="primary_ip"
+                          label="IP"
+                          placeholder="124.451.451.12"
+                          {...register("ip.primary.ip")}
+                          error={errors?.ip?.primary?.ip?.message}
+                        />
+                        <Input
+                          id="primary_ip_port"
+                          label="Porta"
+                          placeholder="2000"
+                          type="number"
+                          {...register("ip.primary.port")}
+                          error={errors?.ip?.primary?.port?.message}
+                        />
+                      </div>
+                      <p className="mt-2 text-sm text-red-600 absolute">
+                        {errors?.ip?.primary?.root?.message}
+                      </p>
                     </div>
-                    <div className="flex gap-2">
-                      <Input
-                        id="secondary_ip"
-                        label="Ip"
-                        placeholder="124.451.451.12"
-                        {...register("ip.secondary.ip")}
-                        error={errors?.ip?.secondary?.ip?.message}
-                      />
-                      <Input
-                        id="secondary_ip_port"
-                        label="Porta"
-                        placeholder="2000"
-                        type="number"
-                        {...register("ip.secondary.port")}
-                        error={errors?.ip?.secondary?.port?.message}
-                      />
+                    <div className="relative">
+                      <div className="flex gap-2">
+                        <Input
+                          id="secondary_ip"
+                          label="IP"
+                          placeholder="124.451.451.12"
+                          {...register("ip.secondary.ip")}
+                          error={errors?.ip?.secondary?.ip?.message}
+                        />
+                        <Input
+                          id="secondary_ip_port"
+                          label="Porta"
+                          placeholder="2000"
+                          type="number"
+                          {...register("ip.secondary.port")}
+                          error={errors?.ip?.secondary?.port?.message}
+                        />
+                      </div>
+                      <p className="mt-2 text-sm text-red-600 absolute">
+                        {errors?.ip?.secondary?.root?.message}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -230,7 +225,6 @@ export function ProfileUpdateForm(props: Props) {
           </div>
         </div>
       </section>
-
       <section aria-labelledby="general-config">
         <div className="bg-white sm:rounded-lg">
           <div className="py-5">
@@ -272,15 +266,15 @@ export function ProfileUpdateForm(props: Props) {
               <div className="sm:col-span-1">
                 <Controller
                   control={control}
-                  name="accelerometer_sensitivity"
+                  name="lock_type"
                   render={({ field }) => (
                     <Select
-                      name="accelerometer_sensitivity"
-                      data={accelerometerSensitivity}
+                      name="lock_type"
+                      data={lockTypeConstant}
                       keyExtractor={(d) => d.value}
                       valueExtractor={(d) => d.label}
-                      label="Sensibilidade do acelerômetro"
-                      value={accelerometerSensitivity.find(
+                      label="Tipo do bloqueio"
+                      value={lockTypeConstant.find(
                         (d) => d.value === field.value
                       )}
                       onChange={(d) => field.onChange(d.value)}
@@ -288,23 +282,33 @@ export function ProfileUpdateForm(props: Props) {
                   )}
                 />
               </div>
-              <div className="sm:col-span-1">
-                <Controller
-                  control={control}
-                  name="lock_type"
-                  render={({ field }) => (
-                    <Select
-                      name="lock_type"
-                      data={lockType}
-                      keyExtractor={(d) => d.value}
-                      valueExtractor={(d) => d.label}
-                      label="Tipo de bloqueio"
-                      value={lockType.find((d) => d.value === field.value)}
-                      onChange={(d) => field.onChange(d.value)}
+              {lockType === 1 ? (
+                <div className="sm:col-span-full">
+                  <dt className="text-sm font-medium text-gray-400">
+                    Definir Progressão
+                  </dt>
+                  <div className="flex gap-2 mt-2">
+                    <Input
+                      {...register("lock_type_progression.n1")}
+                      id="lock_type_progression_n1"
+                      label="N1"
+                      placeholder="60"
+                      type="number"
+                      error={errors.lock_type_progression?.n1?.message}
                     />
-                  )}
-                />
-              </div>
+                    <Input
+                      {...register("lock_type_progression.n2")}
+                      id="lock_type_progression_n2"
+                      label="n2"
+                      placeholder="180"
+                      type="number"
+                      error={errors.lock_type_progression?.n2?.message}
+                    />
+                  </div>
+                </div>
+              ) : (
+                <></>
+              )}
               <div className="sm:col-span-1">
                 <Controller
                   control={control}
@@ -334,19 +338,9 @@ export function ProfileUpdateForm(props: Props) {
                       valueExtractor={(d) => d.label}
                       label="Modo de Economia"
                       value={economyMode.find((d) => d.value === field.value)}
-                      onChange={(d) => alert(JSON.stringify(d.value))}
+                      onChange={(d) => field.onChange(d.value)}
                     />
                   )}
-                />
-              </div>
-              <div className="sm:col-span-1">
-                <Input
-                  {...register("sensitivity_adjustment")}
-                  id="sensibility"
-                  label="Ajuste de Sensibilidade"
-                  placeholder="500"
-                  type="number"
-                  error={errors.sensitivity_adjustment?.message}
                 />
               </div>
               <div className="sm:col-span-1">
@@ -361,7 +355,7 @@ export function ProfileUpdateForm(props: Props) {
               <div className="sm:col-span-1">
                 <Input
                   {...register("odometer")}
-                  id="hodometer"
+                  id="odometer"
                   label="Hodômetro"
                   placeholder="5000"
                   type="number"
@@ -371,15 +365,32 @@ export function ProfileUpdateForm(props: Props) {
               <div className="sm:col-span-1">
                 <Controller
                   control={control}
-                  name="work_mode"
+                  name="input_1"
                   render={({ field }) => (
                     <Select
-                      name="work_mode"
-                      data={workMode}
+                      name="input_1"
+                      data={input1}
                       keyExtractor={(d) => d.value}
                       valueExtractor={(d) => d.label}
-                      label="Modo de trabalho"
-                      value={workMode.find((d) => d.value === field.value)}
+                      label="Entrada 1"
+                      value={input1.find((d) => d.value === field.value)}
+                      onChange={(d) => field.onChange(d.value)}
+                    />
+                  )}
+                />
+              </div>
+              <div className="sm:col-span-1">
+                <Controller
+                  control={control}
+                  name="input_2"
+                  render={({ field }) => (
+                    <Select
+                      name="input_2"
+                      data={input2}
+                      keyExtractor={(d) => d.value}
+                      valueExtractor={(d) => d.label}
+                      label="Entrada 2"
+                      value={input2.find((d) => d.value === field.value)}
                       onChange={(d) => field.onChange(d.value)}
                     />
                   )}
@@ -396,21 +407,56 @@ export function ProfileUpdateForm(props: Props) {
                 />
               </div>
               <div className="sm:col-span-1">
+                <Controller
+                  control={control}
+                  name="communication_type"
+                  render={({ field }) => (
+                    <Select
+                      name="communication_type"
+                      data={communicationType}
+                      keyExtractor={(d) => d.value}
+                      valueExtractor={(d) => d.label}
+                      label="Tipo de comunicação"
+                      value={communicationType.find(
+                        (d) => d.value === field.value
+                      )}
+                      onChange={(d) => field.onChange(d.value)}
+                    />
+                  )}
+                />
+              </div>
+              <div className="sm:col-span-1">
+                <Controller
+                  control={control}
+                  name="protocol_type"
+                  render={({ field }) => (
+                    <Select
+                      name="protocol_type"
+                      data={protocolType}
+                      keyExtractor={(d) => d.value}
+                      valueExtractor={(d) => d.label}
+                      label="Tipo do protocolo"
+                      value={protocolType.find((d) => d.value === field.value)}
+                      onChange={(d) => field.onChange(d.value)}
+                    />
+                  )}
+                />
+              </div>
+              <div className="sm:col-span-1">
                 <Input
-                  {...register("sleep")}
-                  id="sleep"
-                  label="Sleep"
-                  placeholder="2"
+                  {...register("horimeter")}
+                  id="horimeter"
+                  label="Horímetro em milissegundos"
+                  placeholder="3600"
                   type="number"
-                  error={errors.sleep?.message}
+                  error={errors.horimeter?.message}
                 />
               </div>
             </dl>
           </div>
         </div>
       </section>
-
-      <section aria-labelledby="additional-functions">
+      <section aria-labelledby="functions">
         <div className="bg-white sm:rounded-lg">
           <div className="py-5">
             <h1
@@ -450,12 +496,132 @@ export function ProfileUpdateForm(props: Props) {
                   </div>
                 </div>
               ))}
+
+              <div>
+                <div className="relative flex items-center py-4">
+                  <div className="min-w-0 flex-1 text-sm leading-6">
+                    <label
+                      htmlFor={"functions-accel"}
+                      className="select-none font-medium text-gray-900"
+                    >
+                      Acelerômetro
+                    </label>
+                  </div>
+                  <div className="ml-3 flex h-6 items-center gap-2">
+                    <Controller
+                      control={control}
+                      name={"accel"}
+                      render={({ field }) => (
+                        <Toggle onChange={field.onChange} value={field.value} />
+                      )}
+                    />
+                  </div>
+                </div>
+                {watch("accel") ? (
+                  <div className="sm:col-span-1">
+                    <Input
+                      {...register("sensitivity_adjustment")}
+                      id="sensibility"
+                      label="Ajuste de Sensibilidade"
+                      placeholder="500"
+                      type="number"
+                      error={errors.sensitivity_adjustment?.message}
+                    />
+                  </div>
+                ) : (
+                  <></>
+                )}
+              </div>
+
+              <div>
+                <div className="relative flex items-center py-4">
+                  <div className="min-w-0 flex-1 text-sm leading-6">
+                    <label
+                      htmlFor={"functions-cornering_position_update"}
+                      className="select-none font-medium text-gray-900"
+                    >
+                      Atualização da posição em curva
+                    </label>
+                  </div>
+                  <div className="ml-3 flex h-6 items-center gap-2">
+                    <Controller
+                      control={control}
+                      name={"cornering_position_update"}
+                      render={({ field }) => (
+                        <Toggle onChange={field.onChange} value={field.value} />
+                      )}
+                    />
+                  </div>
+                </div>
+                {watch("cornering_position_update") ? (
+                  <div className="sm:col-span-1">
+                    <Input
+                      {...register("angle_adjustment")}
+                      id="angle_adjustment"
+                      label="Ajuste de ângulo"
+                      placeholder="45"
+                      type="number"
+                      error={errors.angle_adjustment?.message}
+                    />
+                  </div>
+                ) : (
+                  <></>
+                )}
+              </div>
+
+              <div>
+                <div className="relative flex items-center py-4">
+                  <div className="min-w-0 flex-1 text-sm leading-6">
+                    <label
+                      htmlFor={"functions-virtual_ignition"}
+                      className="select-none font-medium text-gray-900"
+                    >
+                      Ignição Virtual
+                    </label>
+                  </div>
+                  <div className="ml-3 flex h-6 items-center gap-2">
+                    <Controller
+                      control={control}
+                      name={"virtual_ignition"}
+                      render={({ field }) => (
+                        <Toggle onChange={field.onChange} value={field.value} />
+                      )}
+                    />
+                  </div>
+                </div>
+                {watch("virtual_ignition") ? (
+                  <div className="sm:col-span-full">
+                    <dt className="text-sm font-medium text-gray-400">
+                      Definir Ignição por voltagem
+                    </dt>
+                    <div className="flex gap-2 mt-2">
+                      <Input
+                        {...register("ignition_by_voltage.t1")}
+                        id="ignition_by_voltage_t1"
+                        label="t1"
+                        placeholder="60"
+                        type="number"
+                        error={errors.ignition_by_voltage?.t1?.message}
+                      />
+                      <Input
+                        {...register("ignition_by_voltage.t2")}
+                        id="ignition_by_voltage_t2"
+                        label="t2"
+                        placeholder="180"
+                        type="number"
+                        error={errors.ignition_by_voltage?.t2?.message}
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <></>
+                )}
+              </div>
             </div>
           </div>
         </div>
       </section>
-
-      <section aria-labelledby="additional-functions">
+      <section aria-labelledby="functions-optional">
         <div className="bg-white sm:rounded-lg">
           <div className="py-5">
             <h1
@@ -518,7 +684,6 @@ export function ProfileUpdateForm(props: Props) {
           </div>
         </div>
       </section>
-
       <div className="mt-6 flex items-center justify-end gap-x-6">
         <button
           type="button"
@@ -528,7 +693,7 @@ export function ProfileUpdateForm(props: Props) {
           Limpar
         </button>
         <Button variant="primary" type="submit">
-          Atualizar
+          Registrar
         </Button>
       </div>
     </form>

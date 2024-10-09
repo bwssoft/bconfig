@@ -57,4 +57,24 @@ type Config = {
   operation_mode?: boolean
   sleep?: number
   max_speed?: number
+
+  accel?: boolean
+  communication_type?: string
+  protocol_type?: string
+  anti_theft?: boolean
+  horimeter?: number
+  jammer_detection?: boolean
+  clear_buffer?: boolean
+  clear_horimeter?: boolean
+  input_1?: number
+  input_2?: number
+  angle_adjustment?: number
+  lock_type_progression?: {
+    n1: number
+    n2: number
+  }
+  ignition_by_voltage?: {
+    t1: number
+    t2: number
+  }
 }

@@ -51,9 +51,29 @@ type Led = boolean
 
 type VirtualIgnition = boolean
 
-type PanicButton = boolean
+type MaxSpeed = number
 
-type WorkMode = string
+type Accel = boolean
+
+type CommunicationType = "TCP" | "UDP"
+
+type ProtocolType = "E3+" | "GT06"
+
+type AntiTheft = boolean
+
+type JammerDetection = boolean
+
+type AngleAdjustment = number
+
+type LockTypeProgression = {
+  n1: number
+  n2: number
+}
+
+type IgnitionByVoltage = {
+  t1: number
+  t2: number
+}
 
 export type AutoTest = {
   SN: string,
@@ -86,12 +106,20 @@ interface Check extends Object {
   economy_mode?: EconomyMode
   lbs_position?: LBSPosition
   cornering_position_update?: CorneringPositionUpdate
-  ignition_alert_power_cut?: IgnitionAlertPowerCut
-  gprs_failure_alert?: GprsFailureAlert
   led?: Led
   virtual_ignition?: VirtualIgnition
-  panic_button?: PanicButton
-  work_mode?: WorkMode
+  max_speed?: number
+  sensitivity_adjustment?: number
+  accel?: Accel
+  communication_type?: CommunicationType
+  protocol_type?: ProtocolType
+  anti_theft?: AntiTheft
+  jammer_detection?: JammerDetection
+  angle_adjustment?: AngleAdjustment
+  lock_type_progression?: LockTypeProgression
+  ignition_by_voltage?: IgnitionByVoltage
+  input_1?: number
+  input_2?: number
 }
 
 interface Status {
@@ -131,7 +159,7 @@ export class E34G {
         if (key === "TZ") {
           parsed["timezone"] = this.timezone(value)
         }
-        if (key === "MODE") {
+        if (key === "OUT_MODE") {
           parsed["lock_type"] = this.lock_type(value)
         }
         if (key === "HB") {
@@ -155,20 +183,48 @@ export class E34G {
         if (key === "TUR") {
           parsed["cornering_position_update"] = this.cornering_position_update(value)
         }
-        if (key === "BJ") {
-          parsed["ignition_alert_power_cut"] = this.ignition_alert_power_cut(value)
-        }
-        if (key === "JD") {
-          parsed["gprs_failure_alert"] = this.gprs_failure_alert(value)
-        }
         if (key === "LED") {
           parsed["led"] = this.led(value)
         }
         if (key === "IV") {
           parsed["virtual_ignition"] = this.virtual_ignition(value)
         }
+        if (key === "OD") {
+          parsed["max_speed"] = this.max_speed(value)
+        }
+
+        if (key === "ACC") {
+          parsed["accel"] = this.accel(value)
+        }
+        if (key === "PROT_COM") {
+          parsed["communication_type"] = this.communication_type(value)
+        }
+        if (key === "PROT") {
+          parsed["protocol_type"] = this.protocol_type(value)
+        }
+        if (key === "AF") {
+          parsed["anti_theft"] = this.anti_theft(value)
+        }
+        if (key === "JD") {
+          parsed["jammer_detection"] = this.jammer_detection(value)
+        }
+        if (key === "TDET") {
+          parsed["angle_adjustment"] = this.angle_adjustment(value)
+        }
+        if (key === "DC") {
+          parsed["lock_type_progression"] = this.lock_type_progression(value)
+        }
+        if (key.toLowerCase() === "voltage") {
+          parsed["ignition_by_voltage"] = this.ignition_by_voltage(value)
+        }
         if (key === "ACCMODE") {
-          parsed["work_mode"] = this.work_mode(value)
+          parsed["input_1"] = this.input_1(value)
+        }
+        if (key === "IN2_MODE") {
+          parsed["input_2"] = this.input_2(value)
+        }
+        if (key === "GS") {
+          parsed["sensitivity_adjustment"] = this.sensitivity_adjustment(value)
         }
       })
     }
@@ -233,18 +289,18 @@ export class E34G {
   */
   static ip(input: string) {
     const result: IP = {}
-    const ips = input.replace(/IP1=|IP2=/g, "").split(" ")
+    const ips = input.replace(/\s+/g, '').replace(/IP1=|IP2=/g, "").split(";")
     const ip1 = ips?.[0]
     const ip2 = ips?.[1]
     if (ip1) {
-      const [ip, port] = ip1.split(":")
+      const [ip, port] = ip1.split(",")
       result["primary"] = {
         ip,
         port: Number.isNaN(port) ? undefined : Number(port)
       }
     }
     if (ip2) {
-      const [ip, port] = ip2.split(":")
+      const [ip, port] = ip2.split(",")
       result["secondary"] = {
         ip,
         port: Number.isNaN(port) ? undefined : Number(port)
@@ -348,21 +404,11 @@ export class E34G {
   * @example 30
   */
   static lbs_position(input: string): LBSPosition | undefined {
-    if (!input || (input !== "1" && input !== "0")) return undefined
-    return input === "1" ? true : false
+    if (!input || (input !== "ON" && input !== "OFF")) return undefined
+    return input === "ON" ? true : false
   }
 
   static cornering_position_update(input: string): CorneringPositionUpdate | undefined {
-    if (!input || (input !== "1" && input !== "0")) return undefined
-    return input === "1" ? true : false
-  }
-
-  static ignition_alert_power_cut(input: string): IgnitionAlertPowerCut | undefined {
-    if (!input || (input !== "1" && input !== "0")) return undefined
-    return input === "1" ? true : false
-  }
-
-  static gprs_failure_alert(input: string): GprsFailureAlert | undefined {
     if (!input || (input !== "1" && input !== "0")) return undefined
     return input === "1" ? true : false
   }
@@ -377,18 +423,9 @@ export class E34G {
     return input === "1" ? true : false
   }
 
-  static work_mode(input: string): WorkMode | undefined {
-    if (!input || (!["SLAVE", "MASTER", "NEGATIVE"].includes(input))) {
-      return undefined
-    }
-    return input
-  }
-
   static sensitivity_adjustment(input: string): SensitivityAdjustment | undefined {
-    if (!input.includes("GS:")) return undefined
-    const gs = input.split("GS:")?.[1]
-    if (Number.isNaN(gs)) return undefined
-    return Number(gs)
+    if (!input || Number.isNaN(input)) return undefined
+    return Number(input)
   }
 
   static auto_test(input: string): AutoTest | undefined {
@@ -401,9 +438,82 @@ export class E34G {
     }, {} as AutoTest)
   }
 
+  /*
+  * @example 30
+  */
+  static max_speed(input: string): MaxSpeed | undefined {
+    if (!input || Number.isNaN(input)) return undefined
+    return Number(input)
+  }
+
+  static accel(input: string): Accel | undefined {
+    console.log("accel", input)
+    if (!input || (input !== "1" && input !== "0")) return undefined
+    return input === "1" ? true : false
+  }
+
+  static communication_type(input: string): CommunicationType | undefined {
+    if (!input || (input !== "TCP" && input !== "UDP")) return undefined
+    return input
+  }
+
+  static protocol_type(input: string): ProtocolType | undefined {
+    if (!input || (input !== "E3+" && input !== "GT06")) return undefined
+    return input
+  }
+
+  static anti_theft(input: string): AntiTheft | undefined {
+    if (!input || (input !== "OFF" && input !== "ON")) return undefined
+    return input === "ON" ? true : false
+  }
+
+  //   horimeter:
+  static jammer_detection(input: string): JammerDetection | undefined {
+    if (!input || (input !== "1" && input !== "0")) return undefined
+    return input === "1" ? true : false
+  }
+
+  static angle_adjustment(input: string): AngleAdjustment | undefined {
+    if (!input || Number.isNaN(input)) return undefined
+    return Number(input)
+  }
+  static lock_type_progression(input: string): LockTypeProgression | undefined {
+    const [n1, n2] = input.split(',')
+    if (!n1 || !n2) return undefined
+    if (Number.isNaN(n1) || Number.isNaN(n2)) return undefined
+    return {
+      n1: Number(n2),
+      n2: Number(n1)
+    }
+  }
+  static ignition_by_voltage(input: string): IgnitionByVoltage | undefined {
+    const [t1, t2] = input.split(',')
+    if (!t1 || !t2) return undefined
+    if (Number.isNaN(t1) || Number.isNaN(t2)) return undefined
+    return {
+      t1: Number(t2),
+      t2: Number(t1)
+    }
+  }
+
+  static input_1(input: string): number | undefined {
+    if (!input || Number.isNaN(input)) return undefined
+    return Number(input)
+  }
+
+  static input_2(input: string): number | undefined {
+    if (!input || Number.isNaN(input)) return undefined
+    return Number(input)
+  }
+
+  static horimeter(input: string): number | undefined {
+    if (!input || Number.isNaN(input)) return undefined
+    return Number(input)
+  }
 }
 
-// const check = "Sim=89883030000101192190 SOS= APN=bws.br,bws,bws TZ=W0 HB=60,1800 MG=0 TX=180 BJ=0 ACCMODE=1 TDET=0 WKMODE=0 DD=0 OD=0 ZD=7 AC=0,0 SDMS=2 TUR=1 PR=1 DK=1726 JD=48 LBS=* MODE=1 LED=1 IV=1 ACC=1 GPRS:4G E_UTRAN GPS:V PROT=E3+ DC:100,2000 Voltage:13.40,12.90 AF:OFF GS:80";
+// const check = "Sim=VAZIO SOS=PANIC APN=bws.br,bws,bws TZ=W0 HB=60,7200 MG=0 TX=300 BJ=0 ACCMODE=1 TDET=20 WKMODE=0 DD=0 OD=120 SDMS=2 TUR=1 PROT_COM=TCP DK=0 JD=1 LBS=ON OUT_MODE=2 LED=1 IV=1 ACC=1 GPRS=2G GPS=V PROT=E3+ DC=1500,8000 Voltage=13.50,12.50 AF=OFF GS=120 ACK=30 IN2_MODE=1 MQ=OFF
+
 
 // const status = "BATTERY EXTERNAL:11.49V;BATT_INT:0%;ACC:ON;GPRS:Ok;GPS:0;GSM:20;HR: ;Buffer Memory:0;Tech:4G E_UTRAN;IP:143.198.247.1;Port:2000;ENGINE MODE1"
 
