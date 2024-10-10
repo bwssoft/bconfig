@@ -199,11 +199,10 @@ export function useE34GCommunication(props: { profile?: IProfile }) {
       await openPort(port);
       // let attempts = 0
       // const max_retries = 3
-      let check: DeviceResponse, cxip: DeviceResponse, dns: DeviceResponse, status: DeviceResponse
+      let check: DeviceResponse, cxip: DeviceResponse, status: DeviceResponse
       // while (attempts < max_retries && (!check || !cxip || !dns)) {
       if (!check) check = await sendCommandWithRetries(port, "CHECK");
       if (!cxip) cxip = await sendCommandWithRetries(port, "CXIP");
-      if (!dns) dns = await sendCommandWithRetries(port, "DNS");
       if (!status) status = await sendCommandWithRetries(port, "STATUS");
       //   attempts++
       // }
@@ -213,7 +212,7 @@ export function useE34GCommunication(props: { profile?: IProfile }) {
       return {
         profile: {
           ip: cxip ? E34G.ip(cxip) : undefined,
-          dns: dns ? E34G.dns(dns) : undefined,
+          dns: cxip ? E34G.dns(cxip) : undefined,
           apn: _check?.apn ?? undefined,
           timezone: _check?.timezone ?? undefined,
           lock_type: _check?.lock_type ?? undefined,
@@ -243,7 +242,6 @@ export function useE34GCommunication(props: { profile?: IProfile }) {
         native_profile: {
           cxip,
           check,
-          dns,
           status
         }
       }
@@ -276,7 +274,7 @@ export function useE34GCommunication(props: { profile?: IProfile }) {
         const init_time_command = Date.now()
         callback.onSendCommand(command, c)
         const response = await sendCommandWithRetries(port, command);
-        await sleep(100)
+        await sleep(50)
         const end_time_command = Date.now()
         commands_sent.push({
           response,
