@@ -277,6 +277,7 @@ export function useE34GCommunication(props: { profile?: IProfile }) {
         const init_time_command = Date.now()
         callback.onSendCommand(command, c)
         const response = await sendCommandWithRetries(port, command);
+        await sleep(100)
         const end_time_command = Date.now()
         commands_sent.push({
           response,
