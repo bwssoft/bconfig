@@ -315,12 +315,8 @@ export class E34G {
   */
   static dns(input: string): DNS | undefined {
     let result: DNS = {}
-    console.log("dns")
-    const dns = input.replace(/DNS=/g, "").split(":")
-    console.log(input.replace(/\s+/g, '').replace(/IP1=|IP2=|DNS=/g, "").split(";"))
-    console.log(dns)
-    const address = dns?.[0]
-    const port = dns?.[1]
+    const regex = input.replace(/\s+/g, '').replace(/IP1=|IP2=|DNS=/g, "").split(";")
+    const [address, port] = regex[2].split(',')
     if (address) {
       result["address"] = address
     }
@@ -494,8 +490,8 @@ export class E34G {
     if (!t1 || !t2) return undefined
     if (Number.isNaN(t1) || Number.isNaN(t2)) return undefined
     return {
-      t1: Number(t2),
-      t2: Number(t1)
+      t1: Number(t1),
+      t2: Number(t2)
     }
   }
 
