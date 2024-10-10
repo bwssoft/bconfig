@@ -8,7 +8,7 @@ import { findOneUser, updateOneUserById } from './app/lib/action';
 
 async function getUser(email: string): Promise<IUser | null> {
   try {
-    const user = await findOneUser({ email, connected: false });
+    const user = await findOneUser({ email });
     return user
   } catch (error) {
     console.error('Failed to fetch user:', error);
@@ -29,6 +29,7 @@ export const { auth, signIn, signOut } = NextAuth({
           const { email, password } = parsedCredentials.data;
           const user = await getUser(email);
           if (!user) return null;
+          if (user.type === "external" && user.connected) return null
           const passwordsMatch = await bcrypt.compare(password, user.password);
           if (passwordsMatch) {
             await updateOneUserById({ id: user.id }, { ...user, connected: true })

@@ -5,7 +5,7 @@ import userRepository from "../repository/mongodb/user.repository"
 
 const repository = userRepository
 
-export async function findOneUser(props: { email: string, connected: boolean }) {
+export async function findOneUser(props: { email: string, connected?: boolean }) {
   const user = await repository.findOne(props)
   return user
 }
