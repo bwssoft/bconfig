@@ -238,7 +238,7 @@ export function useE34GCommunication(props: { profile?: IProfile }) {
           input_1: _check?.input_1 ?? undefined,
           input_2: _check?.input_2 ?? undefined,
           sensitivity_adjustment: _check?.sensitivity_adjustment ?? undefined,
-          horimeter: _status?.["HB"] ? E34G.horimeter(_status?.["HB"]) : undefined
+          horimeter: _status?.["HR"] ? E34G.horimeter(_status?.["HR"]) : undefined
         },
         native_profile: {
           cxip,
