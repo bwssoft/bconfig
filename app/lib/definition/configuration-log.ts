@@ -37,4 +37,5 @@ export type DeviceNativeProfile = {
   check?: string
   dns?: string
   cxip?: string
+  status?: string
 }

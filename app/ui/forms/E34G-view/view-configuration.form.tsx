@@ -203,6 +203,16 @@ export function E34GViewConfigurationForm(props: Props) {
                   </dd>
                 </div>
               </div>
+              <div className="sm:col-span-full">
+                <div className="px-4 sm:px-0">
+                  <dt className="text-sm font-medium leading-6 text-gray-900">
+                    Status
+                  </dt>
+                  <dd className="mt-1 text-sm leading-6 text-gray-700">
+                    {actual_native_profile?.status ?? "_-"}
+                  </dd>
+                </div>
+              </div>
             </dl>
           </div>
         </div>

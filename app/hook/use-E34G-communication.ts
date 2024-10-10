@@ -243,7 +243,8 @@ export function useE34GCommunication(props: { profile?: IProfile }) {
         native_profile: {
           cxip,
           check,
-          dns
+          dns,
+          status
         }
       }
     } catch (e) {
