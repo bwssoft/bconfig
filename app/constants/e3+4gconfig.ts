@@ -95,7 +95,7 @@ export const communicationType = [
 ]
 
 export const protocolType = [
-  { value: "E3", label: "E3" },
+  { value: "E3+", label: "E3" },
   { value: "GT06", label: "GT06" },
 ]
 
