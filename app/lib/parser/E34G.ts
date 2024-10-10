@@ -217,7 +217,7 @@ export class E34G {
         if (key.toLowerCase() === "voltage") {
           parsed["ignition_by_voltage"] = this.ignition_by_voltage(value)
         }
-        if (key === "ACCMODE") {
+        if (key === "IN1_MODE") {
           parsed["input_1"] = this.input_1(value)
         }
         if (key === "IN2_MODE") {
@@ -315,7 +315,10 @@ export class E34G {
   */
   static dns(input: string): DNS | undefined {
     let result: DNS = {}
+    console.log("dns")
     const dns = input.replace(/DNS=/g, "").split(":")
+    console.log(input.replace(/\s+/g, '').replace(/IP1=|IP2=|DNS=/g, "").split(";"))
+    console.log(dns)
     const address = dns?.[0]
     const port = dns?.[1]
     if (address) {

@@ -209,9 +209,7 @@ export function useE34GCommunication(props: { profile?: IProfile }) {
       // }
       await closePort(port);
       const _check = check ? E34G.check(check) : undefined;
-      console.log('status', status)
       const _status = status ? E34G.status(status) : undefined;
-      console.log('_status', _status)
       return {
         profile: {
           ip: cxip ? E34G.ip(cxip) : undefined,
@@ -466,11 +464,6 @@ export function useE34GCommunication(props: { profile?: IProfile }) {
 
         const is_configured = configured_device.commands_sent.every(c => typeof c.response !== "undefined")
         const id = crypto.randomUUID()
-
-        console.log("actual")
-        console.log(JSON.stringify(actual_profile, null, 2))
-        console.log("desired")
-        console.log(JSON.stringify(desired_profile.config, null, 2))
 
         const configuration_result = {
           id,
