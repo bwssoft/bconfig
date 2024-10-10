@@ -461,6 +461,8 @@ export function useE34GCommunication(props: { profile?: IProfile }) {
           difference: fields_not_configured
         } = checkWithDifference(desired_profile.config, actual_profile)
 
+        console.log("desired", desired_profile.config)
+        console.log("actul", actual_profile)
         const is_configured = configured_device.commands_sent.every(c => typeof c.response !== "undefined")
         const id = crypto.randomUUID()
 
