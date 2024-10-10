@@ -1,6 +1,7 @@
-import { findAllProfile, findOneProfile } from "@/app/lib/action";
+import { findManyByModel, findOneProfile } from "@/app/lib/action";
 import { Panel } from "./@components/panel";
 import { ProfileSelect } from "./@components/porfile-select";
+import { IProfile } from "@/app/lib/definition";
 
 interface Props {
   searchParams: {
@@ -12,7 +13,7 @@ export default async function Page(props: Props) {
   const {
     searchParams: { id },
   } = props;
-  const profiles = await findAllProfile();
+  const profiles = await findManyByModel("E3+" as IProfile["model"]);
   const profileSelected = (await findOneProfile({ id })) ?? undefined;
   const date = new Date();
   return (

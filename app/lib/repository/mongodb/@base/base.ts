@@ -30,6 +30,11 @@ export class BaseRepository<Entity extends Document> {
     return await db.collection<Entity>(this.collection).findOne(params as Partial<WithId<Entity>>, { projection: { _id: 0 } })
   }
 
+  async findMany(params: Partial<Entity>) {
+    const db = await this.connect();
+    return await db.collection<Entity>(this.collection).find(params as Partial<WithId<Entity>>, { projection: { _id: 0 } }).toArray()
+  }
+
   async findAll() {
     const db = await this.connect();
     return await db.collection<Entity>(this.collection).find().project({ _id: 0 }).toArray();

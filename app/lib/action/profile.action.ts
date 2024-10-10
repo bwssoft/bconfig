@@ -59,3 +59,7 @@ export async function findManyByName(input: string): Promise<IProfile[]> {
   return await aggregate.toArray() as IProfile[]
 }
 
+export async function findManyByModel(model: IProfile["model"]): Promise<IProfile[]> {
+  return await repository.findMany({ model })
+}
+

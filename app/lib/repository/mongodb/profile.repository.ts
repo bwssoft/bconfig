@@ -43,6 +43,7 @@ class ProfileRepository extends BaseRepository<IProfile> {
       },
     ]).toArray();
   }
+
 }
 
 export default ProfileRepository.getInstance();
