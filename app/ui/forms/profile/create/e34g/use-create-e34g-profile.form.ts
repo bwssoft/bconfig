@@ -16,7 +16,7 @@ const data_transmission = z
   .coerce
   .number()
   .positive({ message: "O valor deve ser positivo" })
-  .max(65535, { message: "O valor deve ser no máximo 65535" })
+  .max(3600, { message: "O valor deve ser no máximo 3600" })
   .optional()
 
 const ip = z
@@ -42,8 +42,7 @@ const keep_alive = z
   .coerce
   .number()
   .positive({ message: "O valor deve ser positivo" })
-  .min(60, { message: "O valor deve ser no mínimo 60" })
-  .max(1800, { message: "O valor deve ser no máximo 1800" })
+  .max(3600, { message: "O valor deve ser no máximo 3600" })
   .optional()
 
 const odometer = z
@@ -56,6 +55,7 @@ const horimeter = z
   .coerce
   .number()
   .positive({ message: "O valor deve ser positivo" })
+  .max(65535, { message: "O valor deve ser no máximo 65535" })
   .optional()
 
 const max_speed = z
@@ -84,7 +84,7 @@ const ignition_by_voltage = z
   .coerce
   .number()
   .positive({ message: "O valor deve ser positivo" })
-  .max(90, { message: "O valor deve ser no máximo 90" })
+  .max(65535, { message: "O valor deve ser no máximo 65535" })
 
 const removePropByOptionalFunctions = <T>(schema: T) => {
   const optional_functions = (schema as any).optional_functions

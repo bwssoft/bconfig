@@ -39,13 +39,6 @@ export function E34GProfileCreateForm() {
       className="flex flex-col gap-6 mt-6"
       onSubmit={handleSubmit}
     >
-      {/* 
-        1. falta o tipo de bloqueido "Definir progressão" quando for mode1 
-        2. falta "ignição por tensão" quando for igniniçaõ virtual 
-        3. não exibir ajuste de sensibilidade se a função acelerometro for false
-        4. não exibir ajuste de angulo se a função atualização da posição em curva
-        for false  
-      */}
       <section aria-labelledby="general">
         <div className="bg-white sm:rounded-lg">
           <div className="py-5">
@@ -285,7 +278,7 @@ export function E34GProfileCreateForm() {
               {lockType === 1 ? (
                 <div className="sm:col-span-full">
                   <dt className="text-sm font-medium text-gray-400">
-                    Definir Progressão
+                    Definir Progressão (ms)
                   </dt>
                   <div className="flex gap-2 mt-2">
                     <Input
@@ -446,10 +439,20 @@ export function E34GProfileCreateForm() {
                 <Input
                   {...register("horimeter")}
                   id="horimeter"
-                  label="Horímetro em milissegundos"
+                  label="Horímetro (ms)"
                   placeholder="3600"
                   type="number"
                   error={errors.horimeter?.message}
+                />
+              </div>
+              <div className="sm:col-span-1">
+                <Input
+                  {...register("sensitivity_adjustment")}
+                  id="sensibility"
+                  label="Ajuste de Sensibilidade"
+                  placeholder="500"
+                  type="number"
+                  error={errors.sensitivity_adjustment?.message}
                 />
               </div>
             </dl>
@@ -497,6 +500,8 @@ export function E34GProfileCreateForm() {
                 </div>
               ))}
 
+              {/* 
+              // foi comentado por que não vai ter o comando accell
               <div>
                 <div className="relative flex items-center py-4">
                   <div className="min-w-0 flex-1 text-sm leading-6">
@@ -531,7 +536,7 @@ export function E34GProfileCreateForm() {
                 ) : (
                   <></>
                 )}
-              </div>
+              </div> */}
 
               <div>
                 <div className="relative flex items-center py-4">
@@ -592,7 +597,7 @@ export function E34GProfileCreateForm() {
                 {watch("virtual_ignition") ? (
                   <div className="sm:col-span-full">
                     <dt className="text-sm font-medium text-gray-400">
-                      Definir Ignição por voltagem
+                      Definir Ignição por voltagem (voltagem)
                     </dt>
                     <div className="flex gap-2 mt-2">
                       <Input
