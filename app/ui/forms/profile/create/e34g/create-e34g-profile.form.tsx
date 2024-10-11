@@ -442,6 +442,7 @@ export function E34GProfileCreateForm() {
                   label="Horímetro (ms)"
                   placeholder="3600"
                   type="number"
+                  step="0.01"
                   error={errors.horimeter?.message}
                 />
               </div>
@@ -606,6 +607,7 @@ export function E34GProfileCreateForm() {
                         label="t1"
                         placeholder="60"
                         type="number"
+                        step="0.01"
                         error={errors.ignition_by_voltage?.t1?.message}
                       />
                       <Input
@@ -614,6 +616,7 @@ export function E34GProfileCreateForm() {
                         label="t2"
                         placeholder="180"
                         type="number"
+                        step="0.01"
                         error={errors.ignition_by_voltage?.t2?.message}
                       />
                     </div>
