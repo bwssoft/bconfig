@@ -8,7 +8,6 @@ import {
   lockType as lockTypeConstant,
   optional_functions,
   timezones,
-  jammerDetection,
   input1,
   input2,
 } from "@/app/constants/e3+4gconfig";
@@ -609,7 +608,7 @@ export function E34GProfileUpdateForm(props: Props) {
                       <Input
                         {...register("ignition_by_voltage.t1")}
                         id="ignition_by_voltage_t1"
-                        label="t1"
+                        label="VION (t1)"
                         placeholder="60"
                         type="number"
                         step="0.01"
@@ -618,7 +617,7 @@ export function E34GProfileUpdateForm(props: Props) {
                       <Input
                         {...register("ignition_by_voltage.t2")}
                         id="ignition_by_voltage_t2"
-                        label="t2"
+                        label="VIOFF (t2)"
                         placeholder="180"
                         type="number"
                         step="0.01"

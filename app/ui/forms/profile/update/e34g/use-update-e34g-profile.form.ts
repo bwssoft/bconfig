@@ -49,20 +49,20 @@ const keep_alive = z
 const odometer = z
   .coerce
   .number()
-  .positive({ message: "O valor deve ser positivo" })
+  .min(0, { message: "O valor deve ser no mínimo 0" })
+  .max(65535, { message: "O valor deve ser no máximo 65535" })
   .optional()
 
 const horimeter = z
   .coerce
   .number()
-  .positive({ message: "O valor deve ser positivo" })
+  .min(0, { message: "O valor deve ser no mínimo 0" })
   .max(65535, { message: "O valor deve ser no máximo 65535" })
   .optional()
 
 const max_speed = z
   .coerce
   .number()
-  .positive({ message: "O valor deve ser positivo" })
   .min(0, { message: "O valor deve ser no mínimo 0" })
   .max(255, { message: "O valor deve ser no máximo 255" })
   .optional()
