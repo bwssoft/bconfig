@@ -1,5 +1,5 @@
 import { findManyByModel, findOneProfile } from "@/app/lib/action";
-import { Panel } from "./@components/panel";
+import { Panel } from "./@components/config-panel";
 import { ProfileSelect } from "./@components/porfile-select";
 import { IProfile } from "@/app/lib/definition";
 
