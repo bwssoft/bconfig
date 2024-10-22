@@ -45,10 +45,10 @@ export function E34GProfileCreateForm() {
               id="applicant-information-title"
               className="text-base font-semibold leading-7 text-gray-900"
             >
-              Comunicação
+              Perfil de configuração
             </h1>
             <p className="mt-2 text-sm text-gray-700">
-              Detalhes do equipamento e suas configurações.
+              Insira o nome do perfil.
             </p>
           </div>
           <div className="border-t border-gray-200 py-5">
