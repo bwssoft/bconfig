@@ -10,6 +10,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@bwsoft/accordion": "^2.5.10",
+    "@bwsoft/combobox": "^1.0.0",
     "@bwsoft/tabs": "^0.0.1",
     "@headlessui/react": "^2.0.4",
     "@heroicons/react": "^2.1.3",

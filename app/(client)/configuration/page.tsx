@@ -1,5 +1,6 @@
 import { findManyByModel, findOneProfile } from "@/app/lib/action";
 import { IProfile } from "@/app/lib/definition";
+import { ConfigPanel } from "./@components/config-panel";
 
 interface Props {
   searchParams: {
@@ -12,7 +13,7 @@ export default async function Page(props: Props) {
     searchParams: { id },
   } = props;
   const profiles = await findManyByModel("E3+4G" as IProfile["model"]);
-  const profileSelected = (await findOneProfile({ id })) ?? undefined;
+  const current_profile = (await findOneProfile({ id })) ?? undefined;
   const date = new Date();
   return (
     <div>
@@ -33,6 +34,7 @@ export default async function Page(props: Props) {
           </p>
         </div>
       </div>
+      <ConfigPanel profiles={profiles} current_profile={current_profile} />
     </div>
   );
 }

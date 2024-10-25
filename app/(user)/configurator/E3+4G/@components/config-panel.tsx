@@ -16,7 +16,6 @@ interface Props {
 
 export function ConfigPanel(props: Props) {
   const { profile } = props;
-  const { config } = profile ?? {};
   const {
     configuration,
     identified,
@@ -67,7 +66,7 @@ export function ConfigPanel(props: Props) {
                   inIdentification={inIdentification}
                 />
                 <DevicesToConfigureTable
-                  model={"E3+" as IProfile["model"]}
+                  model={"E3+4G" as IProfile["model"]}
                   data={identified.map((d) => ({
                     ...d,
                     getDeviceProfile,

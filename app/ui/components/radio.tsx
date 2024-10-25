@@ -1,25 +1,4 @@
-/*
-  This example requires some changes to your config:
-  
-  ```
-  // tailwind.config.js
-  module.exports = {
-    // ...
-    plugins: [
-      // ...
-      require('@tailwindcss/forms'),
-    ],
-  }
-  ```
-*/
-const sides = [
-  { id: null, name: "None" },
-  { id: 1, name: "Baked beans" },
-  { id: 2, name: "Coleslaw" },
-  { id: 3, name: "French fries" },
-  { id: 4, name: "Garden salad" },
-  { id: 5, name: "Mashed potatoes" },
-];
+import { useEffect, useState } from "react";
 
 export function Radio<T>(props: {
   data: T[];
@@ -32,6 +11,14 @@ export function Radio<T>(props: {
 }) {
   const { label, data, keyExtractor, valueExtractor, defaultValue, onChange } =
     props;
+
+  const [selectedValue, setSelectedValue] = useState(defaultValue);
+
+  // useEffect to update selected value when defaultValue changes
+  useEffect(() => {
+    setSelectedValue(defaultValue);
+  }, [defaultValue]);
+
   return (
     <fieldset className="w-full">
       {label && (
@@ -56,11 +43,12 @@ export function Radio<T>(props: {
                 name="plan"
                 type="radio"
                 className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                defaultChecked={
-                  defaultValue &&
-                  valueExtractor(op) === valueExtractor(defaultValue)
+                checked={
+                  selectedValue &&
+                  valueExtractor(op) === valueExtractor(selectedValue)
                 }
                 onChange={() => {
+                  setSelectedValue(op);
                   onChange?.(op);
                 }}
               />

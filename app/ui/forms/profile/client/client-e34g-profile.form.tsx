@@ -1,5 +1,4 @@
 "use client";
-
 import {
   communicationType,
   protocolType,
@@ -11,16 +10,25 @@ import {
   input1,
   input2,
 } from "@/app/constants/e3+4gconfig";
-import { Input } from "@/app/ui/components/input";
-import { Select } from "@/app/ui/components/select";
-import { Radio } from "@/app/ui/components/radio";
-import { useE34GProfileCreateForm } from "./use-client-e34g-profile.form";
+import { Input } from "../../../components/input";
+import { Select } from "../../../components/select";
+import { Radio } from "../../../components/radio";
+import { useClientE34GProfileForm } from "./use-client-e34g-profile.form";
 import { Controller } from "react-hook-form";
-import Toggle from "@/app/ui/components/toggle";
-import { Button } from "@/app/ui/components/button";
-import Alert from "@/app/ui/components/alert";
+import Toggle from "../../../components/toggle";
+import { Button } from "../../../components/button";
+import Alert from "../../../components/alert";
+import { IProfile } from "@/app/lib/definition";
+import { Combobox } from "@bwsoft/combobox";
 
-export function E34GProfileCreateForm() {
+interface Props {
+  current_profile?: IProfile;
+  profiles: IProfile[];
+  onSubmit: () => Promise<void>;
+}
+
+export function E34GClientProfileForm(props: Props) {
+  const { current_profile, profiles, onSubmit } = props;
   const {
     register,
     ipdns,
@@ -31,7 +39,10 @@ export function E34GProfileCreateForm() {
     reset,
     lockType,
     watch,
-  } = useE34GProfileCreateForm();
+    handleProfileSelection,
+    handleChangeName,
+    resetAllFields,
+  } = useClientE34GProfileForm({ defaultValues: current_profile, onSubmit });
   return (
     <form
       autoComplete="off"
@@ -54,12 +65,22 @@ export function E34GProfileCreateForm() {
           <div className="border-t border-gray-200 py-5">
             <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
               <div className="sm:col-span-1">
-                <Input
-                  {...register("name")}
-                  id="Nome"
-                  label="Nome"
-                  placeholder="Perfil#00"
-                  error={errors?.name?.message}
+                <Combobox
+                  data={profiles}
+                  displayValueGetter={(profile) => profile.name}
+                  keyExtractor={(profile) => profile.name}
+                  placeholder="Escolha um perfil ou digite o nome de um novo"
+                  type="single"
+                  behavior="search"
+                  onOptionChange={(profile) => {
+                    handleChangeName(profile[0].name);
+                    handleProfileSelection(profile[0].id);
+                  }}
+                  onSearchChange={(query) => {
+                    handleChangeName(query);
+                    handleProfileSelection();
+                    resetAllFields();
+                  }}
                 />
               </div>
             </dl>
@@ -139,7 +160,7 @@ export function E34GProfileCreateForm() {
                     onChange={({ value }) =>
                       handleChangeIpDns(value as "IP" | "DNS")
                     }
-                    defaultValue={{ value: "IP" }}
+                    defaultValue={{ value: ipdns }}
                   />
                 </div>
               </div>
@@ -628,7 +649,7 @@ export function E34GProfileCreateForm() {
           </div>
         </div>
       </section>
-      <section aria-labelledby="functions-optional">
+      {/* <section aria-labelledby="functions-optional">
         <div className="bg-white sm:rounded-lg">
           <div className="py-5">
             <h1
@@ -690,17 +711,10 @@ export function E34GProfileCreateForm() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
       <div className="mt-6 flex items-center justify-end gap-x-6">
-        <button
-          type="button"
-          onClick={() => reset()}
-          className="text-sm font-semibold leading-6 text-gray-900"
-        >
-          Limpar
-        </button>
         <Button variant="primary" type="submit">
-          Registrar
+          Configurar
         </Button>
       </div>
     </form>
