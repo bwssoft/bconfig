@@ -24,7 +24,7 @@ import { Combobox } from "@bwsoft/combobox";
 interface Props {
   current_profile?: IProfile;
   profiles: IProfile[];
-  onSubmit: () => Promise<void>;
+  onSubmit: (profile: Omit<IProfile, "id" | "created_at">) => Promise<void>;
 }
 
 export function E34GClientProfileForm(props: Props) {
@@ -36,7 +36,6 @@ export function E34GClientProfileForm(props: Props) {
     handleSubmit,
     control,
     errors,
-    reset,
     lockType,
     watch,
     handleProfileSelection,
@@ -47,7 +46,7 @@ export function E34GClientProfileForm(props: Props) {
     <form
       autoComplete="off"
       className="flex flex-col gap-6 mt-6"
-      onSubmit={handleSubmit}
+      action={() => handleSubmit()}
     >
       <section aria-labelledby="general">
         <div className="bg-white sm:rounded-lg">
@@ -714,7 +713,9 @@ export function E34GClientProfileForm(props: Props) {
       </section> */}
       <div className="mt-6 flex items-center justify-end gap-x-6">
         <Button variant="primary" type="submit">
-          Configurar
+          {current_profile
+            ? "Atualizar e Configurar"
+            : "Criar perfil e Configurar"}
         </Button>
       </div>
     </form>

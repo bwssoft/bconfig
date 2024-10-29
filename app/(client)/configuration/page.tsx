@@ -1,6 +1,7 @@
 import { findManyByModel, findOneProfile } from "@/app/lib/action";
 import { IProfile } from "@/app/lib/definition";
 import { ConfigPanel } from "./@components/config-panel";
+import { auth } from "@/auth";
 
 interface Props {
   searchParams: {
@@ -15,6 +16,7 @@ export default async function Page(props: Props) {
   const profiles = await findManyByModel("E3+4G" as IProfile["model"]);
   const current_profile = (await findOneProfile({ id })) ?? undefined;
   const date = new Date();
+  const session = await auth();
   return (
     <div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8 ">
@@ -34,7 +36,11 @@ export default async function Page(props: Props) {
           </p>
         </div>
       </div>
-      <ConfigPanel profiles={profiles} current_profile={current_profile} />
+      <ConfigPanel
+        profiles={profiles}
+        current_profile={current_profile}
+        user_type={session?.user.type!}
+      />
     </div>
   );
 }

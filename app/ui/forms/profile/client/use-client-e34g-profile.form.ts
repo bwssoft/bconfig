@@ -1,7 +1,7 @@
 import { toast } from "@/app/hook/use-toast";
-import { updateOneProfileById } from "@/app/lib/action";
+import { createOneProfile, updateOneProfileById } from "@/app/lib/action";
 import { IProfile } from "@/app/lib/definition";
-import { removeEmptyValues, removeUndefined } from "@/app/lib/util";
+import { removeEmptyValues, removeNull, removeUndefined } from "@/app/lib/util";
 import { formatSearchParams } from "@/app/lib/util/format-search-params";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
@@ -189,24 +189,14 @@ const schema = z.preprocess(removeEmptyValues, z
         t2: ignition_by_voltage,
       })
       .optional().nullable(),
-  })).transform(removeUndefined).transform(removePropByOptionalFunctions)
+  })).transform(removeUndefined).transform(removeNull).transform(removePropByOptionalFunctions)
 
 export type Schema = z.infer<typeof schema>;
 
 const resetValues = {
-  name: '', // Campos obrigatórios devem ter um valor inicial como string vazia
-  password: null, // Omitimos valores opcionais para "limpar" os campos
+  password: null,
   apn: null,
-  ip: {
-    primary: {
-      ip: null, // Omitimos valores opcionais aninhados para "limpar" os campos
-      port: null
-    },
-    secondary: {
-      ip: null,
-      port: null
-    }
-  },
+  ip: null,
   dns: null,
   timezone: null,
   lock_type: null,
@@ -215,35 +205,36 @@ const resetValues = {
   keep_alive: null,
   economy_mode: null,
   sensitivity_adjustment: null,
-  lbs_position: false, // Campos booleanos com valor padrão são mantidos
-  cornering_position_update: false,
-  led: false,
-  virtual_ignition: false,
   optional_functions: null,
   max_speed: null,
-  accel: false,
   communication_type: null,
   protocol_type: null,
-  anti_theft: false,
   horimeter: null,
-  jammer_detection: false,
   clear_buffer: null,
   clear_horimeter: null,
   input_1: null,
   input_2: null,
   angle_adjustment: null,
   lock_type_progression: null,
-  ignition_by_voltage: null
-};
+  ignition_by_voltage: null,
 
+  lbs_position: false,
+  cornering_position_update: false,
+  led: false,
+  accel: false,
+  virtual_ignition: false,
+  jammer_detection: false,
+  anti_theft: false,
+};
 
 interface Props {
   defaultValues?: IProfile;
-  onSubmit: () => Promise<void>
+  onSubmit: (profile: Omit<IProfile, 'created_at'>) => Promise<void>
 }
+
 export function useClientE34GProfileForm(props: Props) {
   const { defaultValues, onSubmit } = props;
-  const [isToUpdate, setIsToUpdate] = useState(false)
+
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -269,13 +260,28 @@ export function useClientE34GProfileForm(props: Props) {
   const lockType = watch("lock_type")
 
   const handleSubmit = hookFormSubmit(
-    async () => {
+    async (data) => {
+      let id = searchParams.get("id")
+      const { name, optional_functions, ...config } = data;
+      const profile = {
+        name,
+        config: config as IProfile["config"],
+        optional_functions: optional_functions as IProfile["optional_functions"],
+        model: "E3+4G" as IProfile["model"]
+      }
       try {
-        onSubmit()
+        if (id) {
+          await updateOneProfileById({ id }, profile);
+        } else {
+          const profileCreated = await createOneProfile(profile);
+          id = profileCreated.id
+        }
+        await onSubmit({ ...profile, id })
       } catch (e) {
+        const action = id ? "atualizar" : "cadastrar"
         toast({
           title: "Falha!",
-          description: "Falha ao atualizar o perfil!",
+          description: `Falha ao ${action} o perfil!`,
           variant: "error",
         })
       }
@@ -289,17 +295,6 @@ export function useClientE34GProfileForm(props: Props) {
     }
   );
 
-  useEffect(() => {
-    if (defaultValues) {
-      const { name, config, optional_functions } = defaultValues
-      const isIp = !!config?.ip
-      handleChangeIpDns(isIp ? "IP" : "DNS")
-      hookFormReset({ name, optional_functions, ...config });
-    }
-  }, [defaultValues, hookFormReset]);
-
-
-
   const handleProfileSelection = (id?: string) => {
     const old_params = new URLSearchParams(searchParams);
     const params = formatSearchParams({ id }, old_params);
@@ -308,13 +303,19 @@ export function useClientE34GProfileForm(props: Props) {
 
   const handleChangeName = (name: string) => setValue("name", name)
 
-  const handleToUpdate = (value: boolean) => setIsToUpdate(value)
-
   function resetAllFields() {
-    hookFormReset(resetValues);
+    const name = watch("name")
+    hookFormReset({ ...resetValues, name });
   }
 
-
+  useEffect(() => {
+    if (defaultValues) {
+      const { name, config, optional_functions } = defaultValues
+      const isIp = !!config?.ip
+      handleChangeIpDns(isIp ? "IP" : "DNS")
+      hookFormReset({ name, optional_functions, ...config });
+    }
+  }, [defaultValues, hookFormReset]);
 
   return {
     register,
@@ -329,8 +330,6 @@ export function useClientE34GProfileForm(props: Props) {
     watch,
     handleProfileSelection,
     handleChangeName,
-    handleToUpdate,
-    isToUpdate,
     resetAllFields
   };
 }

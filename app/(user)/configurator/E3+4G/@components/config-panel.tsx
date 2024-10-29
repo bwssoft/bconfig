@@ -1,6 +1,6 @@
 "use client";
 
-import { IProfile } from "@/app/lib/definition";
+import { IProfile, IUser } from "@/app/lib/definition";
 import Alert from "@/app/ui/components/alert";
 import { Button } from "@/app/ui/components/button";
 import DeviceConfiguredTable from "@/app/ui/tables/devices-configured/table";
@@ -12,10 +12,11 @@ import { useE34GCommunication } from "@/app/hook/use-E34G-communication";
 
 interface Props {
   profile?: IProfile;
+  user_type: IUser["type"];
 }
 
 export function ConfigPanel(props: Props) {
-  const { profile } = props;
+  const { profile, user_type } = props;
   const {
     configuration,
     identified,
@@ -27,7 +28,7 @@ export function ConfigPanel(props: Props) {
     ports,
     inIdentification,
     inConfiguration,
-  } = useE34GCommunication({ profile });
+  } = useE34GCommunication();
 
   const handleExport = (input: typeof configuration) => {
     jsonToXlsx({
@@ -118,7 +119,7 @@ export function ConfigPanel(props: Props) {
           configurationLog={configurationLog}
           inConfiguration={inConfiguration}
         />
-        <DeviceConfiguredTable data={configuration} />
+        <DeviceConfiguredTable data={configuration} user_type={user_type} />
       </div>
       <div className="mt-10 flex flex-col gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
         <div>

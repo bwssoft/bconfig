@@ -1,6 +1,6 @@
 "use client";
 import { useE34GCommunication } from "@/app/hook/use-E34G-communication";
-import { IProfile } from "@/app/lib/definition";
+import { IProfile, IUser } from "@/app/lib/definition";
 import { ConfigurationProgress } from "@/app/ui/components/configuration-progress";
 import { E34GClientProfileForm } from "@/app/ui/forms/profile/client/client-e34g-profile.form";
 import DeviceConfiguredTable from "@/app/ui/tables/devices-configured/table";
@@ -15,10 +15,11 @@ import {
 interface Props {
   current_profile?: IProfile;
   profiles: IProfile[];
+  user_type: IUser["type"];
 }
 
 export function ConfigPanel(props: Props) {
-  const { current_profile, profiles } = props;
+  const { current_profile, profiles, user_type } = props;
   const {
     configuration,
     identified,
@@ -30,17 +31,15 @@ export function ConfigPanel(props: Props) {
     ports,
     inIdentification,
     inConfiguration,
-  } = useE34GCommunication({ profile: current_profile });
+  } = useE34GCommunication();
 
   return (
     <div className="flex flex-col justify-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8 relative">
       <E34GClientProfileForm
         profiles={profiles}
         current_profile={current_profile}
-        onSubmit={async () => {
-          current_profile &&
-            Object.keys(current_profile).length > 0 &&
-            (await handleDeviceConfiguration(identified, current_profile));
+        onSubmit={async (profile) => {
+          await handleDeviceConfiguration(identified, profile as IProfile);
         }}
       />
       <div className="bg-white rounded-xl sticky bottom-5 w-full shadow-2xl p-5">
@@ -83,7 +82,10 @@ export function ConfigPanel(props: Props) {
                     configurationLog={configurationLog}
                     inConfiguration={inConfiguration}
                   />
-                  <DeviceConfiguredTable data={configuration} />
+                  <DeviceConfiguredTable
+                    data={configuration}
+                    user_type={user_type}
+                  />
                 </>
               ) : (
                 <></>

@@ -1,6 +1,6 @@
 "use client";
 
-import { IProfile } from "@/app/lib/definition";
+import { IProfile, IUser } from "@/app/lib/definition";
 import Alert from "@/app/ui/components/alert";
 import { Button } from "@/app/ui/components/button";
 import DeviceConfiguredTable from "@/app/ui/tables/devices-configured/table";
@@ -10,11 +10,11 @@ import { ConfigurationProgress } from "@/app/ui/components/configuration-progres
 
 interface Props {
   profile?: IProfile;
+  user_type: IUser["type"];
 }
 
 export function Panel(props: Props) {
-  const { profile } = props;
-  const { config } = profile ?? {};
+  const { profile, user_type } = props;
   const {
     configuration,
     identified,
@@ -26,7 +26,7 @@ export function Panel(props: Props) {
     ports,
     inIdentification,
     inConfiguration,
-  } = useE3Communication({ profile });
+  } = useE3Communication();
 
   return (
     <>
@@ -107,7 +107,7 @@ export function Panel(props: Props) {
           configurationLog={configurationLog}
           inConfiguration={inConfiguration}
         />
-        <DeviceConfiguredTable data={configuration} />
+        <DeviceConfiguredTable data={configuration} user_type={user_type} />
       </div>
     </>
   );

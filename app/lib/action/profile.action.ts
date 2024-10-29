@@ -8,10 +8,18 @@ const repository = profileRepository
 
 export async function createOneProfile(input: Omit<IProfile
   , "id" | "created_at">) {
-  await repository.create({ ...input, created_at: new Date(), id: crypto.randomUUID() })
+  const created_at = new Date()
+  const id = crypto.randomUUID()
+  const _input = {
+    ...input,
+    created_at,
+    id
+  }
+  await repository.create(_input)
   revalidatePath("/profile")
   revalidatePath("/configurator")
-  return input
+  revalidatePath("/configuration")
+  return _input
 }
 
 export async function createManyProfile(input: Omit<IProfile

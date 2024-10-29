@@ -2,6 +2,7 @@ import { findManyByModel, findOneProfile } from "@/app/lib/action";
 import { Panel } from "./@components/config-panel";
 import { ProfileSelect } from "./@components/porfile-select";
 import { IProfile } from "@/app/lib/definition";
+import { auth } from "@/auth";
 
 interface Props {
   searchParams: {
@@ -16,6 +17,7 @@ export default async function Page(props: Props) {
   const profiles = await findManyByModel("E3+" as IProfile["model"]);
   const profileSelected = (await findOneProfile({ id })) ?? undefined;
   const date = new Date();
+  const session = await auth();
   return (
     <div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8 ">
@@ -36,7 +38,7 @@ export default async function Page(props: Props) {
         </div>
       </div>
       <ProfileSelect profiles={profiles} currentProfileIdSelected={id} />
-      <Panel profile={profileSelected} />
+      <Panel profile={profileSelected} user_type={session?.user.type!} />
     </div>
   );
 }

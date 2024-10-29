@@ -48,8 +48,7 @@ interface ConfigurationLog {
 
 type DeviceResponse = string | undefined
 
-export function useE34GCommunication(props: { profile?: IProfile }) {
-  const { profile } = props
+export function useE34GCommunication() {
   const [identified, setIdentified] = useState<Identified[]>([])
   const [identifiedLog, setIdentifiedLog] = useState<IdentifiedLog[]>([])
   const [inIdentification, setInIdentification] = useState<boolean>(false)
@@ -461,8 +460,6 @@ export function useE34GCommunication(props: { profile?: IProfile }) {
           difference: fields_not_configured
         } = checkWithDifference(desired_profile.config, actual_profile)
 
-        console.log("desired", desired_profile.config)
-        console.log("actul", actual_profile)
         const is_configured = configured_device.commands_sent.every(c => typeof c.response !== "undefined")
         const id = crypto.randomUUID()
 
@@ -478,12 +475,11 @@ export function useE34GCommunication(props: { profile?: IProfile }) {
           is_configured,
           not_configured: fields_not_configured,
           metadata: configured_device,
-          profile_id: profile?.id!,
-          profile_name: profile?.name!,
+          profile_id: desired_profile.id,
+          profile_name: desired_profile.name,
           model: "E3+4G" as Configuration["model"]
         }
 
-        localStorage.setItem(`configuration_result_${id}`, JSON.stringify(configuration_result))
         updateConfigurationLog({
           imei,
           step_index: total_steps,

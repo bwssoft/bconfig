@@ -179,7 +179,7 @@ export function E34GViewConfigurationForm(props: Props) {
                     Check
                   </dt>
                   <dd className="mt-1 text-sm leading-6 text-gray-700">
-                    {actual_native_profile?.check ?? "_-"}
+                    {actual_native_profile?.check ?? "--"}
                   </dd>
                 </div>
               </div>
@@ -189,7 +189,7 @@ export function E34GViewConfigurationForm(props: Props) {
                     Cxip
                   </dt>
                   <dd className="mt-1 text-sm leading-6 text-gray-700">
-                    {actual_native_profile?.cxip ?? "_-"}
+                    {actual_native_profile?.cxip ?? "--"}
                   </dd>
                 </div>
               </div>
@@ -199,7 +199,7 @@ export function E34GViewConfigurationForm(props: Props) {
                     Dns
                   </dt>
                   <dd className="mt-1 text-sm leading-6 text-gray-700">
-                    {actual_native_profile?.dns ?? "_-"}
+                    {actual_native_profile?.dns ?? "--"}
                   </dd>
                 </div>
               </div>
@@ -209,7 +209,7 @@ export function E34GViewConfigurationForm(props: Props) {
                     Status
                   </dt>
                   <dd className="mt-1 text-sm leading-6 text-gray-700">
-                    {actual_native_profile?.status ?? "_-"}
+                    {actual_native_profile?.status ?? "--"}
                   </dd>
                 </div>
               </div>
