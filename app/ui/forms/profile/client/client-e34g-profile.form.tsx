@@ -24,7 +24,9 @@ import { Combobox } from "@bwsoft/combobox";
 interface Props {
   current_profile?: IProfile;
   profiles: IProfile[];
-  onSubmit: (profile: Omit<IProfile, "id" | "created_at">) => Promise<void>;
+  onSubmit: (
+    profile: Omit<IProfile, "created_at" | "user_id">
+  ) => Promise<void>;
 }
 
 export function E34GClientProfileForm(props: Props) {

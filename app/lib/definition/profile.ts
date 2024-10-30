@@ -5,6 +5,8 @@ export interface IProfile {
   config: Config
   optional_functions?: Record<string, boolean>
   created_at: Date
+  is_for_customer: boolean
+  user_id: string
 }
 
 enum Model {

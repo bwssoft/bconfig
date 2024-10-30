@@ -1,4 +1,8 @@
-import { findManyByModel, findOneProfile } from "@/app/lib/action";
+import {
+  findAllProfile,
+  findManyByModel,
+  findOneProfile,
+} from "@/app/lib/action";
 import { IProfile } from "@/app/lib/definition";
 import { ConfigPanel } from "./@components/config-panel";
 import { auth } from "@/auth";
@@ -13,10 +17,14 @@ export default async function Page(props: Props) {
   const {
     searchParams: { id },
   } = props;
-  const profiles = await findManyByModel("E3+4G" as IProfile["model"]);
+  const session = await auth();
+  const profiles = await findAllProfile({
+    model: "E3+4G" as IProfile["model"],
+    user_id: session?.user.id,
+    is_for_customer: true,
+  });
   const current_profile = (await findOneProfile({ id })) ?? undefined;
   const date = new Date();
-  const session = await auth();
   return (
     <div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8 ">

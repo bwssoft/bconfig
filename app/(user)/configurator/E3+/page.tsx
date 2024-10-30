@@ -1,4 +1,8 @@
-import { findManyByModel, findOneProfile } from "@/app/lib/action";
+import {
+  findAllProfile,
+  findManyByModel,
+  findOneProfile,
+} from "@/app/lib/action";
 import { Panel } from "./@components/config-panel";
 import { ProfileSelect } from "./@components/porfile-select";
 import { IProfile } from "@/app/lib/definition";
@@ -14,7 +18,10 @@ export default async function Page(props: Props) {
   const {
     searchParams: { id },
   } = props;
-  const profiles = await findManyByModel("E3+" as IProfile["model"]);
+  const profiles = await findAllProfile({
+    model: "E3+" as IProfile["model"],
+    is_for_customer: false,
+  });
   const profileSelected = (await findOneProfile({ id })) ?? undefined;
   const date = new Date();
   const session = await auth();

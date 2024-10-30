@@ -165,7 +165,8 @@ export function useE3ProfileCreateForm() {
           name,
           config,
           optional_functions,
-          model: "E3+" as IProfile["model"]
+          model: "E3+" as IProfile["model"],
+          is_for_customer: false
         });
         toast({
           title: "Sucesso!",

@@ -207,7 +207,8 @@ export function useE34GProfileCreateForm() {
           name,
           config,
           optional_functions,
-          model: "E3+4G" as IProfile["model"]
+          model: "E3+4G" as IProfile["model"],
+          is_for_customer: false
         });
         toast({
           title: "Sucesso!",

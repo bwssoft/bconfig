@@ -229,7 +229,7 @@ const resetValues = {
 
 interface Props {
   defaultValues?: IProfile;
-  onSubmit: (profile: Omit<IProfile, 'created_at'>) => Promise<void>
+  onSubmit: (profile: Omit<IProfile, 'created_at' | "user_id">) => Promise<void>
 }
 
 export function useClientE34GProfileForm(props: Props) {
@@ -267,7 +267,8 @@ export function useClientE34GProfileForm(props: Props) {
         name,
         config: config as IProfile["config"],
         optional_functions: optional_functions as IProfile["optional_functions"],
-        model: "E3+4G" as IProfile["model"]
+        model: "E3+4G" as IProfile["model"],
+        is_for_customer: true
       }
       try {
         if (id) {

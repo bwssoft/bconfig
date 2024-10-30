@@ -9,10 +9,16 @@ export function ImeiWriterForm(props: {
   disabled: boolean;
 }) {
   const { onSubmit, disabled } = props;
-  const { handleSubmit, errors, inputImeiRef, register, handleChangeInput } =
-    useImeiWriterForm({
-      onSubmit,
-    });
+  const {
+    handleSubmit,
+    errors,
+    inputImeiRef,
+    register,
+    handleChangeInput,
+    serial,
+  } = useImeiWriterForm({
+    onSubmit,
+  });
   return (
     <form
       autoComplete="off"
@@ -21,6 +27,7 @@ export function ImeiWriterForm(props: {
     >
       <Input
         {...register("serial")}
+        value={serial}
         label="Enter imei for writing"
         placeholder="Field to insert imei"
         ref={inputImeiRef}

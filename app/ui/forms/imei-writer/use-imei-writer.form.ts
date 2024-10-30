@@ -27,10 +27,13 @@ export function useImeiWriterForm(props: { onSubmit: (imeiForWriting: string) =>
     control,
     setValue,
     reset: hookFormReset,
+    watch
   } = useForm<Schema>({
     resolver: zodResolver(schema),
     mode: "onChange"
   });
+
+  const serial = watch("serial")
 
   const handleSubmit = hookFormSubmit(async (data) => {
     const { serial } = data
@@ -54,8 +57,11 @@ export function useImeiWriterForm(props: { onSubmit: (imeiForWriting: string) =>
 
 
   const handleChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const imei = event.target.value;
-    setValue("serial", imei, { shouldValidate: true }); // Ensure validation happens on every change
+    let imei = event.target.value;
+    if (imei.startsWith("E3+4G:")) {
+      imei = imei.replace("E3+4G:", "");
+    }
+    setValue("serial", imei, { shouldValidate: true });
   };
 
   useEffect(() => {
@@ -73,6 +79,7 @@ export function useImeiWriterForm(props: { onSubmit: (imeiForWriting: string) =>
     setValue,
     reset: hookFormReset,
     inputImeiRef,
-    handleChangeInput
+    handleChangeInput,
+    serial
   };
 }
