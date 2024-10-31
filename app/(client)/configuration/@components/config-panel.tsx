@@ -4,6 +4,8 @@ import { IProfile, IUser } from "@/app/lib/definition";
 import Alert from "@/app/ui/components/alert";
 import { Button } from "@/app/ui/components/button";
 import { ConfigurationProgress } from "@/app/ui/components/configuration-progress";
+import { IdentificationProgress } from "@/app/ui/components/identification-progress";
+import { Spinner } from "@/app/ui/components/spinner";
 import { E34GClientProfileForm } from "@/app/ui/forms/profile/client/client-e34g-profile.form";
 import DeviceConfiguredTable from "@/app/ui/tables/devices-configured/table";
 import DevicesToConfigureTable from "@/app/ui/tables/devices-to-configure/table";
@@ -45,10 +47,33 @@ export function ConfigPanel(props: Props) {
           await handleDeviceConfiguration(identified, profile as IProfile);
         }}
       />
-      <div className="bg-white rounded-xl sticky bottom-5 w-full shadow-2xl p-5 ring-1 ring-inset ring-gray-300">
+      <div className="bg-white rounded-xl sticky bottom-5 w-full shadow-2xl p-5 ring-1 ring-inset ring-gray-300 animate-bounce-limite">
         <Accordion type="multiple">
-          <AccordionItem value="value">
-            <AccordionTrigger>Acompanhe a sua configuração</AccordionTrigger>
+          <AccordionItem value="configuration">
+            <AccordionTrigger>
+              <div className="flex justify-between gap-4">
+                <p>Acompanhe a sua configuração</p>
+                <div>
+                  {inIdentification ? (
+                    <p className="text-sm text-gray-700 flex gap-2">
+                      <Spinner svgClassName="h-4 w-4 fill-gray-600" />
+                      Indentificando os equipamentos
+                    </p>
+                  ) : (
+                    <></>
+                  )}
+
+                  {inConfiguration ? (
+                    <p className="text-sm text-gray-700 flex gap-2">
+                      <Spinner svgClassName="h-4 w-4 fill-gray-600" />
+                      Configurando os equipamentos
+                    </p>
+                  ) : (
+                    <></>
+                  )}
+                </div>
+              </div>
+            </AccordionTrigger>
             <AccordionContent className="flex flex-col gap-2">
               <div className="flex justify-between">
                 <div>
@@ -74,16 +99,22 @@ export function ConfigPanel(props: Props) {
                 </div>
               </div>
               {ports.length > 0 ? (
-                <DevicesToConfigureTable
-                  model={"E3+4G" as IProfile["model"]}
-                  data={identified.map((d) => ({
-                    ...d,
-                    getDeviceProfile,
-                    progress: identifiedLog.find((el) => el.port === d.port)
-                      ?.progress,
-                    handleForgetPort,
-                  }))}
-                />
+                <>
+                  <IdentificationProgress
+                    identifiedLog={identifiedLog}
+                    inIdentification={inIdentification}
+                  />
+                  <DevicesToConfigureTable
+                    model={"E3+4G" as IProfile["model"]}
+                    data={identified.map((d) => ({
+                      ...d,
+                      getDeviceProfile,
+                      progress: identifiedLog.find((el) => el.port === d.port)
+                        ?.progress,
+                      handleForgetPort,
+                    }))}
+                  />
+                </>
               ) : (
                 <Alert
                   variant="info"
