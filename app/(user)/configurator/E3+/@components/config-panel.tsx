@@ -26,6 +26,7 @@ export function Panel(props: Props) {
     ports,
     inIdentification,
     inConfiguration,
+    handleForgetPort,
   } = useE3Communication();
 
   return (
@@ -53,6 +54,7 @@ export function Panel(props: Props) {
                   data={identified.map((d) => ({
                     ...d,
                     getDeviceProfile,
+                    handleForgetPort,
                     progress: identifiedLog.find((el) => el.port === d.port)
                       ?.progress,
                   }))}

@@ -86,7 +86,7 @@ export function useE34GCommunication() {
     })
   }
 
-  const { ports, writeToPort, openPort, getReader, requestPort, closePort } = useSerial({
+  const { ports, writeToPort, openPort, getReader, requestPort, closePort, forgetPort } = useSerial({
     handleDisconnection: handleSerialDisconnection,
     handleConnection: handleSerialConnection
   })
@@ -574,6 +574,18 @@ export function useE34GCommunication() {
     });
   }
 
+  const handleForgetPort = async (port: ISerialPort) => {
+    await forgetPort(port)
+    setIdentified(prev => {
+      const _identified = prev.find(el => el.port === port);
+      const updatedIdentified = prev.filter(el => el.port !== port);
+      setIdentifiedLog(prevLog => prevLog.filter(el => el.port !== port));
+      setConfigurationLog(prevLog => prevLog.filter(el => el.imei !== _identified?.imei));
+      setConfiguration(prevConfig => prevConfig.filter(el => el.imei !== _identified?.imei));
+      return updatedIdentified;
+    });
+  }
+
 
   useEffect(() => {
     const newPorts = ports.filter(port => !previousPorts.current.includes(port));
@@ -603,6 +615,7 @@ export function useE34GCommunication() {
     configurationLog,
     identifiedLog,
     inConfiguration,
-    inIdentification
+    inIdentification,
+    handleForgetPort
   }
 }

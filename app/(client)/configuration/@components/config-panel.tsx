@@ -1,6 +1,8 @@
 "use client";
 import { useE34GCommunication } from "@/app/hook/use-E34G-communication";
 import { IProfile, IUser } from "@/app/lib/definition";
+import Alert from "@/app/ui/components/alert";
+import { Button } from "@/app/ui/components/button";
 import { ConfigurationProgress } from "@/app/ui/components/configuration-progress";
 import { E34GClientProfileForm } from "@/app/ui/forms/profile/client/client-e34g-profile.form";
 import DeviceConfiguredTable from "@/app/ui/tables/devices-configured/table";
@@ -31,6 +33,7 @@ export function ConfigPanel(props: Props) {
     ports,
     inIdentification,
     inConfiguration,
+    handleForgetPort,
   } = useE34GCommunication();
 
   return (
@@ -42,31 +45,52 @@ export function ConfigPanel(props: Props) {
           await handleDeviceConfiguration(identified, profile as IProfile);
         }}
       />
-      <div className="bg-white rounded-xl sticky bottom-5 w-full shadow-2xl p-5">
+      <div className="bg-white rounded-xl sticky bottom-5 w-full shadow-2xl p-5 ring-1 ring-inset ring-gray-300">
         <Accordion type="multiple">
           <AccordionItem value="value">
-            <AccordionTrigger>Ver detalhes</AccordionTrigger>
-            <AccordionContent>
-              <div>
-                <h1
-                  id="applicant-information-title"
-                  className="text-base font-semibold leading-7 text-gray-900"
-                >
-                  Tabela com os equipamentos que serão configurados
-                </h1>
-                <p className="mt-2 text-sm text-gray-700">
-                  Cada linha apresenta o imei, iccid e firmware do equipamento.
-                </p>
+            <AccordionTrigger>Acompanhe a sua configuração</AccordionTrigger>
+            <AccordionContent className="flex flex-col gap-2">
+              <div className="flex justify-between">
+                <div>
+                  <h1
+                    id="applicant-information-title"
+                    className="text-base font-semibold leading-7 text-gray-900"
+                  >
+                    Tabela com os equipamentos que serão configurados
+                  </h1>
+                  <p className="text-sm text-gray-700">
+                    Cada linha apresenta o imei, iccid e firmware do
+                    equipamento.
+                  </p>
+                </div>
+                <div>
+                  <Button
+                    variant="outlined"
+                    className="h-fit whitespace-nowrap"
+                    onClick={requestPort}
+                  >
+                    Requisitar porta usb
+                  </Button>
+                </div>
               </div>
-              <DevicesToConfigureTable
-                model={"E3+4G" as IProfile["model"]}
-                data={identified.map((d) => ({
-                  ...d,
-                  getDeviceProfile,
-                  progress: identifiedLog.find((el) => el.port === d.port)
-                    ?.progress,
-                }))}
-              />
+              {ports.length > 0 ? (
+                <DevicesToConfigureTable
+                  model={"E3+4G" as IProfile["model"]}
+                  data={identified.map((d) => ({
+                    ...d,
+                    getDeviceProfile,
+                    progress: identifiedLog.find((el) => el.port === d.port)
+                      ?.progress,
+                    handleForgetPort,
+                  }))}
+                />
+              ) : (
+                <Alert
+                  variant="info"
+                  title="Você não tem nenhuma porta ativa. Aperte o botão 'Requisitar porta usb' e escolha alguma das opções"
+                />
+              )}
+
               {configurationLog.length > 0 ? (
                 <>
                   <div>

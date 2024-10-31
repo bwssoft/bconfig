@@ -18,6 +18,7 @@ interface Props {
       profile: IProfile["config"];
       native_profile: { cxip?: string; dns?: string; check?: string };
     } | void>;
+    handleForgetPort: (port: ISerialPort) => Promise<void>;
   }[];
   model: IProfile["model"];
 }

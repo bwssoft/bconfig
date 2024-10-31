@@ -28,6 +28,7 @@ export function ConfigPanel(props: Props) {
     ports,
     inIdentification,
     inConfiguration,
+    handleForgetPort,
   } = useE34GCommunication();
 
   const handleExport = (input: typeof configuration) => {
@@ -71,6 +72,7 @@ export function ConfigPanel(props: Props) {
                   data={identified.map((d) => ({
                     ...d,
                     getDeviceProfile,
+                    handleForgetPort,
                     progress: identifiedLog.find((el) => el.port === d.port)
                       ?.progress,
                   }))}

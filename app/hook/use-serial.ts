@@ -89,13 +89,16 @@ export const useSerial = (props: Props) => {
     }
   };
 
-  const forgetPort = async (port: ISerialPort) => {
+  const forgetPort = async (port: ISerialPort): Promise<void> => {
     try {
       await port.forget();
-    } catch (err) {
-      console.error("Error when forget port", err)
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error : new Error("Error when forgetting serial port");
+      console.error(errorMessage);
+      throw errorMessage;
     }
   };
+
 
   const getInfo = (port: ISerialPort) => {
     const info = port.getInfo()

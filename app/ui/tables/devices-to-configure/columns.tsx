@@ -29,6 +29,7 @@ export const columns = (
     profile: IProfile["config"];
     native_profile: { cxip?: string; dns?: string; check?: string };
   } | void>;
+  handleForgetPort: (port: ISerialPort) => Promise<void>;
 }>[] => [
   {
     header: "Identificado",
@@ -101,10 +102,11 @@ export const columns = (
     accessorKey: "port",
     cell: ({ row }) => {
       const device = row.original;
-      const { getDeviceProfile, port } = device;
+      const { getDeviceProfile, port, handleForgetPort } = device;
       return (
         <DevicesToConfigureActionColumn
           getDeviceProfile={getDeviceProfile}
+          handleForgetPort={handleForgetPort}
           port={port}
           model={model}
         />
