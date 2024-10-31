@@ -98,7 +98,7 @@ export function ConfigPanel(props: Props) {
             </div>
 
             <Button
-              variant="outlined"
+              variant="primary"
               className="h-fit whitespace-nowrap"
               onClick={requestPort}
             >
