@@ -166,9 +166,10 @@ const schema = z.preprocess(removeEmptyValues, z
     cornering_position_update: z.coerce.boolean().optional().default(false),
     led: z.coerce.boolean().optional().default(false),
     virtual_ignition: z.coerce.boolean().optional().default(false),
+    virtual_ignition_by_voltage: z.coerce.boolean().optional().default(false),
+    virtual_ignition_by_movement: z.coerce.boolean().optional().default(false),
     optional_functions: z.record(z.string(), z.boolean()).optional().nullable(),
     max_speed: max_speed,
-    accel: z.coerce.boolean().optional().default(false),
     communication_type: z.string().optional().nullable(),
     protocol_type: z.string().optional().nullable(),
     anti_theft: z.coerce.boolean().optional().default(false),
@@ -188,7 +189,14 @@ const schema = z.preprocess(removeEmptyValues, z
         t1: ignition_by_voltage,
         t2: ignition_by_voltage,
       })
-      .optional().nullable(),
+      .refine((data) => data.t1 !== undefined && data.t2 !== undefined, {
+        message: "VION e VIOFF devem ser preenchidos.",
+        path: ["t1"]
+      })
+      .refine((data) => data.t1! > data.t2!, {
+        message: "VION deve ser maior do que VIOFF.",
+        path: ["t1"]
+      }).optional().nullable(),
   })).transform(removeUndefined).transform(removeNull).transform(removePropByOptionalFunctions)
 
 export type Schema = z.infer<typeof schema>;
@@ -225,6 +233,7 @@ const resetValues = {
   virtual_ignition: false,
   jammer_detection: false,
   anti_theft: false,
+  virtual_ignition_by_voltage: false
 };
 
 interface Props {
@@ -318,6 +327,9 @@ export function useClientE34GProfileForm(props: Props) {
     }
   }, [defaultValues, hookFormReset]);
 
+  useEffect(() => {
+    console.log("errors", errors)
+  }, [errors]);
   return {
     register,
     handleSubmit,

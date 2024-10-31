@@ -133,7 +133,8 @@ export const configMapped: { [key in keyof IProfile["config"]]: string } = {
   virtual_ignition: "Ignição Virtual",
   sensitivity_adjustment: "Ajuste de sensibilidade",
 
-  accel: "Acelerômetro",
+  virtual_ignition_by_voltage: "Ignição virtual por tensão",
+  virtual_ignition_by_movement: "Ignição virtual por movimento",
   communication_type: "Tipo de comunicação",
   protocol_type: "Tipo do protocolo",
   anti_theft: "Anti-Furto",

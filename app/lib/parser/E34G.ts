@@ -51,9 +51,11 @@ type Led = boolean
 
 type VirtualIgnition = boolean
 
-type MaxSpeed = number
+type VirtualIgnitionByVoltage = boolean
 
-type Accel = boolean
+type VirtualIgnitionByMovement = boolean
+
+type MaxSpeed = number
 
 type CommunicationType = "TCP" | "UDP"
 
@@ -110,7 +112,8 @@ interface Check extends Object {
   virtual_ignition?: VirtualIgnition
   max_speed?: number
   sensitivity_adjustment?: number
-  accel?: Accel
+  virtual_ignition_by_movement?: VirtualIgnitionByMovement
+  virtual_ignition_by_voltage?: VirtualIgnitionByVoltage
   communication_type?: CommunicationType
   protocol_type?: ProtocolType
   anti_theft?: AntiTheft
@@ -193,15 +196,18 @@ export class E34G {
           parsed["max_speed"] = this.max_speed(value)
         }
 
-        if (key === "ACC") {
-          parsed["accel"] = this.accel(value)
+        if (key === "ACCEL") {
+          parsed["virtual_ignition_by_movement"] = this.virtual_ignition_by_movement(value)
         }
+
         if (key === "PROT_COM") {
           parsed["communication_type"] = this.communication_type(value)
         }
+
         if (key === "PROT") {
           parsed["protocol_type"] = this.protocol_type(value)
         }
+
         if (key === "AF") {
           parsed["anti_theft"] = this.anti_theft(value)
         }
@@ -214,8 +220,11 @@ export class E34G {
         if (key === "DC") {
           parsed["lock_type_progression"] = this.lock_type_progression(value)
         }
-        if (key.toLowerCase() === "voltage") {
+        if (key === "Voltage") {
           parsed["ignition_by_voltage"] = this.ignition_by_voltage(value)
+        }
+        if (key === "VOLTAGE") {
+          parsed["virtual_ignition_by_voltage"] = this.virtual_ignition_by_voltage(value)
         }
         if (key === "IN1_MODE") {
           parsed["input_1"] = this.input_1(value)
@@ -422,6 +431,11 @@ export class E34G {
     return input === "1" ? true : false
   }
 
+  static virtual_ignition_by_voltage(input: string): VirtualIgnitionByVoltage | undefined {
+    if (!input || (input !== "OFF" && input !== "ON")) return undefined
+    return input === "ON" ? true : false
+  }
+
   static sensitivity_adjustment(input: string): SensitivityAdjustment | undefined {
     if (!input || Number.isNaN(input)) return undefined
     return Number(input)
@@ -445,8 +459,7 @@ export class E34G {
     return Number(input)
   }
 
-  static accel(input: string): Accel | undefined {
-    console.log("accel", input)
+  static virtual_ignition_by_movement(input: string): VirtualIgnitionByMovement | undefined {
     if (!input || (input !== "1" && input !== "0")) return undefined
     return input === "1" ? true : false
   }
@@ -466,10 +479,9 @@ export class E34G {
     return input === "ON" ? true : false
   }
 
-  //   horimeter:
   static jammer_detection(input: string): JammerDetection | undefined {
-    if (!input || (input !== "1" && input !== "0")) return undefined
-    return input === "1" ? true : false
+    if (!input || (input !== "0,0" && input !== "1,0")) return undefined
+    return input === "1,0" ? true : false
   }
 
   static angle_adjustment(input: string): AngleAdjustment | undefined {

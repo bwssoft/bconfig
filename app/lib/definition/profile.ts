@@ -60,7 +60,8 @@ type Config = {
   sleep?: number
   max_speed?: number
 
-  accel?: boolean
+  virtual_ignition_by_voltage?: boolean
+  virtual_ignition_by_movement?: boolean
   communication_type?: string
   protocol_type?: string
   anti_theft?: boolean

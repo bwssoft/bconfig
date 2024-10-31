@@ -191,7 +191,14 @@ export class E34GEncoder {
     return `IV${props ? "ON" : "OFF"}`
   }
 
-  static accel(props: boolean): string | undefined {
+  static virtual_ignition_by_voltage(props: boolean): string | undefined {
+    if (typeof props !== "boolean") {
+      return undefined
+    }
+    return `VOLTAGE${props ? "ON" : "OFF"}`
+  }
+
+  static virtual_ignition_by_movement(props: boolean): string | undefined {
     if (typeof props !== "boolean") {
       return undefined
     }
@@ -326,7 +333,8 @@ export class E34GEncoder {
       led: E34GEncoder.led,
       virtual_ignition: E34GEncoder.virtual_ignition,
 
-      accel: E34GEncoder.accel,
+      virtual_ignition_by_movement: E34GEncoder.virtual_ignition_by_movement,
+      virtual_ignition_by_voltage: E34GEncoder.virtual_ignition_by_voltage,
       communication_type: E34GEncoder.communication_type,
       protocol_type: E34GEncoder.protocol_type,
       anti_theft: E34GEncoder.anti_theft,
