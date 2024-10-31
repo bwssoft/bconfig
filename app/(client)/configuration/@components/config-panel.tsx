@@ -47,9 +47,13 @@ export function ConfigPanel(props: Props) {
           await handleDeviceConfiguration(identified, profile as IProfile);
         }}
       />
-      <div className="bg-white rounded-xl sticky bottom-5 w-full shadow-2xl p-5 ring-1 ring-inset ring-gray-300 animate-bounce-limite">
-        <Accordion type="multiple">
-          <AccordionItem value="configuration">
+      <div className="bg-white rounded-xl sticky bottom-5 w-full shadow-2xl p-5 ring-1 ring-inset ring-gray-300 animate-bounce-limited">
+        <Accordion type="multiple" defaultValue={["configuration"]}>
+          <AccordionItem
+            value="configuration"
+            id="configuration"
+            itemID="configuration"
+          >
             <AccordionTrigger>
               <div className="flex justify-between gap-4">
                 <p>Acompanhe a sua configuração</p>
