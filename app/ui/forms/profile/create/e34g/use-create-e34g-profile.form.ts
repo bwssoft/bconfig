@@ -149,10 +149,10 @@ const schema = z.preprocess(removeEmptyValues, z
     cornering_position_update: z.coerce.boolean().optional().default(false),
     led: z.coerce.boolean().optional().default(false),
     virtual_ignition: z.coerce.boolean().optional().default(false),
+    virtual_ignition_by_voltage: z.coerce.boolean().optional().default(false),
+    virtual_ignition_by_movement: z.coerce.boolean().optional().default(false),
     optional_functions: z.record(z.string(), z.boolean()).optional(),
     max_speed: max_speed,
-
-    accel: z.coerce.boolean().optional().default(false),
     communication_type: z.string().optional(),
     protocol_type: z.string().optional(),
     anti_theft: z.coerce.boolean().optional().default(false),
@@ -174,7 +174,14 @@ const schema = z.preprocess(removeEmptyValues, z
         t1: ignition_by_voltage,
         t2: ignition_by_voltage,
       })
-      .optional(),
+      .refine((data) => data.t1 !== undefined && data.t2 !== undefined, {
+        message: "VION e VIOFF devem ser preenchidos.",
+        path: ["t1"]
+      })
+      .refine((data) => data.t1! > data.t2!, {
+        message: "VION deve ser maior do que VIOFF.",
+        path: ["t1"]
+      }).optional(),
   })).transform(removeUndefined).transform(removePropByOptionalFunctions)
 
 export type Schema = z.infer<typeof schema>;

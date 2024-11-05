@@ -139,7 +139,7 @@ export function E34GProfileCreateForm() {
                     onChange={({ value }) =>
                       handleChangeIpDns(value as "IP" | "DNS")
                     }
-                    defaultValue={{ value: "IP" }}
+                    defaultValue={{ value: ipdns }}
                   />
                 </div>
               </div>
@@ -445,16 +445,6 @@ export function E34GProfileCreateForm() {
                   error={errors.horimeter?.message}
                 />
               </div>
-              <div className="sm:col-span-1">
-                <Input
-                  {...register("sensitivity_adjustment")}
-                  id="sensibility"
-                  label="Ajuste de Sensibilidade"
-                  placeholder="500"
-                  type="number"
-                  error={errors.sensitivity_adjustment?.message}
-                />
-              </div>
             </dl>
           </div>
         </div>
@@ -499,44 +489,6 @@ export function E34GProfileCreateForm() {
                   </div>
                 </div>
               ))}
-
-              {/* 
-              // foi comentado por que não vai ter o comando accell
-              <div>
-                <div className="relative flex items-center py-4">
-                  <div className="min-w-0 flex-1 text-sm leading-6">
-                    <label
-                      htmlFor={"functions-accel"}
-                      className="select-none font-medium text-gray-900"
-                    >
-                      Acelerômetro
-                    </label>
-                  </div>
-                  <div className="ml-3 flex h-6 items-center gap-2">
-                    <Controller
-                      control={control}
-                      name={"accel"}
-                      render={({ field }) => (
-                        <Toggle onChange={field.onChange} value={field.value} />
-                      )}
-                    />
-                  </div>
-                </div>
-                {watch("accel") ? (
-                  <div className="sm:col-span-1">
-                    <Input
-                      {...register("sensitivity_adjustment")}
-                      id="sensibility"
-                      label="Ajuste de Sensibilidade"
-                      placeholder="500"
-                      type="number"
-                      error={errors.sensitivity_adjustment?.message}
-                    />
-                  </div>
-                ) : (
-                  <></>
-                )}
-              </div> */}
 
               <div>
                 <div className="relative flex items-center py-4">
@@ -594,36 +546,106 @@ export function E34GProfileCreateForm() {
                     />
                   </div>
                 </div>
-                {watch("virtual_ignition") ? (
-                  <div className="sm:col-span-full">
-                    <dt className="text-sm font-medium text-gray-400">
-                      Definir Ignição por voltagem (voltagem)
-                    </dt>
-                    <div className="flex gap-2 mt-2">
-                      <Input
-                        {...register("ignition_by_voltage.t1")}
-                        id="ignition_by_voltage_t1"
-                        label="VION (t1)"
-                        placeholder="60"
-                        type="number"
-                        step="0.01"
-                        error={errors.ignition_by_voltage?.t1?.message}
-                      />
-                      <Input
-                        {...register("ignition_by_voltage.t2")}
-                        id="ignition_by_voltage_t2"
-                        label="VIOFF (t2)"
-                        placeholder="180"
-                        type="number"
-                        step="0.01"
-                        error={errors.ignition_by_voltage?.t2?.message}
-                      />
-                    </div>
-                  </div>
-                ) : (
-                  <></>
-                )}
               </div>
+
+              {watch("virtual_ignition") ? (
+                <>
+                  <div>
+                    <div className="pl-4 relative flex items-center py-4">
+                      <div className="min-w-0 flex-1 text-sm leading-6">
+                        <label
+                          htmlFor={"functions-virtual_ignition"}
+                          className="select-none font-medium text-gray-900"
+                        >
+                          Ignição por Tensão
+                        </label>
+                      </div>
+                      <div className="ml-3 flex h-6 items-center gap-2">
+                        <Controller
+                          control={control}
+                          name={"virtual_ignition_by_voltage"}
+                          render={({ field }) => (
+                            <Toggle
+                              onChange={field.onChange}
+                              value={field.value}
+                            />
+                          )}
+                        />
+                      </div>
+                    </div>
+                    {watch("virtual_ignition_by_voltage") ? (
+                      <div className="pl-4 sm:col-span-full">
+                        <dt className="text-sm font-medium text-gray-400">
+                          Definir Ignição por voltagem (voltagem)
+                        </dt>
+                        <div className="flex gap-2 mt-2">
+                          <Input
+                            {...register("ignition_by_voltage.t1")}
+                            id="ignition_by_voltage_t1"
+                            label="VION (t1)"
+                            placeholder="60"
+                            type="number"
+                            step="0.01"
+                            error={errors.ignition_by_voltage?.t1?.message}
+                          />
+                          <Input
+                            {...register("ignition_by_voltage.t2")}
+                            id="ignition_by_voltage_t2"
+                            label="VIOFF (t2)"
+                            placeholder="180"
+                            type="number"
+                            step="0.01"
+                            error={errors.ignition_by_voltage?.t2?.message}
+                          />
+                        </div>
+                      </div>
+                    ) : (
+                      <></>
+                    )}
+                  </div>
+
+                  <div>
+                    <div className="pl-4 relative flex items-center py-4">
+                      <div className="min-w-0 flex-1 text-sm leading-6">
+                        <label
+                          htmlFor={"functions-virtual_ignition_by_movement"}
+                          className="select-none font-medium text-gray-900"
+                        >
+                          Ignição por Movimento
+                        </label>
+                      </div>
+                      <div className="ml-3 flex h-6 items-center gap-2">
+                        <Controller
+                          control={control}
+                          name={"virtual_ignition_by_movement"}
+                          render={({ field }) => (
+                            <Toggle
+                              onChange={field.onChange}
+                              value={field.value}
+                            />
+                          )}
+                        />
+                      </div>
+                    </div>
+                    {watch("virtual_ignition_by_movement") ? (
+                      <div className="pl-4 sm:col-span-1">
+                        <Input
+                          {...register("sensitivity_adjustment")}
+                          id="sensibility"
+                          label="Ajuste de Sensibilidade"
+                          placeholder="500"
+                          type="number"
+                          error={errors.sensitivity_adjustment?.message}
+                        />
+                      </div>
+                    ) : (
+                      <></>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <></>
+              )}
             </div>
           </div>
         </div>
