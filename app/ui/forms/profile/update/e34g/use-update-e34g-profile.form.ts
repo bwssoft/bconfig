@@ -16,7 +16,7 @@ const data_transmission = z
   .coerce
   .number()
   .positive({ message: "O valor deve ser positivo" })
-  .max(3600, { message: "O valor deve ser no máximo 65535" })
+  .max(65535, { message: "O valor deve ser no máximo 65535" })
   .optional()
 
 const ip = z
@@ -43,7 +43,7 @@ const keep_alive = z
   .number()
   .positive({ message: "O valor deve ser positivo" })
   .min(60, { message: "O valor deve ser no mínimo 60" })
-  .max(3600, { message: "O valor deve ser no máximo 3600" })
+  .max(1800, { message: "O valor deve ser no máximo 1800" })
   .optional()
 
 const odometer = z
