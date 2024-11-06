@@ -58,8 +58,8 @@ export function useImeiWriterForm(props: { onSubmit: (imeiForWriting: string) =>
 
   const handleChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     let imei = event.target.value;
-    if (imei.startsWith("E3+4G:")) {
-      imei = imei.replace("E3+4G:", "");
+    if (imei.startsWith("E3+4G")) {
+      imei = imei.replace(/E3\+4G|:|Ç|ç/g, "");
     }
     setValue("serial", imei, { shouldValidate: true });
   };
