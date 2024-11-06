@@ -48,17 +48,19 @@ export function useImeiWriterForm(props: { onSubmit: (imeiForWriting: string) =>
       const currentTime = new Date().getTime();
       if (lastPressTime && currentTime - lastPressTime < 300) {
         event.preventDefault()
-        inputImeiRef.current?.focus()
-        inputImeiRef.current && (inputImeiRef.current.value = "")
+        if (inputImeiRef.current) {
+          inputImeiRef.current?.focus()
+          inputImeiRef.current.value = "";
+          setValue("serial", "");
+        }
       }
       setLastPressTime(currentTime);
     }
   };
 
-
   const handleChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     let imei = event.target.value;
-    if (imei.startsWith("E3+4G")) {
+    if (imei.startsWith("E3+4GÇ") || imei.startsWith("E3+4G:")) {
       imei = imei.replace(/E3\+4G|:|Ç|ç/g, "");
     }
     setValue("serial", imei, { shouldValidate: true });
