@@ -241,4 +241,131 @@ export async function exportConfigurationLog(props: {
 }
 
 
+export async function countGatewayConfigured(props: { model: IProfile["model"] }) {
+  const { model } = props
+  const aggregate = await repository.aggregate([
+    {
+      $match: {
+        is_configured: true,
+        $or: [
+          { "desired_profile.ip.primary": { $ne: null } },
+          { "desired_profile.ip.secondary": { $ne: null } },
+          { "desired_profile.dns": { $ne: null } }
+        ]
+      }
+    },
+    {
+      $lookup: {
+        from: "profile",
+        localField: "profile_id",
+        foreignField: "id",
+        as: "profile",
+        pipeline: [
+          {
+            $project: {
+              _id: 0,
+              model: 1
+            }
+          }
+        ]
+      }
+    },
+    { $match: { "profile.model": model } },
+    {
+      $addFields: {
+        primaryIP: {
+          $cond: {
+            if: { $ne: ["$desired_profile.ip.primary", null] },
+            then: {
+              $concat: [
+                "$desired_profile.ip.primary.ip",
+                ":",
+                { $toString: "$desired_profile.ip.primary.port" }
+              ]
+            },
+            else: null
+          }
+        },
+        secondaryIP: {
+          $cond: {
+            if: { $ne: ["$desired_profile.ip.secondary", null] },
+            then: {
+              $concat: [
+                "$desired_profile.ip.secondary.ip",
+                ":",
+                { $toString: "$desired_profile.ip.secondary.port" }
+              ]
+            },
+            else: null
+          }
+        },
+        dns: {
+          $cond: {
+            if: { $ne: ["$desired_profile.dns", null] },
+            then: {
+              $concat: [
+                "$desired_profile.dns.address",
+                ":",
+                { $toString: "$desired_profile.dns.port" }
+              ]
+            },
+            else: null
+          }
+        }
+      }
+    },
+    {
+      $project: {
+        ipsAndDns: {
+          $filter: {
+            input: ["$primaryIP", "$secondaryIP", "$dns"],
+            as: "item",
+            cond: { $ne: ["$$item", null] }
+          }
+        }
+      }
+    },
+    { $unwind: "$ipsAndDns" },
+    {
+      $group: {
+        _id: "$ipsAndDns",
+        count: { $sum: 1 }
+      }
+    },
+    {
+      $facet: {
+        aboveThreshold: [
+          { $match: { count: { $gte: 50 } } },
+          { $sort: { count: -1 } }
+        ],
+        belowThreshold: [
+          { $match: { count: { $lt: 50 } } },
+          {
+            $group: {
+              _id: "Outros",
+              count: { $sum: "$count" }
+            }
+          }
+        ]
+      }
+    },
+    {
+      $project: {
+        results: {
+          $concatArrays: ["$aboveThreshold", "$belowThreshold"]
+        }
+      }
+    },
+    { $unwind: "$results" },
+    {
+      $replaceRoot: { newRoot: "$results" }
+    }
+  ]
+  )
+  return await aggregate.toArray()
+}
+
+
+
+
 
