@@ -312,6 +312,16 @@ export class E34GEncoder {
     return `SPEED${props}`
   }
 
+  /*
+  * @example 30
+  */
+  static ack(props: number): string | undefined {
+    if (typeof props !== "number" || Number.isNaN(props)) {
+      return undefined
+    }
+    return `SETACK${props}`
+  }
+
 
 
   static commands() {
@@ -347,7 +357,8 @@ export class E34GEncoder {
       angle_adjustment: E34GEncoder.angle_adjustment,
       lock_type_progression: E34GEncoder.lock_type_progression,
       ignition_by_voltage: E34GEncoder.ignition_by_voltage,
-      max_speed: E34GEncoder.max_speed
+      max_speed: E34GEncoder.max_speed,
+      ack: E34GEncoder.ack
     }
   }
 

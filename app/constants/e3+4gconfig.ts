@@ -146,5 +146,6 @@ export const configMapped: { [key in keyof IProfile["config"]]: string } = {
   input_2: "Entrada 2",
   angle_adjustment: "Ajuste de ângulo",
   lock_type_progression: "Definir progressão",
-  ignition_by_voltage: "Ignição por voltagem"
+  ignition_by_voltage: "Ignição por voltagem",
+  ack: "Definir ack"
 }

@@ -237,6 +237,7 @@ export function useE34GCommunication() {
           input_1: _check?.input_1 ?? undefined,
           input_2: _check?.input_2 ?? undefined,
           sensitivity_adjustment: _check?.sensitivity_adjustment ?? undefined,
+          ack: _check?.ack ?? undefined,
           horimeter: _status?.["HR"] ? E34G.horimeter(_status?.["HR"]) : undefined
         },
         native_profile: {

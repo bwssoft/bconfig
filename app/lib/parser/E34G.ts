@@ -123,6 +123,7 @@ interface Check extends Object {
   ignition_by_voltage?: IgnitionByVoltage
   input_1?: number
   input_2?: number
+  ack?: number
 }
 
 interface Status {
@@ -234,6 +235,9 @@ export class E34G {
         }
         if (key === "GS") {
           parsed["sensitivity_adjustment"] = this.sensitivity_adjustment(value)
+        }
+        if (key === "ACK") {
+          parsed["ack"] = this.ack(value)
         }
       })
     }
@@ -518,6 +522,14 @@ export class E34G {
   }
 
   static horimeter(input: string): number | undefined {
+    if (!input || Number.isNaN(input)) return undefined
+    return Number(input)
+  }
+
+  /*
+  * @example 30
+  */
+  static ack(input: string): MaxSpeed | undefined {
     if (!input || Number.isNaN(input)) return undefined
     return Number(input)
   }

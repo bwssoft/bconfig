@@ -80,4 +80,5 @@ type Config = {
     t1: number
     t2: number
   }
+  ack?: number
 }

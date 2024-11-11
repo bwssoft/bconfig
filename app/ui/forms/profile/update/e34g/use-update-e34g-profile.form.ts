@@ -87,6 +87,14 @@ const ignition_by_voltage = z
   .positive({ message: "O valor deve ser positivo" })
   .max(65535, { message: "O valor deve ser no máximo 65535" })
 
+
+const ack = z
+  .coerce
+  .number()
+  .min(0, { message: "O valor deve ser no mínimo 0" })
+  .max(180, { message: "O valor deve ser no máximo 180" })
+  .optional()
+
 const removePropByOptionalFunctions = <T>(schema: T) => {
   const optional_functions = (schema as any).optional_functions
   if (!optional_functions) return schema
@@ -183,6 +191,7 @@ const schema = z.preprocess(removeEmptyValues, z
         message: "VION deve ser maior do que VIOFF.",
         path: ["t1"]
       }).optional(),
+    ack: ack,
   })).transform(removeUndefined).transform(removePropByOptionalFunctions)
 
 export type Schema = z.infer<typeof schema>;

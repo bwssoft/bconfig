@@ -445,6 +445,16 @@ export function E34GProfileCreateForm() {
                   error={errors.horimeter?.message}
                 />
               </div>
+              <div className="sm:col-span-1">
+                <Input
+                  {...register("ack")}
+                  id="ack"
+                  label="Definir ack"
+                  placeholder="30"
+                  type="number"
+                  error={errors.ack?.message}
+                />
+              </div>
             </dl>
           </div>
         </div>
