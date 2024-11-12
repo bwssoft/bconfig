@@ -39,8 +39,8 @@ export const removeEmptyValues = <T>(obj: T): T => {
   const entries = Object.entries(obj).map(([key, value]) => {
     if (typeof value === 'string' && value === '') {
       return [key, undefined];
-    } else if (typeof value === 'number' && value === 0) {
-      return [key, undefined];
+      // } else if (typeof value === 'number' && value === 0) {
+      //   return [key, undefined];
     } else if (typeof value === 'object' && value !== null) {
       return [key, removeEmptyValues(value)];
     } else {
