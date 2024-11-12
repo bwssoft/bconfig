@@ -16,12 +16,12 @@ export const authConfig = {
         nextUrl.pathname.startsWith("/auto-test") ||
         nextUrl.pathname.startsWith("/auto-test-log") ||
         nextUrl.pathname.startsWith("/configurator") ||
-        nextUrl.pathname.startsWith("/configuration-log") ||
+        nextUrl.pathname === "/configuration-log" ||
         nextUrl.pathname.startsWith("/profile");
 
       // Routes accessible by clients only
       const isAuthClientRoutes =
-        nextUrl.pathname.startsWith("/configuration");
+        nextUrl.pathname === "/configuration"
 
       const isAuthRoutes = isAuthEmployeeRoutes || isAuthClientRoutes;
 
