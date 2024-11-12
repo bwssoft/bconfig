@@ -49,6 +49,11 @@ export function E34GClientProfileForm(props: Props) {
       autoComplete="off"
       className="flex flex-col gap-6 mt-6"
       action={() => handleSubmit()}
+      onKeyDown={(event) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+        }
+      }}
     >
       <section aria-labelledby="general">
         <div className="bg-white sm:rounded-lg">
@@ -83,6 +88,7 @@ export function E34GClientProfileForm(props: Props) {
                     resetAllFields();
                   }}
                   error={errors?.name?.message ?? ""}
+                  helpText="O nome inserido será usado para criar ou atualizar um novo perfil."
                 />
               </div>
             </dl>
@@ -127,7 +133,7 @@ export function E34GClientProfileForm(props: Props) {
               </div>
               <div className="sm:col-span-full">
                 <dt className="text-sm font-medium text-gray-400">APN</dt>
-                <div className="flex gap-2 mt-2">
+                <div className="flex flex-col sm:flex-row gap-2 mt-2">
                   <Input
                     id="addres"
                     label="Endereço"
@@ -168,19 +174,19 @@ export function E34GClientProfileForm(props: Props) {
               </div>
               {ipdns === "IP" && (
                 <div className="sm:col-span-full">
-                  <div className="flex gap-2">
+                  <div className="flex flex-col sm:flex-row gap-2">
                     <div className="relative">
-                      <div className="flex gap-2">
+                      <div className="flex flex-col sm:flex-row gap-2">
                         <Input
                           id="primary_ip"
-                          label="IP"
+                          label="IP Primário"
                           placeholder="124.451.451.12"
                           {...register("ip.primary.ip")}
                           error={errors?.ip?.primary?.ip?.message}
                         />
                         <Input
                           id="primary_ip_port"
-                          label="Porta"
+                          label="Porta Primária"
                           placeholder="2000"
                           type="number"
                           {...register("ip.primary.port")}
@@ -192,17 +198,17 @@ export function E34GClientProfileForm(props: Props) {
                       </p>
                     </div>
                     <div className="relative">
-                      <div className="flex gap-2">
+                      <div className="flex flex-col sm:flex-row gap-2">
                         <Input
                           id="secondary_ip"
-                          label="IP"
+                          label="IP Secundário"
                           placeholder="124.451.451.12"
                           {...register("ip.secondary.ip")}
                           error={errors?.ip?.secondary?.ip?.message}
                         />
                         <Input
                           id="secondary_ip_port"
-                          label="Porta"
+                          label="Porta Secundário"
                           placeholder="2000"
                           type="number"
                           {...register("ip.secondary.port")}
@@ -218,7 +224,7 @@ export function E34GClientProfileForm(props: Props) {
               )}
               {ipdns === "DNS" && (
                 <div className="sm:col-span-full">
-                  <div className="flex gap-2">
+                  <div className="flex flex-col sm:flex-row gap-2">
                     <Input
                       id="dns_address"
                       label="Endereço"
@@ -259,7 +265,7 @@ export function E34GClientProfileForm(props: Props) {
                 <dt className="text-sm font-medium text-gray-400">
                   Intervalo de Transmissão
                 </dt>
-                <div className="flex gap-2 mt-2">
+                <div className="flex flex-col sm:flex-row gap-2 mt-2">
                   <Input
                     {...register("data_transmission.on")}
                     id="transmission_on"
@@ -461,7 +467,7 @@ export function E34GClientProfileForm(props: Props) {
                 <Input
                   {...register("horimeter")}
                   id="horimeter"
-                  label="Horímetro (ms)"
+                  label="Horímetro (minutos)"
                   placeholder="3600"
                   type="number"
                   step="0.01"
