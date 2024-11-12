@@ -285,6 +285,7 @@ export function useClientE34GProfileForm(props: Props) {
         } else {
           const profileCreated = await createOneProfile(profile);
           id = profileCreated.id
+          handleProfileSelection(id)
         }
         await onSubmit({ ...profile, id })
       } catch (e) {
