@@ -7,31 +7,57 @@ export const authConfig = {
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
-      const isLoginPage = nextUrl.pathname.startsWith("/login")
-      const isAuthRoutes =
+      const userType = auth?.user?.type;
+      const isLoginPage = nextUrl.pathname.startsWith("/login");
+
+      // Routes accessible by employees only
+      const isAuthEmployeeRoutes =
         nextUrl.pathname === "/" ||
         nextUrl.pathname.startsWith("/auto-test") ||
         nextUrl.pathname.startsWith("/auto-test-log") ||
         nextUrl.pathname.startsWith("/configurator") ||
         nextUrl.pathname.startsWith("/configuration-log") ||
-        nextUrl.pathname.startsWith("/profile")
+        nextUrl.pathname.startsWith("/profile");
 
-      if (!isAuthRoutes && !isLoggedIn) return true
+      // Routes accessible by clients only
+      const isAuthClientRoutes =
+        nextUrl.pathname.startsWith("/configuration");
 
-      if (isAuthRoutes && !isLoggedIn && !isLoginPage) return Response.redirect(new URL("/login", nextUrl))
+      const isAuthRoutes = isAuthEmployeeRoutes || isAuthClientRoutes;
 
-      if (isLoggedIn && isLoginPage) return Response.redirect(new URL("/", nextUrl))
+      // Redirect unauthenticated users trying to access auth routes
+      if (!isAuthRoutes && !isLoggedIn) return true;
+
+      if (isAuthRoutes && !isLoggedIn && !isLoginPage) {
+        return Response.redirect(new URL("/login", nextUrl));
+      }
+
+      if (isLoggedIn) {
+        if (userType === "employee" && isAuthClientRoutes) {
+          return Response.redirect(new URL("/", nextUrl));
+        }
+        if (userType === "client" && isAuthEmployeeRoutes) {
+          return Response.redirect(new URL("/configuration", nextUrl));
+        }
+      }
+
+      if (isLoggedIn && isLoginPage && userType === "employee") {
+        return Response.redirect(new URL("/", nextUrl));
+      } else if (isLoggedIn && isLoginPage && userType === "client") {
+        return Response.redirect(new URL("/configuration", nextUrl));
+      }
+
       return true;
     },
     jwt({ user, token }) {
       if (user) {
-        token = Object.assign(token, { id: user.id, type: user.type })
+        token = Object.assign(token, { id: user.id, type: user.type });
       }
-      return token
+      return token;
     },
     session({ session, token }) {
-      session.user.id = String(token.id)
-      session.user.type = token.type as "external" | "client" | "employee"
+      session.user.id = String(token.id);
+      session.user.type = token.type as "external" | "client" | "employee";
       return session;
     }
   },

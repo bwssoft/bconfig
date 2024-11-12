@@ -107,8 +107,7 @@ const employeeNavigation: NavItem[] = [
 ];
 
 const clientNavigation: NavItem[] = [
-  { name: "Dashboard", icon: HomeIcon, pathname: "/" },
-  { name: "Configuration", pathname: "/configuration", icon: WrenchIcon },
+  { name: "Configurador", pathname: "/configuration", icon: WrenchIcon },
 ];
 
 const externalNavigation: NavItem[] = [];
