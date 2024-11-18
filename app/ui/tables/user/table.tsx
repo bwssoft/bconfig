@@ -4,14 +4,20 @@ import { columns } from "./columns";
 import { DataTable } from "../../components/data-table";
 
 interface Props {
-  data: { id: string; name: string; email: string, type: "employee" | "external" | "client" }[];
+  data: { id: string; name: string; email: string; type: "employee" | "external" | "client" }[];
+  sessionType?: "employee" | "external" | "client";
 }
-export default function UserTable(props: Props) {
-  const { data } = props;
+
+export default function UserTable({ data, sessionType }: Props) {
+  const dataWithSession = data.map((item) => ({
+    ...item,
+    sessionType,
+  }));
+
   return (
     <DataTable
       columns={columns}
-      data={data}
+      data={dataWithSession}
       mobileDisplayValue={(data) => data.name}
       mobileKeyExtractor={() => Math.random().toString()}
       className="w-full mt-10"

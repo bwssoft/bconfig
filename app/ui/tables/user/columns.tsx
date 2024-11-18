@@ -7,6 +7,8 @@ export const columns: ColumnDef<{
   id: string;
   name: string;
   email: string;
+  type: "employee" | "external" | "client";
+  sessionType?: "employee" | "external" | "client";
 }>[] = [
   { header: "Nome", accessorKey: "name" },
   {
@@ -14,10 +16,17 @@ export const columns: ColumnDef<{
     accessorKey: "email",
   },
   {
+    header: "Tipo do usuário",
+    accessorKey: "type",
+  },
+  {
     header: "Ações",
     accessorKey: "name",
     cell: ({ row }) => {
       const user = row.original;
+      
+      if (user.sessionType != 'employee') return null;
+
       return (
         <td className="flex gap-2 relative whitespace-nowrap pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
           <Link
