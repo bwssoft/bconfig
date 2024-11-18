@@ -288,7 +288,7 @@ export function E34GProfileUpdateForm(props: Props) {
                     <Input
                       {...register("lock_type_progression.n1")}
                       id="lock_type_progression_n1"
-                      label="N1"
+                      label="Tempo acionado"
                       placeholder="60"
                       type="number"
                       error={errors.lock_type_progression?.n1?.message}
@@ -296,7 +296,7 @@ export function E34GProfileUpdateForm(props: Props) {
                     <Input
                       {...register("lock_type_progression.n2")}
                       id="lock_type_progression_n2"
-                      label="n2"
+                      label="Tempo não acionado"
                       placeholder="180"
                       type="number"
                       error={errors.lock_type_progression?.n2?.message}
