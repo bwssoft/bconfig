@@ -59,10 +59,10 @@ export class E34GEncoder {
 
   //comands
   static apn(props: APN): string | undefined {
-    if (!props?.address || !props?.user || !props?.password) {
+    if (!props?.address) {
       return undefined
     }
-    return `APN*${props.address}*${props.user}*${props.password}`
+    return `APN*${props.address}*${props.user ?? ""}*${props.password ?? ""}`
   }
 
   static ip(props: IP): string[] | undefined {

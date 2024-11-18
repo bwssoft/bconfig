@@ -286,14 +286,14 @@ export class E34G {
   * @example: www.bws.com,bws,bws
   */
   static apn(input: string): APN | undefined {
-    const values = input.split(',')
-    if (values.length !== 3) {
+    const [address, user, password] = input.split(',')
+    if (!address) {
       return undefined
     }
     return {
-      address: values?.[0],
-      user: values?.[1],
-      password: values?.[2]
+      address,
+      user,
+      password
     }
   }
 
