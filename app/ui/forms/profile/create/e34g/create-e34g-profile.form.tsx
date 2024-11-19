@@ -504,15 +504,7 @@ export function E34GProfileCreateForm() {
 
               <div>
                 <div className="relative flex items-center py-4">
-                  <div className="min-w-0 flex-1 text-sm leading-6">
-                    <label
-                      htmlFor={"functions-cornering_position_update"}
-                      className="select-none font-medium text-gray-900"
-                    >
-                      Atualização da posição em curva
-                    </label>
-                  </div>
-                  <div className="ml-3 flex h-6 items-center gap-2">
+                <div className="ml-3 flex h-6 items-center gap-2">
                     <Controller
                       control={control}
                       name={"cornering_position_update"}
@@ -521,6 +513,15 @@ export function E34GProfileCreateForm() {
                       )}
                     />
                   </div>
+                  <div className="min-w-0 flex-1 text-sm leading-6 ml-4">
+                    <label
+                      htmlFor={"functions-cornering_position_update"}
+                      className="select-none font-medium text-gray-900"
+                    >
+                      Atualização da posição em curva
+                    </label>
+                  </div>
+                  
                 </div>
                 {watch("cornering_position_update") ? (
                   <div className="sm:col-span-1">
@@ -540,15 +541,7 @@ export function E34GProfileCreateForm() {
 
               <div>
                 <div className="relative flex items-center py-4">
-                  <div className="min-w-0 flex-1 text-sm leading-6">
-                    <label
-                      htmlFor={"functions-virtual_ignition"}
-                      className="select-none font-medium text-gray-900"
-                    >
-                      Ignição Virtual
-                    </label>
-                  </div>
-                  <div className="ml-3 flex h-6 items-center gap-2">
+                <div className="ml-3 flex h-6 items-center gap-2">
                     <Controller
                       control={control}
                       name={"virtual_ignition"}
@@ -557,6 +550,15 @@ export function E34GProfileCreateForm() {
                       )}
                     />
                   </div>
+                  <div className="min-w-0 flex-1 text-sm leading-6 ml-4">
+                    <label
+                      htmlFor={"functions-virtual_ignition"}
+                      className="select-none font-medium text-gray-900"
+                    >
+                      Ignição Virtual
+                    </label>
+                  </div>
+                  
                 </div>
               </div>
 
@@ -564,14 +566,6 @@ export function E34GProfileCreateForm() {
                 <>
                   <div>
                     <div className="pl-4 relative flex items-center py-4">
-                      <div className="min-w-0 flex-1 text-sm leading-6">
-                        <label
-                          htmlFor={"functions-virtual_ignition"}
-                          className="select-none font-medium text-gray-900"
-                        >
-                          Ignição por Tensão
-                        </label>
-                      </div>
                       <div className="ml-3 flex h-6 items-center gap-2">
                         <Controller
                           control={control}
@@ -584,6 +578,15 @@ export function E34GProfileCreateForm() {
                           )}
                         />
                       </div>
+                      <div className="min-w-0 flex-1 text-sm leading-6 ml-4">
+                        <label
+                          htmlFor={"functions-virtual_ignition"}
+                          className="select-none font-medium text-gray-900"
+                        >
+                          Ignição por Tensão
+                        </label>
+                      </div>
+
                     </div>
                     {watch("virtual_ignition_by_voltage") ? (
                       <div className="pl-4 sm:col-span-full">
@@ -618,14 +621,6 @@ export function E34GProfileCreateForm() {
 
                   <div>
                     <div className="pl-4 relative flex items-center py-4">
-                      <div className="min-w-0 flex-1 text-sm leading-6">
-                        <label
-                          htmlFor={"functions-virtual_ignition_by_movement"}
-                          className="select-none font-medium text-gray-900"
-                        >
-                          Ignição por Movimento
-                        </label>
-                      </div>
                       <div className="ml-3 flex h-6 items-center gap-2">
                         <Controller
                           control={control}
@@ -638,6 +633,15 @@ export function E34GProfileCreateForm() {
                           )}
                         />
                       </div>
+                      <div className="min-w-0 flex-1 text-sm leading-6 ml-4">
+                        <label
+                          htmlFor={"functions-virtual_ignition_by_movement"}
+                          className="select-none font-medium text-gray-900"
+                        >
+                          Ignição por Movimento
+                        </label>
+                      </div>
+
                     </div>
                     {watch("virtual_ignition_by_movement") ? (
                       <div className="pl-4 sm:col-span-1">
@@ -702,14 +706,6 @@ export function E34GProfileCreateForm() {
                       </label>
                     </div>
                   </div>
-                  <div className="ml-3 min-w-0 flex-1 text-sm leading-6">
-                    <label
-                      htmlFor={`functions-${func.name}`}
-                      className="select-none font-medium text-gray-900"
-                    >
-                      {func.label}
-                    </label>
-                  </div>
                   <div className="ml-3 flex h-6 items-center gap-2">
                     <Controller
                       control={control}
@@ -719,6 +715,15 @@ export function E34GProfileCreateForm() {
                       )}
                     />
                   </div>
+                  <div className="ml-3 min-w-0 flex-1 text-sm leading-6">
+                    <label
+                      htmlFor={`functions-${func.name}`}
+                      className="select-none font-medium text-gray-900"
+                    >
+                      {func.label}
+                    </label>
+                  </div>
+
                 </div>
               ))}
             </div>

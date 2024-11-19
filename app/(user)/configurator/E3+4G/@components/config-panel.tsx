@@ -9,6 +9,7 @@ import { jsonToXlsx } from "@/app/lib/util/json-to-xlsx";
 import { IdentificationProgress } from "@/app/ui/components/identification-progress";
 import { ConfigurationProgress } from "@/app/ui/components/configuration-progress";
 import { useE34GCommunication } from "@/app/hook/use-E34G-communication";
+import { toast } from "@/app/hook/use-toast";
 
 interface Props {
   profile?: IProfile;
@@ -87,10 +88,18 @@ export function ConfigPanel(props: Props) {
               <Button
                 variant="primary"
                 className="h-fit"
-                onClick={() =>
+                onClick={() => {
+                  ports.length ? 
                   profile &&
                   Object.keys(profile).length > 0 &&
                   handleDeviceConfiguration(identified, profile)
+                  : toast({
+                    title: "Erro de Configuração",
+                    description: "Nenhuma porta está disponível ou o equipamento está desconectado. Verifique a conexão e tente novamente.",
+                    variant: "error",
+                    className: "destructive group border bg-red-500 border-red-400 text-white"
+                  });
+                }
                 }
               >
                 Configurar
