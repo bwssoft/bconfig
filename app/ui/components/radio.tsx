@@ -28,16 +28,8 @@ export function Radio<T>(props: {
       )}
       <div className="mt-4 divide-y divide-gray-200 border-b border-t border-gray-200">
         {data.map((op, opIdx) => (
-          <div key={opIdx} className="relative flex items-start py-4">
-            <div className="min-w-0 flex-1 text-sm leading-6">
-              <label
-                htmlFor={`radio-${keyExtractor(op)}`}
-                className="select-none font-medium text-gray-900"
-              >
-                {valueExtractor(op)}
-              </label>
-            </div>
-            <div className="ml-3 flex h-6 items-center">
+          <div key={opIdx} className="relative flex items-start justify-start py-4">
+            <div className="mr-3 flex h-6 items-center">
               <input
                 id={`radio-${keyExtractor(op)}`}
                 name="plan"
@@ -52,6 +44,14 @@ export function Radio<T>(props: {
                   onChange?.(op);
                 }}
               />
+            </div>
+            <div className="min-w-0 text-sm leading-6">
+              <label
+                htmlFor={`radio-${keyExtractor(op)}`}
+                className="select-none font-medium text-gray-900"
+              >
+                {valueExtractor(op)}
+              </label>
             </div>
           </div>
         ))}
