@@ -72,6 +72,7 @@ interface Props {
 const employeeNavigation: NavItem[] = [
   { name: "Dashboard", icon: HomeIcon, pathname: "/dashboard" },
   { name: "Configuration Profile", pathname: "/profile", icon: UsersIcon },
+  { name: "Users", pathname: "/user", icon: UsersIcon },
   {
     name: "Logs",
     icon: Bars3Icon,

@@ -405,14 +405,7 @@ export function E3ProfileCreateForm() {
             <div className="divide-y divide-gray-200 border-b border-t border-gray-200">
               {functions.map((func, id) => (
                 <div key={id} className="relative flex items-center py-4">
-                  <div className="min-w-0 flex-1 text-sm leading-6">
-                    <label
-                      htmlFor={`functions-${func.name}`}
-                      className="select-none font-medium text-gray-900"
-                    >
-                      {func.label}
-                    </label>
-                  </div>
+
                   <div className="ml-3 flex h-6 items-center gap-2">
                     <Controller
                       control={control}
@@ -422,6 +415,16 @@ export function E3ProfileCreateForm() {
                       )}
                     />
                   </div>
+
+                  <div className="min-w-0 flex-1 text-sm leading-6 ml-4">
+                    <label
+                      htmlFor={`functions-${func.name}`}
+                      className="select-none font-medium text-gray-900"
+                    >
+                      {func.label}
+                    </label>
+                  </div>
+
                 </div>
               ))}
             </div>
@@ -469,14 +472,6 @@ export function E3ProfileCreateForm() {
                       </label>
                     </div>
                   </div>
-                  <div className="ml-3 min-w-0 flex-1 text-sm leading-6">
-                    <label
-                      htmlFor={`functions-${func.name}`}
-                      className="select-none font-medium text-gray-900"
-                    >
-                      {func.label}
-                    </label>
-                  </div>
                   <div className="ml-3 flex h-6 items-center gap-2">
                     <Controller
                       control={control}
@@ -486,6 +481,15 @@ export function E3ProfileCreateForm() {
                       )}
                     />
                   </div>
+                  <div className="ml-3 min-w-0 flex-1 text-sm leading-6">
+                    <label
+                      htmlFor={`functions-${func.name}`}
+                      className="select-none font-medium text-gray-900"
+                    >
+                      {func.label}
+                    </label>
+                  </div>
+                 
                 </div>
               ))}
             </div>

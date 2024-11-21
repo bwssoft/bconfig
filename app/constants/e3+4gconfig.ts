@@ -17,7 +17,7 @@ export const functions = [
     data: [{ label: "Ligado", value: true }, { label: "Desligado", value: false }]
   },
   {
-    label: "Indicar LED",
+    label: "Funcionamento dos LEDS",
     name: "led",
     data: [{ label: "Ligado", value: true }, { label: "Desligado", value: false }]
   },

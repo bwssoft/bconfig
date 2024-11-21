@@ -7,6 +7,7 @@ import DeviceConfiguredTable from "@/app/ui/tables/devices-configured/table";
 import DevicesToConfigureTable from "@/app/ui/tables/devices-to-configure/table";
 import { useE3Communication } from "@/app/hook/use-E3-communication";
 import { ConfigurationProgress } from "@/app/ui/components/configuration-progress";
+import { toast } from "@/app/hook/use-toast";
 
 interface Props {
   profile?: IProfile;
@@ -75,10 +76,18 @@ export function Panel(props: Props) {
                 variant="primary"
                 className="h-fit"
                 disabled={inConfiguration}
-                onClick={() =>
+                onClick={() => {
+                  ports.length ? 
                   profile &&
                   Object.keys(profile).length > 0 &&
-                  handleDeviceConfiguration(identified, profile)
+                  handleDeviceConfiguration(identified, profile) 
+                  : toast({
+                    title: "Erro de Configuração",
+                    description: "Nenhuma porta está disponível ou o equipamento está desconectado. Verifique a conexão e tente novamente.",
+                    variant: "error",
+                    className: "destructive group border bg-red-500 border-red-400 text-white"
+                  });
+                }
                 }
               >
                 Configurar
