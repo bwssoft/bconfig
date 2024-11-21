@@ -32,7 +32,8 @@ export const { auth, signIn, signOut } = NextAuth({
           if (user.type === "external" && user.connected) return null
           const passwordsMatch = await bcrypt.compare(password, user.password);
           if (passwordsMatch) {
-            await updateOneUserById({ id: user.id }, { ...user, connected: true })
+            const { password, ...restUser } = user
+            await updateOneUserById({ id: user.id }, { ...restUser, connected: true })
             return user
           };
         }
