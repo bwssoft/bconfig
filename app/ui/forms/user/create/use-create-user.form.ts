@@ -48,7 +48,7 @@ export function useUserCreateForm() {
             name,
             email,
             password,
-            type: "employee",
+            type: data.type,  
             connected: false
         });
         toast({
