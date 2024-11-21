@@ -27,12 +27,12 @@ export async function createOneUser(input: Omit<IUser, "id" | "created_at" | "us
   const created_at = new Date();
   const id = crypto.randomUUID();
 
-  // Criptografar a senha
+ 
   const hashedPassword = await bcrypt.hash(input.password, 10);
 
   const _input = {
     ...input,
-    password: hashedPassword, // Substituir a senha pelo hash
+    password: hashedPassword, 
     created_at,
     id,
     user_id: session?.user.id!,
@@ -49,7 +49,7 @@ export async function updateOneUserById(
   query: { id: string },
   value: Partial<Omit<IUser, "id" | "created_at">>
 ) {
-  // Se o valor incluir uma nova senha, criptografar antes de atualizar
+ 
   if (value.password) {
     value.password = await bcrypt.hash(value.password, 10);
   }
@@ -62,7 +62,6 @@ export async function updateOneUserByEmail(
   query: { email: string },
   value: Partial<Omit<IUser, "id" | "created_at">>
 ) {
-  // Se o valor incluir uma nova senha, criptografar antes de atualizar
   if (value.password) {
     value.password = await bcrypt.hash(value.password, 10);
   }

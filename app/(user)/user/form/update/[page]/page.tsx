@@ -13,7 +13,6 @@ export default async function Page({
 
   const user = await findOneUserById({ id });
 
-  console.log(user);
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Atualizar Usuário</h1>
