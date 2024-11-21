@@ -30,9 +30,10 @@ export const columns: ColumnDef<{
       return (
         <td className="flex gap-2 relative whitespace-nowrap pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
           <Link
-            href={`/user/form/update/${user.name.toLowerCase()}?id=${
-                user.id
-            }`}
+            href={
+             ` /user/form/update/${user.id.toLowerCase()}`
+            }
+
             className="text-indigo-600 hover:text-indigo-900"
           >
             Editar
