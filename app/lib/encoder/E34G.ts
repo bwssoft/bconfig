@@ -322,6 +322,12 @@ export class E34GEncoder {
     return `SETACK${props}`
   }
 
+  static ignition_status_hb(props: boolean): string | undefined {
+    if (typeof props !== "boolean") {
+      return undefined
+    }
+    return `ISHB${props ? "ON" : "OFF"}`
+  }
 
 
   static commands() {
@@ -358,7 +364,8 @@ export class E34GEncoder {
       lock_type_progression: E34GEncoder.lock_type_progression,
       ignition_by_voltage: E34GEncoder.ignition_by_voltage,
       max_speed: E34GEncoder.max_speed,
-      ack: E34GEncoder.ack
+      ack: E34GEncoder.ack,
+      ignition_status_hb: E34GEncoder.ignition_status_hb
     }
   }
 

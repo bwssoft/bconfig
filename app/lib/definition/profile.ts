@@ -81,4 +81,5 @@ type Config = {
     t2: number
   }
   ack?: number
+  ignition_status_hb?: boolean
 }

@@ -192,6 +192,7 @@ const schema = z.preprocess(removeEmptyValues, z
         path: ["t1"]
       }).optional(),
     ack: ack,
+    ignition_status_hb: z.coerce.boolean().optional().default(true),
   })).transform(removeUndefined).transform(removePropByOptionalFunctions)
 
 export type Schema = z.infer<typeof schema>;
