@@ -6,8 +6,6 @@ import { DataTable } from "../../components/data-table";
 
 interface Props {
   data: {
-    init_time_command: number;
-    end_time_command?: number;
     request: string;
     response?: string;
   }[];

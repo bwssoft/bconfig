@@ -26,8 +26,6 @@ export type ConfigurationMetadata = {
   init_time_configuration: number
   end_time_configuration: number
   commands_sent: {
-    init_time_command: number
-    end_time_command?: number
     request: string
     response?: string
   }[]

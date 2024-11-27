@@ -210,15 +210,11 @@ export function useE34GAutoTest() {
       const init_time_configuration = Date.now()
       for (let c = 0; c < commands.length; c++) {
         const [command, timeout] = commands[c]
-        const init_time_command = Date.now()
         callback.onSendCommand(command, c)
         const response = await sendCommandWithRetries(port, command, timeout);
-        const end_time_command = Date.now()
         commands_sent.push({
           response,
           request: command,
-          init_time_command,
-          end_time_command: response ? end_time_command : undefined
         })
       }
       const end_time_configuration = Date.now()
