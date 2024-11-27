@@ -1,4 +1,5 @@
 import { LoginForm } from "@/app/ui/forms/login/login.form";
+// import { hashSync } from "bcrypt";
 /*
   This example requires some changes to your config:
   
@@ -14,6 +15,17 @@ import { LoginForm } from "@/app/ui/forms/login/login.form";
   ```
 */
 export default function Example() {
+  // console.log([
+  //   {
+  //     name: "Hiago",
+  //     password: hashSync("hiago@2024", 10),
+  //     email: "hiagor516@gmail.com",
+  //     type: "client",
+  //     created_at: new Date(),
+  //     id: crypto.randomUUID(),
+  //     connected: false,
+  //   },
+  // ]);
   return (
     <>
       {/*

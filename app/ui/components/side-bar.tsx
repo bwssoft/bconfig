@@ -26,6 +26,7 @@ import {
   BriefcaseIcon,
   RectangleStackIcon,
   ArrowRightEndOnRectangleIcon,
+  AdjustmentsHorizontalIcon,
 } from "@heroicons/react/24/outline";
 import {
   Disclosure,
@@ -71,7 +72,11 @@ interface Props {
 
 const employeeNavigation: NavItem[] = [
   { name: "Dashboard", icon: HomeIcon, pathname: "/dashboard" },
-  { name: "Configuration Profile", pathname: "/profile", icon: UsersIcon },
+  {
+    name: "Configuration Profile",
+    pathname: "/profile",
+    icon: AdjustmentsHorizontalIcon,
+  },
   { name: "Users", pathname: "/user", icon: UsersIcon },
   {
     name: "Logs",
