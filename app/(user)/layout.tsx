@@ -3,7 +3,7 @@ import "../globals.css";
 import { Layout } from "../ui/layout";
 import { IUser } from "../lib/definition";
 import { auth } from "@/auth";
-import { logout } from "../lib/action";
+import HolyLoader from "holy-loader";
 
 export const metadata: Metadata = {
   title: "BConfig",
@@ -16,5 +16,18 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const session = await auth();
-  return <Layout user={session?.user! as IUser}>{children}</Layout>;
+
+  return (
+    <>
+      <Layout user={session?.user! as IUser}>
+        <HolyLoader
+          color="linear-gradient(to right, #f1f522, #1e61fc, #a855f7)"
+          speed={250}
+          easing="linear"
+          showSpinner
+        />
+        {children}
+      </Layout>
+    </>
+  );
 }

@@ -7,14 +7,13 @@ export default async function Example(props: {
   searchParams: {
     query?: string;
     is_configured?: string;
-    modal_is_open?: string;
     from?: string;
     to?: string;
     page?: string;
   };
 }) {
   const {
-    searchParams: { query, is_configured, modal_is_open, from, to, page },
+    searchParams: { query, is_configured, from, to, page },
   } = props;
 
   const handleQueryParams = () => {
@@ -49,9 +48,7 @@ export default async function Example(props: {
         </div>
       </div>
       <div className="mt-5 flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
-        <SearchConfigurationLogForm
-          modal_is_open={modal_is_open === "true" ? true : false}
-        />
+        <SearchConfigurationLogForm />
       </div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8 space-y-12">
         <ConfigurationLogTable data={configurationLogs} />

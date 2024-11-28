@@ -4,6 +4,7 @@ import {
   ArrowDownOnSquareIcon,
   ArrowPathIcon,
   FunnelIcon,
+  MagnifyingGlassIcon,
   XCircleIcon,
 } from "@heroicons/react/24/outline";
 import { Button } from "../../components/button";
@@ -12,123 +13,133 @@ import { Select } from "../../components/select";
 import { useSearchConfigurationLogForm } from "./use-search-configuration-log.form";
 import { Dialog } from "../../components/dialog";
 import { DateRange } from "../../components/date-range";
+import { Controller } from "react-hook-form";
 
-type Props = {
-  modal_is_open: boolean;
-};
-
-export function SearchConfigurationLogForm(props: Props) {
-  const { modal_is_open } = props;
-
-  const { handleQueryChange, handleExport, handleModalOpening, searchParams } =
-    useSearchConfigurationLogForm();
+export function SearchConfigurationLogForm() {
+  const {
+    handleExport,
+    register,
+    handleSubmit,
+    reset,
+    control,
+    modalIsOpen,
+    handleOpenModal,
+  } = useSearchConfigurationLogForm();
 
   return (
     <>
-      <div className="flex gap-2 w-full">
+      <form className="flex gap-2 w-full" onSubmit={handleSubmit}>
         <Input
           id="Nome"
           label=""
           placeholder="Busque por imei ou nome do usuário"
-          onChange={(e) => handleQueryChange({ query: e.target.value })}
+          {...register("query")}
           containerClassname="max-w-sm"
-          defaultValue={searchParams.get("query") ?? ""}
         />
+        <Button type="submit" variant="outlined" title="Search">
+          <MagnifyingGlassIcon width={16} height={16} />
+        </Button>
         <Button
           variant="outlined"
           title="Filter"
-          onClick={() => handleModalOpening(!modal_is_open)}
+          type="button"
+          onClick={() => handleOpenModal(true)}
         >
           <FunnelIcon width={16} height={16} />
         </Button>
         <Button
           variant="outlined"
           title="Clear filters"
-          onClick={() =>
-            handleQueryChange({
+          type="button"
+          onClick={async () => {
+            reset({
               is_configured: undefined,
-              query: undefined,
-              from: undefined,
-              to: undefined,
+              query: "",
+              date: {
+                from: undefined,
+                to: undefined,
+              },
               page: undefined,
-            })
-          }
+            });
+            await handleSubmit();
+          }}
         >
           <ArrowPathIcon width={16} height={16} />
         </Button>
-      </div>
+      </form>
       <form action={() => handleExport()}>
         <Button variant="outlined" className="flex gap-2" type="submit">
           <ArrowDownOnSquareIcon height={16} width={16} /> Exportar
         </Button>
       </form>
-      {modal_is_open && (
+      {modalIsOpen && (
         <Dialog
-          open={modal_is_open}
-          setOpen={() => handleModalOpening(!modal_is_open)}
+          open={modalIsOpen}
+          setOpen={() => handleOpenModal(!modalIsOpen)}
         >
-          <div className="h-fit flex flex-col gap-4">
+          <form className="h-fit flex flex-col gap-4" onSubmit={handleSubmit}>
             <div className="w-full flex justify-between items-center">
               <p className="block text-sm font-medium leading-6 text-gray-900">
                 Modal para filtrar os logs de configuração
               </p>
-              <Button
-                variant="outlined"
-                onClick={() => handleModalOpening(false)}
-              >
+              <Button variant="outlined" onClick={() => handleOpenModal(false)}>
                 <XCircleIcon width={16} height={16} />
               </Button>
             </div>
             <div className="flex flex-col gap-2">
-              <Select
-                data={statusOptions}
-                keyExtractor={(i) => i.id}
-                valueExtractor={(i) => i.name}
-                name="test_status"
-                label="Status do teste"
-                placeholder="Selecione um status"
-                onChange={({ value }) =>
-                  handleQueryChange({ is_configured: value })
-                }
-                value={statusOptions.find(
-                  (el) => el.value === searchParams.get("is_configured")
+              <Controller
+                control={control}
+                name="is_configured"
+                render={({ field }) => (
+                  <Select
+                    data={statusOptions}
+                    keyExtractor={(i) => i.id}
+                    valueExtractor={(i) => i.name}
+                    name="is_configured"
+                    label="Status do teste"
+                    placeholder="Selecione um status"
+                    onChange={({ value }) => field.onChange(value)}
+                    value={statusOptions.find((el) => el.value === field.value)}
+                  />
                 )}
               />
               <Input
                 id="Nome"
                 label="Serial, iccid, perfil ou usuário"
                 placeholder="Busque pelo número serial, iccid, nome do perfil ou nome do usuário"
-                onChange={(e) => handleQueryChange({ query: e.target.value })}
+                {...register("query")}
                 containerClassname="w-full"
-                defaultValue={searchParams.get("query") ?? ""}
               />
-              <DateRange
-                label="Selecione o periodo de tempo"
-                onChange={(range) => {
-                  handleQueryChange({
-                    from: range.from.toISOString(),
-                    to: range.to.toISOString(),
-                  });
-                }}
-                range={{
-                  from: searchParams.get("from")
-                    ? new Date(searchParams.get("from")!)
-                    : new Date(),
-                  to: searchParams.get("to")
-                    ? new Date(searchParams.get("to")!)
-                    : new Date(),
-                }}
+              <Controller
+                control={control}
+                name="date"
+                render={({ field }) => (
+                  <DateRange
+                    label="Selecione o periodo de tempo"
+                    onChange={(range) => {
+                      field.onChange({
+                        from: range.from.toISOString(),
+                        to: range.to.toISOString(),
+                      });
+                    }}
+                    range={{
+                      from: field?.value?.from
+                        ? new Date(field?.value?.from)
+                        : new Date(),
+                      to: field?.value?.to
+                        ? new Date(field?.value?.to)
+                        : new Date(),
+                    }}
+                  />
+                )}
               />
             </div>
             <div className="mt-6">
-              <Button
-                variant="primary"
-                onClick={() => handleModalOpening(false)}
-              >
+              <Button type="submit" variant="primary">
                 Aplicar Filtros
               </Button>
             </div>
-          </div>
+          </form>
         </Dialog>
       )}
     </>
