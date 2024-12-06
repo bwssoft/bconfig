@@ -46,10 +46,7 @@ export function DevicesToConfigureActionColumn(props: Props) {
           if (result) {
             const id = crypto.randomUUID();
             localStorage.setItem(`profile_${id}`, JSON.stringify(result));
-            window.open(
-              `/configurator/${model}/actual-profile?id=${id}`,
-              "_blank"
-            );
+            window.open(`/configuration/actual-profile?id=${id}`, "_blank");
           } else {
             toast({
               title: "Falha!",
