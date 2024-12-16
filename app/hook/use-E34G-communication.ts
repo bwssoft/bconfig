@@ -529,8 +529,7 @@ export function useE34GCommunication() {
         configure_commands.push(...(Array.isArray(_command) ? _command : [_command]));
       }
     });
-    const initialize_commands: string[] = []
-    const all_commands = initialize_commands.concat(configure_commands)
+    const all_commands = configure_commands.concat(["RESTART"])
     return all_commands
   }
   const updateConfigurationLog = (input: {
