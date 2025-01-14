@@ -274,7 +274,7 @@ export function useE34GCommunication() {
         const command = commands[c]
         callback.onSendCommand(command, c)
         const response = await sendCommandWithRetries(port, command);
-        await sleep(50)
+        await sleep(100)
         commands_sent.push({
           response,
           request: command,
@@ -497,6 +497,8 @@ export function useE34GCommunication() {
         }
         await createOneConfigurationLog(JSON.parse(JSON.stringify(configuration_result)))
         if (is_configured) {
+          await sleep(3000)
+          await sendCommandWithRetries(port, "RESTART");
           toast({
             title: "Configurado!",
             description: `Equipamento configurado com sucesso! (${imei})`,
@@ -529,8 +531,8 @@ export function useE34GCommunication() {
         configure_commands.push(...(Array.isArray(_command) ? _command : [_command]));
       }
     });
-    const all_commands = configure_commands.concat(["RESTART"])
-    return all_commands
+    // const all_commands = configure_commands.concat(["RESTART"])
+    return configure_commands
   }
   const updateConfigurationLog = (input: {
     step_label: string,
