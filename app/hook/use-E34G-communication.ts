@@ -274,7 +274,7 @@ export function useE34GCommunication() {
         const command = commands[c]
         callback.onSendCommand(command, c)
         const response = await sendCommandWithRetries(port, command);
-        await sleep(100)
+        await sleep(150)
         commands_sent.push({
           response,
           request: command,
