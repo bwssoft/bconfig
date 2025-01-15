@@ -1,8 +1,9 @@
 interface Props {
   percentage: number;
+  hint?: string
 }
 export function Progress(props: Props) {
-  const { percentage } = props;
+  const { percentage, hint } = props;
   return (
     <div className="flex flex-col">
       {/* <div className="mb-2 flex justify-between items-center">
@@ -137,6 +138,9 @@ export function Progress(props: Props) {
           <span className="text-sm text-gray-800">
             {percentage.toFixed(2)}%
           </span>
+          {hint && <span className="text-sm text-gray-800">
+            {percentage.toFixed(2)}%
+          </span>}
         </div>
       </div>
     </div>

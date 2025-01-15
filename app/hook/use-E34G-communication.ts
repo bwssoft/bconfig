@@ -390,7 +390,7 @@ export function useE34GCommunication() {
       for (let device of devices) {
         const { port, imei, iccid, et } = device
         if (!imei || !et) continue
-        const total_steps = commands.length + 7;
+        const total_steps = commands.length + 10;
 
         updateConfigurationLog({
           imei,
@@ -439,7 +439,7 @@ export function useE34GCommunication() {
         updateConfigurationLog({
           imei,
           step_label: "Requisitando configuração",
-          step_index: total_steps - 2,
+          step_index: total_steps - 5,
           total_steps
         })
 
@@ -448,7 +448,7 @@ export function useE34GCommunication() {
         updateConfigurationLog({
           imei,
           step_label: "Checando as diferenças",
-          step_index: total_steps - 1,
+          step_index: total_steps - 4,
           total_steps
         })
 
@@ -480,8 +480,8 @@ export function useE34GCommunication() {
 
         updateConfigurationLog({
           imei,
-          step_index: total_steps,
-          step_label: "Processo finalizado",
+          step_index: total_steps - 3,
+          step_label: "Envio de comandos finalizados",
           total_steps,
         })
         const portHasDisconnected = disconnectedPorts.current.find(p => p === port)
@@ -495,10 +495,28 @@ export function useE34GCommunication() {
         } else if (!portHasDisconnected) {
           setConfiguration(prev => prev.concat(configuration_result))
         }
+        updateConfigurationLog({
+          imei,
+          step_index: total_steps - 2,
+          step_label: "Salvando no banco de dados",
+          total_steps,
+        })
         await createOneConfigurationLog(JSON.parse(JSON.stringify(configuration_result)))
         if (is_configured) {
+          updateConfigurationLog({
+            imei,
+            step_index: total_steps - 1,
+            step_label: "Aguardando 3 segundos antes do restart",
+            total_steps,
+          })
           await sleep(3000)
           await sendCommandWithRetries(port, "RESTART");
+          updateConfigurationLog({
+            imei,
+            step_index: total_steps,
+            step_label: "Reset Enviado",
+            total_steps,
+          })
           toast({
             title: "Configurado!",
             description: `Equipamento configurado com sucesso! (${imei})`,

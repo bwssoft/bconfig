@@ -14,5 +14,5 @@ export const ConfigurationProgress = (props: Props) => {
   const averageProgress =
     configurationLog.length > 0 ? totalProgress / configurationLog.length : 0;
 
-  return inConfiguration ? <Progress percentage={averageProgress} /> : <></>;
+  return inConfiguration ? <Progress percentage={averageProgress} hint={configurationLog[0].label}/> : <></>;
 };
