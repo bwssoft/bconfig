@@ -48,7 +48,12 @@ interface ConfigurationLog {
 
 type DeviceResponse = string | undefined
 
+let countdownTimeout: NodeJS.Timeout
+
 export function useE34GCommunication() {
+  const [isConfigurationDisabled, setIsConfigurationDisabled] = useState<boolean>(true);
+  const [configurationDisabledTimer, setConfigurationDisabledTimer] = useState<number>(10)
+
   const [identified, setIdentified] = useState<Identified[]>([])
   const [identifiedLog, setIdentifiedLog] = useState<IdentifiedLog[]>([])
   const [inIdentification, setInIdentification] = useState<boolean>(false)
@@ -84,6 +89,9 @@ export function useE34GCommunication() {
       description: "Equipamento conectado!",
       variant: "success",
     })
+
+    setIsConfigurationDisabled(true)
+    setConfigurationDisabledTimer(10)
   }
 
   const { ports, writeToPort, openPort, getReader, requestPort, closePort, forgetPort } = useSerial({
@@ -377,6 +385,12 @@ export function useE34GCommunication() {
             return oldIdentifiers.concat({ port, isIdentified: false })
           })
         }
+
+        // vo buta aqui
+
+        setTimeout(() => {
+          setIsConfigurationDisabled(false)
+        }, 10000)
       }
       setInIdentification(false)
     } catch (e) {
@@ -603,7 +617,6 @@ export function useE34GCommunication() {
     });
   }
 
-
   useEffect(() => {
     const newPorts = ports.filter(port => !previousPorts.current.includes(port));
 
@@ -613,6 +626,14 @@ export function useE34GCommunication() {
 
     previousPorts.current = ports
   }, [ports]);
+
+  useEffect(() => {
+    if(isConfigurationDisabled && configurationDisabledTimer > 0) {
+      countdownTimeout = setTimeout(() => {
+        setConfigurationDisabledTimer(configurationDisabledTimer - 1)
+      }, 1000)
+    } 
+  }, [isConfigurationDisabled, configurationDisabledTimer])
 
   // useEffect(() => {
   //   const interval = setInterval(() => {
@@ -633,6 +654,8 @@ export function useE34GCommunication() {
     identifiedLog,
     inConfiguration,
     inIdentification,
-    handleForgetPort
+    handleForgetPort,
+    isConfigurationDisabled,
+    configurationDisabledTimer
   }
 }
