@@ -86,6 +86,8 @@ export function useE34GCommunication() {
       description: "Equipamento conectado!",
       variant: "success",
     })
+
+    setIsConfigurationDisabled(true)
   }
 
   const { ports, writeToPort, openPort, getReader, requestPort, closePort, forgetPort } = useSerial({
@@ -394,7 +396,6 @@ export function useE34GCommunication() {
   const handleDeviceConfiguration = async (devices: Identified[], desired_profile: IProfile) => {
     try {
       setInConfiguration(true)
-      setIsConfigurationDisabled(true)
       const commands = parseCommands(desired_profile)
       for (let device of devices) {
         const { port, imei, iccid, et } = device
