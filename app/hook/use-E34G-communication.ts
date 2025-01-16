@@ -49,6 +49,8 @@ interface ConfigurationLog {
 type DeviceResponse = string | undefined
 
 export function useE34GCommunication() {
+  const [isConfigurationDisabled, setIsConfigurationDisabled] = useState<boolean>(true);
+
   const [identified, setIdentified] = useState<Identified[]>([])
   const [identifiedLog, setIdentifiedLog] = useState<IdentifiedLog[]>([])
   const [inIdentification, setInIdentification] = useState<boolean>(false)
@@ -377,6 +379,12 @@ export function useE34GCommunication() {
             return oldIdentifiers.concat({ port, isIdentified: false })
           })
         }
+
+        // vo buta aqui
+
+        setTimeout(() => {
+          setIsConfigurationDisabled(false)
+        }, 10000)
       }
       setInIdentification(false)
     } catch (e) {
@@ -386,6 +394,7 @@ export function useE34GCommunication() {
   const handleDeviceConfiguration = async (devices: Identified[], desired_profile: IProfile) => {
     try {
       setInConfiguration(true)
+      setIsConfigurationDisabled(true)
       const commands = parseCommands(desired_profile)
       for (let device of devices) {
         const { port, imei, iccid, et } = device
@@ -603,7 +612,6 @@ export function useE34GCommunication() {
     });
   }
 
-
   useEffect(() => {
     const newPorts = ports.filter(port => !previousPorts.current.includes(port));
 
@@ -633,6 +641,7 @@ export function useE34GCommunication() {
     identifiedLog,
     inConfiguration,
     inIdentification,
-    handleForgetPort
+    handleForgetPort,
+    isConfigurationDisabled
   }
 }
