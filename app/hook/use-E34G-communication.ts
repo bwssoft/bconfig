@@ -48,8 +48,11 @@ interface ConfigurationLog {
 
 type DeviceResponse = string | undefined
 
+let countdownTimeout: NodeJS.Timeout
+
 export function useE34GCommunication() {
   const [isConfigurationDisabled, setIsConfigurationDisabled] = useState<boolean>(true);
+  const [configurationDisabledTimer, setConfigurationDisabledTimer] = useState<number>(10)
 
   const [identified, setIdentified] = useState<Identified[]>([])
   const [identifiedLog, setIdentifiedLog] = useState<IdentifiedLog[]>([])
@@ -88,6 +91,7 @@ export function useE34GCommunication() {
     })
 
     setIsConfigurationDisabled(true)
+    setConfigurationDisabledTimer(10)
   }
 
   const { ports, writeToPort, openPort, getReader, requestPort, closePort, forgetPort } = useSerial({
@@ -623,6 +627,14 @@ export function useE34GCommunication() {
     previousPorts.current = ports
   }, [ports]);
 
+  useEffect(() => {
+    if(isConfigurationDisabled && configurationDisabledTimer > 0) {
+      countdownTimeout = setTimeout(() => {
+        setConfigurationDisabledTimer(configurationDisabledTimer - 1)
+      }, 1000)
+    } 
+  }, [isConfigurationDisabled, configurationDisabledTimer])
+
   // useEffect(() => {
   //   const interval = setInterval(() => {
   //     if (inConfiguration) return
@@ -643,6 +655,7 @@ export function useE34GCommunication() {
     inConfiguration,
     inIdentification,
     handleForgetPort,
-    isConfigurationDisabled
+    isConfigurationDisabled,
+    configurationDisabledTimer
   }
 }

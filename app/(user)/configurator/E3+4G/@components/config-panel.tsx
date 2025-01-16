@@ -30,7 +30,8 @@ export function ConfigPanel(props: Props) {
     inIdentification,
     inConfiguration,
     handleForgetPort,
-    isConfigurationDisabled
+    isConfigurationDisabled,
+    configurationDisabledTimer
   } = useE34GCommunication();
 
   const handleExport = (input: typeof configuration) => {
@@ -104,7 +105,7 @@ export function ConfigPanel(props: Props) {
                 }
                 }
               >
-                Configurar
+                Configurar {isConfigurationDisabled && `(${configurationDisabledTimer})`}
               </Button>
             </div>
 
