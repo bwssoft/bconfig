@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache"
 import * as XLSX from 'xlsx'
 import { IConfigurationLog, IProfile, IUser } from "../definition"
 import configurationLogRepository from "../repository/mongodb/configuration-log.repository"
+import { FindOptions } from "mongodb"
 
 const repository = configurationLogRepository
 
@@ -32,8 +33,13 @@ export async function createManyConfigurationLog(input: Omit<IConfigurationLog
   return input
 }
 
-export async function findOneConfigurationLog(input: Partial<IConfigurationLog>) {
-  return await repository.findOne(input)
+export async function findOneConfigurationLog(input: Partial<IConfigurationLog>, options?: FindOptions) {
+  return await repository.findOne(input, options)
+}
+
+
+export async function updateOneConfigurationLog(query: Partial<IConfigurationLog>, value: Partial<IConfigurationLog>) {
+  return await repository.updateOne(query, value)
 }
 
 export async function findAllConfigurationLog(props: {

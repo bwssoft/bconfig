@@ -44,7 +44,7 @@ export const useSerial = (props: Props) => {
       };
     }
     // }
-  }, []);
+  }, [handleDisconnection]);
 
   //Serial
   const requestPort = async () => {
