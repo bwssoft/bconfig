@@ -3,6 +3,7 @@ import { ISerialPort } from "./serial";
 
 export interface IConfigurationLog {
   id: string
+  port: ISerialPort
   imei: string
   iccid?: string
   et: string
