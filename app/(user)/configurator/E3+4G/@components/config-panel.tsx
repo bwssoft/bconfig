@@ -30,6 +30,8 @@ export function ConfigPanel(props: Props) {
     inIdentification,
     inConfiguration,
     handleForgetPort,
+    isConfigurationDisabled,
+    configurationDisabledTimer
   } = useE34GCommunication();
 
   const handleExport = (input: typeof configuration) => {
@@ -86,6 +88,7 @@ export function ConfigPanel(props: Props) {
           <div className="flex justify-between gap-2">
             <div className="flex gap-2">
               <Button
+                disabled={isConfigurationDisabled}
                 variant="primary"
                 className="h-fit"
                 onClick={() => {
@@ -102,7 +105,7 @@ export function ConfigPanel(props: Props) {
                 }
                 }
               >
-                Configurar
+                Configurar {isConfigurationDisabled && `(${configurationDisabledTimer})`}
               </Button>
             </div>
 

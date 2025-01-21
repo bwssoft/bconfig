@@ -3,7 +3,6 @@ import { ISerialPort } from "./serial";
 
 export interface IConfigurationLog {
   id: string
-  port: ISerialPort;
   imei: string
   iccid?: string
   et: string
@@ -18,6 +17,8 @@ export interface IConfigurationLog {
   created_at: Date
   user_id: string
   model: "E3+" | "E3+4G"
+  need_double_check: boolean
+  has_double_check: boolean
 }
 
 

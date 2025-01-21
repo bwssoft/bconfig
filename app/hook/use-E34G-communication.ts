@@ -8,6 +8,7 @@ import { toast } from "./use-toast"
 import { createOneConfigurationLog } from "../lib/action/configuration-log.action"
 import { E34G } from "../lib/parser/E34G"
 import { E34GEncoder } from "../lib/encoder/E34G"
+import { useRouter } from "next/navigation"
 
 
 interface Identified {
@@ -48,7 +49,12 @@ interface ConfigurationLog {
 
 type DeviceResponse = string | undefined
 
+let countdownTimeout: NodeJS.Timeout
+
 export function useE34GCommunication() {
+  const [isConfigurationDisabled, setIsConfigurationDisabled] = useState<boolean>(true);
+  const [configurationDisabledTimer, setConfigurationDisabledTimer] = useState<number>(10)
+
   const [identified, setIdentified] = useState<Identified[]>([])
   const [identifiedLog, setIdentifiedLog] = useState<IdentifiedLog[]>([])
   const [inIdentification, setInIdentification] = useState<boolean>(false)
@@ -59,6 +65,8 @@ export function useE34GCommunication() {
 
   const previousPorts = useRef<ISerialPort[]>([])
   const disconnectedPorts = useRef<ISerialPort[]>([])
+
+  const router = useRouter();
 
   const handleSerialDisconnection = useCallback((port: ISerialPort) => {
     toast({
@@ -84,6 +92,9 @@ export function useE34GCommunication() {
       description: "Equipamento conectado!",
       variant: "success",
     })
+
+    setIsConfigurationDisabled(true)
+    setConfigurationDisabledTimer(10)
   }
 
   const { ports, writeToPort, openPort, getReader, requestPort, closePort, forgetPort } = useSerial({
@@ -377,6 +388,12 @@ export function useE34GCommunication() {
             return oldIdentifiers.concat({ port, isIdentified: false })
           })
         }
+
+        // vo buta aqui
+
+        setTimeout(() => {
+          setIsConfigurationDisabled(false)
+        }, 10000)
       }
       setInIdentification(false)
     } catch (e) {
@@ -390,7 +407,7 @@ export function useE34GCommunication() {
       for (let device of devices) {
         const { port, imei, iccid, et } = device
         if (!imei || !et) continue
-        const total_steps = commands.length + 10;
+        const total_steps = commands.length + 9;
 
         updateConfigurationLog({
           imei,
@@ -424,13 +441,13 @@ export function useE34GCommunication() {
             onClosePort: () => updateConfigurationLog({
               imei,
               step_label: "Fechando a porta",
-              step_index: total_steps - 4,
+              step_index: total_steps - 6,
               total_steps
             }),
             onFinished: () => updateConfigurationLog({
               imei,
               step_label: "Porta fechada",
-              step_index: total_steps - 3,
+              step_index: total_steps - 5,
               total_steps
             }),
           }
@@ -439,7 +456,7 @@ export function useE34GCommunication() {
         updateConfigurationLog({
           imei,
           step_label: "Requisitando configuração",
-          step_index: total_steps - 5,
+          step_index: total_steps - 4,
           total_steps
         })
 
@@ -448,7 +465,7 @@ export function useE34GCommunication() {
         updateConfigurationLog({
           imei,
           step_label: "Checando as diferenças",
-          step_index: total_steps - 4,
+          step_index: total_steps - 3,
           total_steps
         })
 
@@ -475,12 +492,14 @@ export function useE34GCommunication() {
           metadata: configured_device,
           profile_id: desired_profile.id,
           profile_name: desired_profile.name,
-          model: "E3+4G" as Configuration["model"]
+          model: "E3+4G" as Configuration["model"],
+          need_double_check: true,
+          has_double_check: false,
         }
 
         updateConfigurationLog({
           imei,
-          step_index: total_steps - 3,
+          step_index: total_steps - 2,
           step_label: "Envio de comandos finalizados",
           total_steps,
         })
@@ -497,7 +516,7 @@ export function useE34GCommunication() {
         }
         updateConfigurationLog({
           imei,
-          step_index: total_steps - 2,
+          step_index: total_steps - 1,
           step_label: "Salvando no banco de dados",
           total_steps,
         })
@@ -505,16 +524,8 @@ export function useE34GCommunication() {
         if (is_configured) {
           updateConfigurationLog({
             imei,
-            step_index: total_steps - 1,
-            step_label: "Aguardando 3 segundos antes do restart",
-            total_steps,
-          })
-          await sleep(3000)
-          await sendCommandWithRetries(port, "RESTART");
-          updateConfigurationLog({
-            imei,
             step_index: total_steps,
-            step_label: "Reset Enviado",
+            step_label: "Processo finalizado",
             total_steps,
           })
           toast({
@@ -522,6 +533,7 @@ export function useE34GCommunication() {
             description: `Equipamento configurado com sucesso! (${imei})`,
             variant: "success"
           })
+          router.push("/check/E3+4G")
         } else {
           toast({
             title: "Não Configurado!",
@@ -603,7 +615,6 @@ export function useE34GCommunication() {
     });
   }
 
-
   useEffect(() => {
     const newPorts = ports.filter(port => !previousPorts.current.includes(port));
 
@@ -613,6 +624,14 @@ export function useE34GCommunication() {
 
     previousPorts.current = ports
   }, [ports]);
+
+  useEffect(() => {
+    if(isConfigurationDisabled && configurationDisabledTimer > 0) {
+      countdownTimeout = setTimeout(() => {
+        setConfigurationDisabledTimer(configurationDisabledTimer - 1)
+      }, 1000)
+    } 
+  }, [isConfigurationDisabled, configurationDisabledTimer])
 
   // useEffect(() => {
   //   const interval = setInterval(() => {
@@ -633,6 +652,8 @@ export function useE34GCommunication() {
     identifiedLog,
     inConfiguration,
     inIdentification,
-    handleForgetPort
+    handleForgetPort,
+    isConfigurationDisabled,
+    configurationDisabledTimer
   }
 }

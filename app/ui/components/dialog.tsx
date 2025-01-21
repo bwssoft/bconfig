@@ -10,7 +10,7 @@ export function Dialog(props: {
   const { open, setOpen, children } = props;
 
   return (
-    <HDialog open={open} onClose={setOpen} className="relative z-[60]">
+    <HDialog open={open} onClose={setOpen} className="relative z-[100]">
       <div
         // transition
         className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"

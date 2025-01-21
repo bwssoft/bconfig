@@ -1,5 +1,5 @@
 import clientPromise from "./config";
-import { AggregateOptions, AggregationCursor, Document, Filter, WithId } from "mongodb";
+import { AggregateOptions, AggregationCursor, Document, Filter, FindOptions, WithId } from "mongodb";
 
 type Constructor = {
   collection: string
@@ -25,9 +25,9 @@ export class BaseRepository<Entity extends Document> {
     return await db.collection(this.collection).insertMany(data);
   }
 
-  async findOne(params: Partial<Entity>) {
+  async findOne(params: Partial<Entity>, options?: FindOptions) {
     const db = await this.connect();
-    return await db.collection<Entity>(this.collection).findOne(params as Partial<WithId<Entity>>, { projection: { _id: 0 } })
+    return await db.collection<Entity>(this.collection).findOne(params as Partial<WithId<Entity>>, options ?? { projection: { _id: 0 } })
   }
 
   async findMany(params: Partial<Entity>) {

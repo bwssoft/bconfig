@@ -121,6 +121,7 @@ export function Progress(props: Props) {
         </div>
       </div> */}
 
+      <div className="flex flex-col gap-1">
       <div className="flex items-center gap-x-3 whitespace-nowrap">
         <div
           className="flex w-full h-2 bg-gray-200 rounded-full overflow-hidden"
@@ -138,11 +139,13 @@ export function Progress(props: Props) {
           <span className="text-sm text-gray-800">
             {percentage.toFixed(2)}%
           </span>
-          {hint && <span className="text-sm text-gray-800">
-            {percentage.toFixed(2)}%
-          </span>}
         </div>
       </div>
     </div>
+    {hint && <p className="whitespace-nowrap text-sm text-gray-800">
+            {hint}
+          </p>}
+      </div>
+
   );
 }
