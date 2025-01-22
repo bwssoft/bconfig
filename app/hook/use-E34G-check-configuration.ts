@@ -2,7 +2,7 @@ import { useEffect, useState, useRef, useCallback } from "react"
 import { useSerial } from "./use-serial"
 import { ISerialPort } from "../lib/definition/serial"
 import { sleep } from "../lib/util/sleep"
-import { ConfigurationMetadata, DeviceNativeProfile, DeviceProfile, IProfile } from "../lib/definition"
+import { ConfigurationMetadata, DeviceNativeProfile, DeviceProfile, IConfigurationLog, IProfile } from "../lib/definition"
 import { toast } from "./use-toast"
 import { E34G } from "../lib/parser/E34G"
 import { findOneConfigurationLog, updateOneConfigurationLog } from "../lib/action"
@@ -33,6 +33,7 @@ type DeviceResponse = string | undefined
 export function useE34GCheckConfiguration() {
   const [showModal, setShowModal] = useState<boolean>(false)
   const [checkResult, setCheckResult] = useState<boolean>(false)
+  const [lastConfigurationLog, setlastConfigurationLog] = useState<IConfigurationLog>()
 
   const [identified, setIdentified] = useState<Identified[]>([])
   const [identifiedLog, setIdentifiedLog] = useState<IdentifiedLog[]>([])
@@ -356,6 +357,7 @@ export function useE34GCheckConfiguration() {
           }
         )
         if(!last_configuration_log) continue
+        setlastConfigurationLog(last_configuration_log)
         const { profile: actual_profile } = await getDeviceProfile(identified.port) ?? {};
         
         delete actual_profile?.horimeter
@@ -427,6 +429,7 @@ export function useE34GCheckConfiguration() {
     inChecking,
     showModal,
     setShowModal,
-    checkResult
+    checkResult,
+    lastConfigurationLog
   }
 }
