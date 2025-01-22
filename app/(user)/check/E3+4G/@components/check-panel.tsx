@@ -21,7 +21,8 @@ export function CheckConfigurationPanel() {
     getDeviceProfile,
     showModal,
     setShowModal,
-    checkResult
+    checkResult,
+    lastConfigurationLog
   } = useE34GCheckConfiguration();
   const router = useRouter()
 
@@ -104,7 +105,7 @@ export function CheckConfigurationPanel() {
             type="button"
             onClick={() => {
               setShowModal(false)
-              router.push("/configurator/E3+4G")
+              router.push(`/configurator/E3+4G?id=${lastConfigurationLog?.profile_id}`)
             }}
             className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2"
           >
