@@ -291,15 +291,15 @@ export function useE34GCheckConfiguration() {
           }
         })
         if(identified.find(el => el.imei === identification?.imei) && identification){
-          if(!identification.iccid) {
-            toast({
-              title: "Desconecte e insira o SIMCard!",
-              description: "Equipamento deve ser desconectado e o SIMCard deve ser inserido!",
-              variant: "default",
-              className: "destructive group border bg-cyan-400 border-cyan-300 text-white"
-            })
-            continue
-          }
+          // if(!identification.iccid) {
+          //   toast({
+          //     title: "Desconecte e insira o SIMCard!",
+          //     description: "Equipamento deve ser desconectado e o SIMCard deve ser inserido!",
+          //     variant: "default",
+          //     className: "destructive group border bg-cyan-400 border-cyan-300 text-white"
+          //   })
+          //   continue
+          // }
           await handleDeviceCheckConfiguration([identification])
           continue
         }
@@ -358,7 +358,7 @@ export function useE34GCheckConfiguration() {
         )
         if(!last_configuration_log) continue
         setlastConfigurationLog(last_configuration_log)
-        const { profile: actual_profile } = await getDeviceProfile(identified.port) ?? {};
+        const { profile: actual_profile, native_profile } = await getDeviceProfile(identified.port) ?? {};
         
         delete actual_profile?.horimeter
         delete actual_profile?.odometer
@@ -374,7 +374,13 @@ export function useE34GCheckConfiguration() {
           return old.concat({ ...identified, double_check: isEqual })
         })
         if(isEqual){
-          await updateOneConfigurationLog({id: last_configuration_log.id}, {...last_configuration_log, iccid: identified.iccid, has_double_check: true})
+          await updateOneConfigurationLog({id: last_configuration_log.id}, {
+            ...last_configuration_log, 
+            iccid: identified.iccid, 
+            actual_native_profile: native_profile,
+            actual_profile,
+            has_double_check: true
+          })
           setCheckResult(true)
           setShowModal(true)          
         }else{
