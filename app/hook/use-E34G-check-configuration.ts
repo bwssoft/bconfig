@@ -348,6 +348,56 @@ export function useE34GCheckConfiguration() {
       setInChecking(true)
       for (let identified of identifieds) {
         await waitDeviceBoot()
+        const port = identified.port
+        const total_steps = 8
+        const _identified = await getDeviceIdentification({
+          port,
+          callback: {
+            onOpenPort: () => updateIdentifiedLog({
+              port,
+              step_label: "Abrindo a porta",
+              step_index: 1,
+              total_steps
+            }),
+            onPortOpened: () => updateIdentifiedLog({
+              port,
+              step_label: "Porta aberta",
+              step_index: 2,
+              total_steps
+            }),
+            onImei: () => updateIdentifiedLog({
+              port,
+              step_label: "IMEI",
+              step_index: 3,
+              total_steps
+            }),
+            onIccid: () => updateIdentifiedLog({
+              port,
+              step_label: "ICCID",
+              step_index: 4,
+              total_steps
+            }),
+            onEt: () => updateIdentifiedLog({
+              port,
+              step_label: "ET",
+              step_index: 5,
+              total_steps
+            }),
+            onClosePort: () => updateIdentifiedLog({
+              port,
+              step_label: "Fechando a porta",
+              step_index: 6,
+              total_steps
+            }),
+            onFinished: () => updateIdentifiedLog({
+              port,
+              step_label: "Porta Fechada",
+              step_index: 7,
+              total_steps
+            }),
+          }
+        })
+        if(!_identified) continue
 
         const last_configuration_log = await findOneConfigurationLog(
           { imei: identified.imei }, 
@@ -358,7 +408,7 @@ export function useE34GCheckConfiguration() {
         )
         if(!last_configuration_log) continue
         setlastConfigurationLog(last_configuration_log)
-        const { profile: actual_profile, native_profile } = await getDeviceProfile(identified.port) ?? {};
+        const { profile: actual_profile, native_profile } = await getDeviceProfile(_identified.port) ?? {};
         
         delete actual_profile?.horimeter
         delete actual_profile?.odometer
@@ -367,18 +417,19 @@ export function useE34GCheckConfiguration() {
         delete last_configuration_log?.actual_profile?.horimeter
 
         const { isEqual, difference } = checkWithDifference(actual_profile, last_configuration_log?.actual_profile)
-        setCheckConfiguration(prev => {
-          const old = prev.filter(el => el.imei !== identified.imei)
-          const current = prev.find(el => el.imei === identified.imei)
-          if(!current) return old.concat({ ...identified, double_check: isEqual })
-          return old.concat({ ...identified, double_check: isEqual })
-        })
         if(isEqual){
-          await updateOneConfigurationLog({ id: last_configuration_log.id }, {
-            iccid: identified.iccid, 
+          await updateOneConfigurationLog({id: last_configuration_log.id}, {
+            ...last_configuration_log, 
+            iccid: _identified.iccid, 
             actual_native_profile: native_profile,
             actual_profile,
             has_double_check: true
+          })
+          setCheckConfiguration(prev => {
+            const old = prev.filter(el => el.imei !== _identified.imei)
+            const current = prev.find(el => el.imei === _identified.imei)
+            if(!current) return old.concat({ ..._identified, double_check: isEqual })
+            return old.concat({ ..._identified, double_check: isEqual })
           })
           setCheckResult(true)
           setShowModal(true)          
@@ -415,6 +466,7 @@ export function useE34GCheckConfiguration() {
 
   useEffect(() => {
     const newPorts = ports.filter(port => !previousPorts.current.includes(port));
+
     if (newPorts.length > 0) {
       handleDeviceIdentification(newPorts);
     }
