@@ -374,8 +374,7 @@ export function useE34GCheckConfiguration() {
           return old.concat({ ...identified, double_check: isEqual })
         })
         if(isEqual){
-          await updateOneConfigurationLog({id: last_configuration_log.id}, {
-            ...last_configuration_log, 
+          await updateOneConfigurationLog({ id: last_configuration_log.id }, {
             iccid: identified.iccid, 
             actual_native_profile: native_profile,
             actual_profile,
@@ -416,7 +415,6 @@ export function useE34GCheckConfiguration() {
 
   useEffect(() => {
     const newPorts = ports.filter(port => !previousPorts.current.includes(port));
-
     if (newPorts.length > 0) {
       handleDeviceIdentification(newPorts);
     }
