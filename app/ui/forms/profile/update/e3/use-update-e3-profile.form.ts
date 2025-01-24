@@ -50,6 +50,7 @@ const odometer = z
   .coerce
   .number()
   .positive({ message: "O valor deve ser positivo" })
+  .min(0, { message: "O valor deve ser no mínimo 0" })
   .optional()
 
 const max_speed = z
