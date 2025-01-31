@@ -1,5 +1,5 @@
 "use client";
-import { useE34GCommunication } from "@/app/hook/use-E34G-communication";
+import { useE34GClientCommunication } from "@/app/hook/use-E34G-client-communication";
 import { IProfile, IUser } from "@/app/lib/definition";
 import Alert from "@/app/ui/components/alert";
 import { Button } from "@/app/ui/components/button";
@@ -36,7 +36,7 @@ export function ConfigPanel(props: Props) {
     inIdentification,
     inConfiguration,
     handleForgetPort,
-  } = useE34GCommunication();
+  } = useE34GClientCommunication();
 
   return (
     <div className="flex flex-col justify-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8 relative">

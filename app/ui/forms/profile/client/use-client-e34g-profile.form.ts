@@ -256,6 +256,7 @@ export function useClientE34GProfileForm(props: Props) {
     setValue,
     watch,
     reset: hookFormReset,
+    unregister
   } = useForm<Schema>({
     resolver: zodResolver(schema),
     defaultValues
@@ -264,6 +265,8 @@ export function useClientE34GProfileForm(props: Props) {
   const [ipdns, setIpdns] = useState<"IP" | "DNS">("IP");
   const handleChangeIpDns = (value: "IP" | "DNS") => {
     setIpdns(value);
+    if(value === "IP") unregister("dns")
+    if(value === "DNS") unregister("ip")
   };
 
   const lockType = watch("lock_type")
@@ -344,7 +347,8 @@ export function useClientE34GProfileForm(props: Props) {
     watch,
     handleProfileSelection,
     handleChangeName,
-    resetAllFields
+    resetAllFields,
+    unregister
   };
 }
 
