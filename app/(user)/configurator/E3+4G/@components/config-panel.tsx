@@ -10,6 +10,12 @@ import { IdentificationProgress } from "@/app/ui/components/identification-progr
 import { ConfigurationProgress } from "@/app/ui/components/configuration-progress";
 import { useE34GCommunication } from "@/app/hook/use-E34G-communication";
 import { toast } from "@/app/hook/use-toast";
+import { useEffect, useState } from "react";
+import { Dialog } from "@/app/ui/components/dialog";
+import { cn } from "@/app/lib/util";
+import { XMarkIcon } from "@heroicons/react/24/outline";
+import { DialogTitle } from "@headlessui/react";
+import { useRouter } from "next/navigation";
 
 interface Props {
   profile?: IProfile;
@@ -17,6 +23,7 @@ interface Props {
 }
 
 export function ConfigPanel(props: Props) {
+  const router = useRouter();
   const { profile, user_type } = props;
   const {
     configuration,
@@ -31,8 +38,14 @@ export function ConfigPanel(props: Props) {
     inConfiguration,
     handleForgetPort,
     isConfigurationDisabled,
-    configurationDisabledTimer
+    configurationDisabledTimer,
   } = useE34GCommunication();
+
+  const [wrongImeiDetected, setWrongImeiDetected] = useState<boolean>(false);
+
+  useEffect(() => {
+    setWrongImeiDetected(identified.some((el) => el.imei?.startsWith("86")));
+  }, [identified]);
 
   const handleExport = (input: typeof configuration) => {
     jsonToXlsx({
@@ -92,20 +105,22 @@ export function ConfigPanel(props: Props) {
                 variant="primary"
                 className="h-fit"
                 onClick={() => {
-                  ports.length ? 
-                  profile &&
-                  Object.keys(profile).length > 0 &&
-                  handleDeviceConfiguration(identified, profile)
-                  : toast({
-                    title: "Erro de Configuração",
-                    description: "Nenhuma porta está disponível ou o equipamento está desconectado. Verifique a conexão e tente novamente.",
-                    variant: "error",
-                    className: "destructive group border bg-red-500 border-red-400 text-white"
-                  });
-                }
-                }
+                  ports.length
+                    ? profile &&
+                      Object.keys(profile).length > 0 &&
+                      handleDeviceConfiguration(identified, profile)
+                    : toast({
+                        title: "Erro de Configuração",
+                        description:
+                          "Nenhuma porta está disponível ou o equipamento está desconectado. Verifique a conexão e tente novamente.",
+                        variant: "error",
+                        className:
+                          "destructive group border bg-red-500 border-red-400 text-white",
+                      });
+                }}
               >
-                Configurar {isConfigurationDisabled && `(${configurationDisabledTimer})`}
+                Configurar{" "}
+                {isConfigurationDisabled && `(${configurationDisabledTimer})`}
               </Button>
             </div>
 
@@ -153,6 +168,55 @@ export function ConfigPanel(props: Props) {
           Exportar
         </Button>
       </div>
+
+      {wrongImeiDetected && (
+        <Dialog
+          open={wrongImeiDetected}
+          setOpen={(value) => {
+            if (!value) {
+              setWrongImeiDetected(false);
+              router.push(`/imei-writer/E3+4G`);
+            } else {
+              setWrongImeiDetected(true);
+            }
+          }}
+        >
+          <div>
+            <div
+              className={cn(
+                "mx-auto flex size-12 items-center justify-center rounded-full bg-red-100"
+              )}
+            >
+              <XMarkIcon aria-hidden="false" className="size-6 text-red-600" />
+            </div>
+            <div className="mt-3 text-center sm:mt-5">
+              <DialogTitle
+                as="h3"
+                className="text-base font-semibold text-gray-900"
+              >
+                IMEI Inválido
+              </DialogTitle>
+              <div className="mt-2">
+                <p className="text-sm text-gray-500">
+                  Não é permitido configurar equipamento com esse IMEI.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="mt-5 sm:mt-6">
+            <button
+              type="button"
+              onClick={() => {
+                setWrongImeiDetected(false);
+                router.push(`/imei-writer/E3+4G`);
+              }}
+              className="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 sm:col-start-2"
+            >
+              Ok
+            </button>
+          </div>
+        </Dialog>
+      )}
     </>
   );
 }

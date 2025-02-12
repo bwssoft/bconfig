@@ -4,21 +4,22 @@ import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-const serial = z
-  .coerce
+const serial = z.coerce
   .string({ message: "This field is required." })
   .min(15, { message: "At least 15 characters." })
   .max(15, { message: "Maximum 15 characters." })
-  .refine(isIMEI, { message: "Enter a valid imei." })
+  .refine(isIMEI, { message: "Enter a valid imei." });
 
 const schema = z.object({
   serial,
-})
+});
 
 export type Schema = z.infer<typeof schema>;
 
-export function useImeiWriterForm(props: { onSubmit: (imeiForWriting: string) => Promise<void> }) {
-  const { onSubmit } = props
+export function useImeiWriterForm(props: {
+  onSubmit: (imeiForWriting: string) => Promise<void>;
+}) {
+  const { onSubmit } = props;
 
   const {
     register,
@@ -27,29 +28,29 @@ export function useImeiWriterForm(props: { onSubmit: (imeiForWriting: string) =>
     control,
     setValue,
     reset: hookFormReset,
-    watch
+    watch,
   } = useForm<Schema>({
     resolver: zodResolver(schema),
-    mode: "onChange"
+    mode: "onChange",
   });
 
-  const serial = watch("serial")
+  const serial = watch("serial");
 
   const handleSubmit = hookFormSubmit(async (data) => {
-    const { serial } = data
-    await onSubmit(serial)
-  })
+    const { serial } = data;
+    await onSubmit(serial);
+  });
 
   // estado, função e use effect para lidar com o auto focus no input a partir de dois apertos na tecla espaço
   const [lastPressTime, setLastPressTime] = useState<number | null>(null);
   const inputImeiRef = useRef<HTMLInputElement | null>(null);
   const handleKeyDown = (event: KeyboardEvent) => {
-    if (event.code === 'Space') {
+    if (event.code === "Space") {
       const currentTime = new Date().getTime();
       if (lastPressTime && currentTime - lastPressTime < 300) {
-        event.preventDefault()
+        event.preventDefault();
         if (inputImeiRef.current) {
-          inputImeiRef.current?.focus()
+          inputImeiRef.current?.focus();
           inputImeiRef.current.value = "";
           setValue("serial", "");
         }
@@ -60,17 +61,20 @@ export function useImeiWriterForm(props: { onSubmit: (imeiForWriting: string) =>
 
   const handleChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     let imei = event.target.value;
-    if (imei.startsWith("E3+4GÇ") || imei.startsWith("E3+4G:") || imei.startsWith("E3+4Gç")) {
-
+    if (
+      imei.startsWith("E3+4GÇ") ||
+      imei.startsWith("E3+4G:") ||
+      imei.startsWith("E3+4Gç")
+    ) {
       imei = imei.replace(/E3\+4G|:|Ç|ç/g, "");
     }
     setValue("serial", imei, { shouldValidate: true });
   };
 
   useEffect(() => {
-    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener("keydown", handleKeyDown);
     };
   }, [lastPressTime]);
 
@@ -83,6 +87,6 @@ export function useImeiWriterForm(props: { onSubmit: (imeiForWriting: string) =>
     reset: hookFormReset,
     inputImeiRef,
     handleChangeInput,
-    serial
+    serial,
   };
 }
