@@ -17,6 +17,7 @@ interface Props {
     profile_name: string;
     created_at: Date;
     user: IUser;
+    model: string;
   }[];
 }
 export default function ConfigurationLogTable(props: Props) {
