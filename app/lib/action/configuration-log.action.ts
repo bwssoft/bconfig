@@ -224,6 +224,11 @@ export async function exportConfigurationLog(props: {
       $replaceRoot: { newRoot: "$latestDocument" },
     },
     {
+      $sort: {
+        created_at: 1,
+      },
+    },
+    {
       $project: {
         _id: 0,
         "profile._id": 0,
