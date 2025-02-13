@@ -209,6 +209,21 @@ export async function exportConfigurationLog(props: {
       }
     },
     {
+      $sort: {
+        imei: 1,
+        created_at: -1,
+      },
+    },
+    {
+      $group: {
+        _id: "$imei",
+        latestDocument: { $first: "$$ROOT" },
+      },
+    },
+    {
+      $replaceRoot: { newRoot: "$latestDocument" },
+    },
+    {
       $project: {
         _id: 0,
         "profile._id": 0,

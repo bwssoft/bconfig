@@ -19,6 +19,7 @@ export async function GET() {
             imei: 1,
             profile_name: 1,
             actual_native_profile: 1,
+            created_at: 1,
           },
         },
         {

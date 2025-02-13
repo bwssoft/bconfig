@@ -4,7 +4,8 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "../../components/button";
 import { DocumentMagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { IProfile, IUser } from "@/app/lib/definition";
-import { configMapped } from "@/app/constants/e3+config";
+import { configMapped as configMappedE3Plus } from "@/app/constants/e3+config";
+import { configMapped as configMappedE3Plus4G } from "@/app/constants/e3+4gconfig";
 import Link from "next/link";
 
 const statuses = {
@@ -29,6 +30,7 @@ export const columns: ColumnDef<{
   profile_name: string;
   created_at: Date;
   user: IUser;
+  model: string;
 }>[] = [
   {
     header: "Configurado",
@@ -99,7 +101,8 @@ export const columns: ColumnDef<{
       ) as (keyof IProfile["config"])[];
       const displayedFields = fields.slice(0, 2);
       const remainingCount = fields.length - displayedFields.length;
-
+      const configMapped =
+        device.model === "E3+4G" ? configMappedE3Plus4G : configMappedE3Plus;
       return fields.length ? (
         <div>
           {displayedFields.map((i) => configMapped[i]).join(", ")}
