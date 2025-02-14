@@ -197,6 +197,7 @@ const schema = z.preprocess(removeEmptyValues, z
         message: "VION deve ser maior do que VIOFF.",
         path: ["t1"]
       }).optional().nullable(),
+      ignition_status_hb: z.coerce.boolean().optional().default(true),
   })).transform(removeUndefined).transform(removeNull).transform(removePropByOptionalFunctions)
 
 export type Schema = z.infer<typeof schema>;
