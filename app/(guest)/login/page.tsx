@@ -15,17 +15,83 @@ import { LoginForm } from "@/app/ui/forms/login/login.form";
   ```
 */
 export default function Example() {
-  // console.log([
-  //   {
-  //     name: "Hiago",
-  //     password: hashSync("hiago@2024", 10),
-  //     email: "hiagor516@gmail.com",
-  //     type: "client",
-  //     created_at: new Date(),
-  //     id: crypto.randomUUID(),
-  //     connected: false,
-  //   },
-  // ]);
+  // console.log(
+  //   JSON.stringify([
+  //     {
+  //       name: "Brian",
+  //       password: hashSync("brian@2025", 10),
+  //       type: "client",
+  //       created_at: new Date(),
+  //       id: crypto.randomUUID(),
+  //       connected: false,
+  //       email: "brian.augusto@bwsiot.com",
+  //     },
+  //     {
+  //       name: "Alessandra",
+  //       password: hashSync("alessandra@2025", 10),
+  //       type: "client",
+  //       created_at: new Date(),
+  //       id: crypto.randomUUID(),
+  //       connected: false,
+  //       email: "alessandra@bwstechnology.com",
+  //     },
+  //     {
+  //       name: "Edson",
+  //       password: hashSync("edson@2025", 10),
+  //       type: "client",
+  //       created_at: new Date(),
+  //       id: crypto.randomUUID(),
+  //       connected: false,
+  //       email: "edson.molina@bwsiot.com",
+  //     },
+  //     {
+  //       name: "Gilberto",
+  //       password: hashSync("gilberto@2025", 10),
+  //       type: "client",
+  //       created_at: new Date(),
+  //       id: crypto.randomUUID(),
+  //       connected: false,
+  //       email: "gilberto.borges@bwsiot.com",
+  //     },
+  //     {
+  //       name: "Raphaela",
+  //       password: hashSync("rapha@2025", 10),
+  //       type: "client",
+  //       created_at: new Date(),
+  //       id: crypto.randomUUID(),
+  //       connected: false,
+  //       email: "rapha.braga@bwsiot.com",
+  //     },
+  //     {
+  //       name: "Walter",
+  //       password: hashSync("walter@2025", 10),
+  //       type: "client",
+  //       created_at: new Date(),
+  //       id: crypto.randomUUID(),
+  //       connected: false,
+  //       email: "walter@bwstechnology.com",
+  //     },
+  //     {
+  //       name: "Rodrigo",
+  //       password: hashSync("rodrigo@2025", 10),
+  //       type: "client",
+  //       created_at: new Date(),
+  //       id: crypto.randomUUID(),
+  //       connected: false,
+  //       email: "rodrigo.arruda@bwsiot.com",
+  //     },
+  //     {
+  //       name: "Victor",
+  //       password: hashSync("victor@2025", 10),
+  //       type: "client",
+  //       created_at: new Date(),
+  //       id: crypto.randomUUID(),
+  //       connected: false,
+  //       email: "victor.fernandes@bwsiot.com",
+  //     },
+  //   ])
+  // );
+
   return (
     <>
       {/*
