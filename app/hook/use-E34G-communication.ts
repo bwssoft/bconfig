@@ -441,7 +441,7 @@ export function useE34GCommunication() {
 
         setTimeout(() => {
           setIsConfigurationDisabled(false);
-        }, 10000);
+        }, 20000);
       }
       setInIdentification(false);
     } catch (e) {
