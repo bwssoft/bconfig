@@ -134,7 +134,7 @@ export function useE34GCommunication() {
     const decoder = new TextDecoder();
     let buffer = "";
     const timeoutPromise = new Promise<undefined>((resolve) =>
-      setTimeout(() => resolve(undefined), 500)
+      setTimeout(() => resolve(undefined), 3000)
     );
 
     const readPromise = (async () => {
