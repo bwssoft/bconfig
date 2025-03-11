@@ -76,7 +76,7 @@ export function useE34GCheckConfiguration() {
     const decoder = new TextDecoder()
     let buffer = ""
     const timeoutPromise = new Promise<undefined>((resolve) =>
-      setTimeout(() => resolve(undefined), 500)
+      setTimeout(() => resolve(undefined), 3000)
     );
 
     const readPromise = (async () => {
@@ -102,25 +102,32 @@ export function useE34GCheckConfiguration() {
   }
   const sendCommandWithRetries = async (port: ISerialPort, command: string) => {
     let attempts = 0;
-    const maxRetries = 3
+    const maxRetries = 3;
     while (attempts < maxRetries) {
-      await sleep(100)
-      const reader = await getReader(port)
-      if (!reader) return
+      await sleep(100);
+      const reader = await getReader(port);
+      if (!reader) return;
       try {
+        console.log("sending -> ", command);
         await writeToPort(port, command);
         const response = await readDeviceResponse(reader);
-        await reader.cancel()
-        reader.releaseLock()
-        if (response) return response
+        console.log("response -> ", response);
+        await reader.cancel();
+        reader.releaseLock();
+        if (response) return response;
       } catch (error) {
-        await reader.cancel()
-        reader.releaseLock()
-        console.error(`ERROR [sendCommandWithRetries] ${attempts + 1} for command ${command}:`, error);
+        await reader.cancel();
+        reader.releaseLock();
+        console.error(
+          `ERROR [sendCommandWithRetries] ${
+            attempts + 1
+          } for command ${command}:`,
+          error
+        );
       }
       attempts++;
     }
-  }
+  };
 
   //
   const getDeviceIdentification = async (props: {
