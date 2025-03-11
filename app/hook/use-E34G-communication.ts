@@ -60,7 +60,7 @@ export function useE34GCommunication() {
   const [isConfigurationDisabled, setIsConfigurationDisabled] =
     useState<boolean>(true);
   const [configurationDisabledTimer, setConfigurationDisabledTimer] =
-    useState<number>(10);
+    useState<number>(20);
 
   const [identified, setIdentified] = useState<Identified[]>([]);
   const [identifiedLog, setIdentifiedLog] = useState<IdentifiedLog[]>([]);
@@ -111,7 +111,7 @@ export function useE34GCommunication() {
     });
 
     setIsConfigurationDisabled(true);
-    setConfigurationDisabledTimer(10);
+    setConfigurationDisabledTimer(20);
   };
 
   const {

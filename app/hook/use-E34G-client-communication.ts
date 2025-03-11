@@ -51,7 +51,7 @@ let countdownTimeout: NodeJS.Timeout
 
 export function useE34GClientCommunication() {
   const [isConfigurationDisabled, setIsConfigurationDisabled] = useState<boolean>(true);
-  const [configurationDisabledTimer, setConfigurationDisabledTimer] = useState<number>(10)
+  const [configurationDisabledTimer, setConfigurationDisabledTimer] = useState<number>(20)
 
   const [identified, setIdentified] = useState<Identified[]>([])
   const [identifiedLog, setIdentifiedLog] = useState<IdentifiedLog[]>([])
@@ -90,7 +90,7 @@ export function useE34GClientCommunication() {
     })
 
     setIsConfigurationDisabled(true)
-    setConfigurationDisabledTimer(10)
+    setConfigurationDisabledTimer(20)
   }
 
   const { ports, writeToPort, openPort, getReader, requestPort, closePort, forgetPort } = useSerial({
