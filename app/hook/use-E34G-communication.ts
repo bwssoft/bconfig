@@ -166,8 +166,10 @@ export function useE34GCommunication() {
       const reader = await getReader(port);
       if (!reader) return;
       try {
+        console.log("sending -> ", command);
         await writeToPort(port, command);
         const response = await readDeviceResponse(reader);
+        console.log("response -> ", response);
         await reader.cancel();
         reader.releaseLock();
         if (response) return response;
@@ -208,18 +210,12 @@ export function useE34GCommunication() {
       callback.onOpenPort();
       await openPort(port);
       callback.onPortOpened();
-      // let attempts = 0
-      // const max_retries = 3
-      // Main loop to gather device info
-      // while (attempts < max_retries && (!imei || !iccid || !et)) {
       callback.onImei();
       const imei = await sendCommandWithRetries(port, "IMEI");
       callback.onIccid();
       const iccid = await sendCommandWithRetries(port, "ICCID");
       callback.onEt();
       const et = await sendCommandWithRetries(port, "ET");
-      //   attempts++
-      // }
       const isIdentified =
         imei !== undefined && iccid !== undefined && et !== undefined;
       callback.onClosePort();
@@ -248,15 +244,10 @@ export function useE34GCommunication() {
     if (depth <= 0) return undefined;
     try {
       await openPort(port);
-      // let attempts = 0
-      // const max_retries = 3
       let check: DeviceResponse, cxip: DeviceResponse, status: DeviceResponse;
-      // while (attempts < max_retries && (!check || !cxip || !dns)) {
       if (!check) check = await sendCommandWithRetries(port, "CHECK");
       if (!cxip) cxip = await sendCommandWithRetries(port, "CXIP");
       if (!status) status = await sendCommandWithRetries(port, "STATUS");
-      //   attempts++
-      // }
       await closePort(port);
       const _check = check ? E34G.check(check) : undefined;
       const _status = status ? E34G.status(status) : undefined;
