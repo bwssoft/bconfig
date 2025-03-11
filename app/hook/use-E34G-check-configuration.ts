@@ -241,7 +241,7 @@ export function useE34GCheckConfiguration() {
     }
   };
   const waitDeviceBoot = async (): Promise<void> => {
-    await sleep(15000)
+    await sleep(20000)
   };
 
   //
