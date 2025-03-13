@@ -436,13 +436,11 @@ export function useE34GCommunication() {
             return oldIdentifiers.concat({ port, isIdentified: false });
           });
         }
-
-        // vo buta aqui
-
-        setTimeout(() => {
-          setIsConfigurationDisabled(false);
-        }, 20000);
       }
+      // vo buta aqui
+      setTimeout(() => {
+        setIsConfigurationDisabled(false);
+      }, 20000);
       setInIdentification(false);
     } catch (e) {
       console.error("[handleDeviceIdentification]", e);
