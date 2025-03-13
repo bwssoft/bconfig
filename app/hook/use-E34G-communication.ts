@@ -109,9 +109,6 @@ export function useE34GCommunication() {
       description: "Equipamento conectado!",
       variant: "success",
     });
-
-    setIsConfigurationDisabled(true);
-    setConfigurationDisabledTimer(20);
   };
 
   const {
@@ -437,7 +434,8 @@ export function useE34GCommunication() {
           });
         }
       }
-      // vo buta aqui
+      setIsConfigurationDisabled(true);
+      setConfigurationDisabledTimer(20);
       setTimeout(() => {
         setIsConfigurationDisabled(false);
       }, 20000);
@@ -705,6 +703,9 @@ export function useE34GCommunication() {
         setConfigurationDisabledTimer(configurationDisabledTimer - 1);
       }, 1000);
     }
+    return () => {
+      clearTimeout(countdownTimeout);
+    };
   }, [isConfigurationDisabled, configurationDisabledTimer]);
 
   // useEffect(() => {
