@@ -1,8 +1,16 @@
 import { CheckConfigurationPanel } from "./@components/check-panel";
 
-interface Props {}
+interface Props {
+  searchParams: {
+    has_count: string;
+    redirect_to_automatic: string;
+  };
+}
 
 export default async function Page(props: Props) {
+  const {
+    searchParams: { has_count, redirect_to_automatic },
+  } = props;
   const date = new Date();
   return (
     <div>
@@ -23,7 +31,16 @@ export default async function Page(props: Props) {
           </p>
         </div>
       </div>
-      <CheckConfigurationPanel />
+      <CheckConfigurationPanel
+        has_count={has_count ? (has_count === "true" ? true : false) : false}
+        redirect_to_automatic={
+          redirect_to_automatic
+            ? redirect_to_automatic === "true"
+              ? true
+              : false
+            : true
+        }
+      />
     </div>
   );
 }

@@ -12,7 +12,12 @@ import { DialogTitle } from "@headlessui/react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/app/lib/util";
 
-export function CheckConfigurationPanel() {
+interface Props {
+  has_count: boolean;
+  redirect_to_automatic: boolean;
+}
+
+export function CheckConfigurationPanel(props: Props) {
   const {
     identified,
     checkConfiguration,
@@ -24,7 +29,7 @@ export function CheckConfigurationPanel() {
     setShowModal,
     checkResult,
     lastConfigurationLog,
-  } = useE34GCheckConfiguration();
+  } = useE34GCheckConfiguration(props);
   const router = useRouter();
 
   return (
@@ -125,7 +130,9 @@ export function CheckConfigurationPanel() {
               onClick={() => {
                 setShowModal(false);
                 router.push(
-                  `/configurator/E3+4G?id=${lastConfigurationLog?.profile_id}`
+                  !props.redirect_to_automatic
+                    ? `/configurator/E3+4G?id=${lastConfigurationLog?.profile_id}`
+                    : `/configurator/E3+4G/automatic?id=${lastConfigurationLog?.profile_id}`
                 );
               }}
               className="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 sm:col-start-2"

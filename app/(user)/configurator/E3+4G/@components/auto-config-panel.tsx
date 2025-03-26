@@ -10,7 +10,7 @@ import { IdentificationProgress } from "@/app/ui/components/identification-progr
 import { ConfigurationProgress } from "@/app/ui/components/configuration-progress";
 import { useE34GCommunication } from "@/app/hook/use-E34G-communication";
 import { toast } from "@/app/hook/use-toast";
-import { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Dialog } from "@/app/ui/components/dialog";
 import { cn } from "@/app/lib/util";
 import { XMarkIcon } from "@heroicons/react/24/outline";
@@ -23,7 +23,7 @@ interface Props {
   user_type: IUser["type"];
 }
 
-export function ConfigPanel(props: Props) {
+export function AutoConfigPanel(props: Props) {
   const router = useRouter();
   const { profile, user_type } = props;
   const {
@@ -38,15 +38,18 @@ export function ConfigPanel(props: Props) {
     inIdentification,
     inConfiguration,
     handleForgetPort,
-    isConfigurationDisabled,
-    configurationDisabledTimer,
   } = useE34GCommunication();
 
   const [wrongImeiDetected, setWrongImeiDetected] = useState<boolean>(false);
 
   useEffect(() => {
-    setWrongImeiDetected(identified.some((el) => el.imei?.startsWith("86")));
-  }, [identified]);
+    const wrong_imei = identified.some((el) => el.imei?.startsWith("86"));
+    if (wrong_imei) {
+      setWrongImeiDetected(wrong_imei);
+    } else if (profile && !inConfiguration) {
+      handleDeviceConfiguration(identified, profile, false);
+    }
+  }, [identified, profile]);
 
   useEffect(() => {
     return () => revalidate("/configuration-log");
@@ -104,31 +107,6 @@ export function ConfigPanel(props: Props) {
             )}
           </div>
           <div className="flex justify-between gap-2">
-            <div className="flex gap-2">
-              <Button
-                disabled={isConfigurationDisabled}
-                variant="primary"
-                className="h-fit"
-                onClick={() => {
-                  ports.length
-                    ? profile &&
-                      Object.keys(profile).length > 0 &&
-                      handleDeviceConfiguration(identified, profile)
-                    : toast({
-                        title: "Erro de Configuração",
-                        description:
-                          "Nenhuma porta está disponível ou o equipamento está desconectado. Verifique a conexão e tente novamente.",
-                        variant: "error",
-                        className:
-                          "destructive group border bg-red-500 border-red-400 text-white",
-                      });
-                }}
-              >
-                Configurar{" "}
-                {isConfigurationDisabled && `(${configurationDisabledTimer})`}
-              </Button>
-            </div>
-
             <Button
               variant="outlined"
               className="h-fit whitespace-nowrap"

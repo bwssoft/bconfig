@@ -30,7 +30,12 @@ interface CheckConfiguration extends Identified {
 
 type DeviceResponse = string | undefined
 
-export function useE34GCheckConfiguration() {
+interface Props {
+  has_count: boolean;
+}
+
+export function useE34GCheckConfiguration(props: Props) {
+  const { has_count } = props
   const [showModal, setShowModal] = useState<boolean>(false)
   const [checkResult, setCheckResult] = useState<boolean>(false)
   const [lastConfigurationLog, setlastConfigurationLog] = useState<IConfigurationLog>()
@@ -241,7 +246,7 @@ export function useE34GCheckConfiguration() {
     }
   };
   const waitDeviceBoot = async (): Promise<void> => {
-    await sleep(20000)
+    has_count ? await sleep(20000) : await Promise.resolve()
   };
 
   //

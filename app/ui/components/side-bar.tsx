@@ -104,6 +104,7 @@ const employeeNavigation: NavItem[] = [
         name: "E3+4G",
         children: [
           { name: "Configurator", pathname: "/configurator/E3+4G" },
+          { name: "Auto. Configurator", pathname: "/configurator/E3+4G/automatic" },
           { name: "Check configuration", pathname: "/check/E3+4G" },
           { name: "AUTO Test", pathname: "/auto-test/E3+4G" },
           { name: "Imei Writer", pathname: "/imei-writer/E3+4G" },

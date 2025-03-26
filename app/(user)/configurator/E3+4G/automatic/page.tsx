@@ -1,11 +1,8 @@
-import {
-  findAllProfile,
-  findOneProfile,
-} from "@/app/lib/action";
-import { ProfileSelect } from "./@components/porfile-select";
-import { ConfigPanel } from "./@components/config-panel";
+import { findAllProfile, findOneProfile } from "@/app/lib/action";
 import { IProfile } from "@/app/lib/definition";
 import { auth } from "@/auth";
+import { ProfileSelect } from "../@components/porfile-select";
+import { AutoConfigPanel } from "../@components/auto-config-panel";
 
 interface Props {
   searchParams: {
@@ -44,7 +41,10 @@ export default async function Page(props: Props) {
         </div>
       </div>
       <ProfileSelect profiles={profiles} currentProfileIdSelected={id} />
-      <ConfigPanel profile={profileSelected} user_type={session?.user.type!} />
+      <AutoConfigPanel
+        profile={profileSelected}
+        user_type={session?.user.type!}
+      />
     </div>
   );
 }

@@ -446,7 +446,8 @@ export function useE34GCommunication() {
   };
   const handleDeviceConfiguration = async (
     devices: Identified[],
-    desired_profile: IProfile
+    desired_profile: IProfile,
+    redirect_to_check: boolean = true
   ) => {
     try {
       setInConfiguration(true);
@@ -594,7 +595,10 @@ export function useE34GCommunication() {
             description: `Equipamento configurado com sucesso! (${imei})`,
             variant: "success",
           });
-          router.push("/check/E3+4G");
+          redirect_to_check &&
+            router.push(
+              "/check/E3+4G?has_count=true&redirect_to_automatic=false"
+            );
         } else {
           toast({
             title: "Não Configurado!",

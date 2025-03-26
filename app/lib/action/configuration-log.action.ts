@@ -17,7 +17,6 @@ export async function createOneConfigurationLog(input: Omit<IConfigurationLog
     user_id: session?.user?.id!,
     created_at: new Date()
   })
-  revalidatePath("/configuration-log")
   return input
 }
 
@@ -148,7 +147,8 @@ export async function exportConfigurationLog(props: {
         from: "profile",
         localField: "profile_id",
         foreignField: "id",
-        as: "profile"
+        as: "profile",
+        pipeline: [{$project: {name: 1}}]
       }
     },
     {
@@ -156,7 +156,8 @@ export async function exportConfigurationLog(props: {
         from: "user",
         localField: "user_id",
         foreignField: "id",
-        as: "user"
+        as: "user",
+        pipeline: [{$project: {name: 1}}]
       }
     },
     {
@@ -209,6 +210,19 @@ export async function exportConfigurationLog(props: {
       }
     },
     {
+      $project: {
+        is_configured: 1,
+        user: 1,
+        profile: 1,
+        imei: 1,
+        iccid: 1,
+        et: 1,
+        actual_native_profile: 1,
+        metadata: 1,
+        created_at: 1
+      }
+    },
+    {
       $sort: {
         imei: 1,
         created_at: -1,
@@ -228,15 +242,7 @@ export async function exportConfigurationLog(props: {
         created_at: 1,
       },
     },
-    {
-      $project: {
-        _id: 0,
-        "profile._id": 0,
-        "user._id": 0,
-        "user.password": 0,
-      }
-    }
-  ])
+  ], { allowDiskUse: true })
   const workbook = XLSX.utils.book_new();
   const worksheet = XLSX.utils.aoa_to_sheet([[
     "Configurado", "Usuário", "Perfil", "Data", "IMEI", "ICCID", "ET", "Check", "CXIP", "DNS"
@@ -247,8 +253,8 @@ export async function exportConfigurationLog(props: {
     if (doc) {
       const row = [
         doc.is_configured ? "Sucesso" : "Falha",
-        doc.user.name,
-        doc.profile.name,
+        doc.user?.name ?? "--",
+        doc.profile?.name ?? "--",
         new Date(doc.metadata.init_time_configuration).toLocaleString("pt-BR", {
           timeZone: 'America/Sao_Paulo'
         }),
