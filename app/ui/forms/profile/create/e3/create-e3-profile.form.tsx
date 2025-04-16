@@ -155,7 +155,7 @@ export function E3ProfileCreateForm() {
                         id="primary_ip_port"
                         label="Porta"
                         placeholder="2000"
-                        type="number"
+                        type="text"
                         {...register("ip.primary.port")}
                         error={errors?.ip?.primary?.port?.message}
                       />
@@ -172,7 +172,7 @@ export function E3ProfileCreateForm() {
                         id="secondary_ip_port"
                         label="Porta"
                         placeholder="2000"
-                        type="number"
+                        type="text"
                         {...register("ip.secondary.port")}
                         error={errors?.ip?.secondary?.port?.message}
                       />
@@ -193,7 +193,7 @@ export function E3ProfileCreateForm() {
                       id="dns_port"
                       label="Porta"
                       placeholder="2000"
-                      type="number"
+                      type="text"
                       {...register("dns.port")}
                       error={errors?.dns?.port?.message}
                     />
@@ -230,7 +230,7 @@ export function E3ProfileCreateForm() {
                     id="transmission_on"
                     label="Monitorado Ligado (Segundos)"
                     placeholder="60"
-                    type="number"
+                    type="text"
                     error={errors.data_transmission?.on?.message}
                   />
                   <Input
@@ -238,7 +238,7 @@ export function E3ProfileCreateForm() {
                     id="transmission_off"
                     label="Monitorado Desligado (Segundos)"
                     placeholder="180"
-                    type="number"
+                    type="text"
                     error={errors.data_transmission?.off?.message}
                   />
                 </div>
@@ -319,7 +319,7 @@ export function E3ProfileCreateForm() {
                   id="sensibility"
                   label="Ajuste de Sensibilidade"
                   placeholder="500"
-                  type="number"
+                  type="text"
                   error={errors.sensitivity_adjustment?.message}
                 />
               </div>
@@ -338,7 +338,7 @@ export function E3ProfileCreateForm() {
                   id="odometer"
                   label="Hodômetro"
                   placeholder="5000"
-                  type="number"
+                  type="text"
                   error={errors.odometer?.message}
                 />
               </div>
@@ -365,7 +365,7 @@ export function E3ProfileCreateForm() {
                   id="max_speed"
                   label="Velocidade Máxima"
                   placeholder="150"
-                  type="number"
+                  type="text"
                   error={errors.max_speed?.message}
                 />
               </div>
@@ -375,7 +375,7 @@ export function E3ProfileCreateForm() {
                   id="sleep"
                   label="Sleep"
                   placeholder="2"
-                  type="number"
+                  type="text"
                   error={errors.sleep?.message}
                 />
               </div>

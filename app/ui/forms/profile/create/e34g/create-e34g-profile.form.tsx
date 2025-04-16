@@ -159,7 +159,7 @@ export function E34GProfileCreateForm() {
                           id="primary_ip_port"
                           label="Porta"
                           placeholder="2000"
-                          type="number"
+                          type="text"
                           {...register("ip.primary.port")}
                           error={errors?.ip?.primary?.port?.message}
                         />
@@ -181,7 +181,7 @@ export function E34GProfileCreateForm() {
                           id="secondary_ip_port"
                           label="Porta"
                           placeholder="2000"
-                          type="number"
+                          type="text"
                           {...register("ip.secondary.port")}
                           error={errors?.ip?.secondary?.port?.message}
                         />
@@ -206,7 +206,7 @@ export function E34GProfileCreateForm() {
                       id="dns_port"
                       label="Porta"
                       placeholder="2000"
-                      type="number"
+                      type="text"
                       {...register("dns.port")}
                       error={errors?.dns?.port?.message}
                     />
@@ -242,7 +242,7 @@ export function E34GProfileCreateForm() {
                     id="transmission_on"
                     label="Monitorado Ligado (Segundos)"
                     placeholder="60"
-                    type="number"
+                    type="text"
                     error={errors.data_transmission?.on?.message}
                   />
                   <Input
@@ -250,7 +250,7 @@ export function E34GProfileCreateForm() {
                     id="transmission_off"
                     label="Monitorado Desligado (Segundos)"
                     placeholder="180"
-                    type="number"
+                    type="text"
                     error={errors.data_transmission?.off?.message}
                   />
                 </div>
@@ -285,7 +285,7 @@ export function E34GProfileCreateForm() {
                       id="lock_type_progression_n1"
                       label="Tempo acionado"
                       placeholder="60"
-                      type="number"
+                      type="text"
                       error={errors.lock_type_progression?.n1?.message}
                     />
                     <Input
@@ -293,7 +293,7 @@ export function E34GProfileCreateForm() {
                       id="lock_type_progression_n2"
                       label="Tempo não acionado"
                       placeholder="180"
-                      type="number"
+                      type="text"
                       error={errors.lock_type_progression?.n2?.message}
                     />
                   </div>
@@ -350,7 +350,7 @@ export function E34GProfileCreateForm() {
                   id="odometer"
                   label="Hodômetro"
                   placeholder="5000"
-                  type="number"
+                  type="text"
                   error={errors.odometer?.message}
                 />
               </div>
@@ -394,7 +394,7 @@ export function E34GProfileCreateForm() {
                   id="max_speed"
                   label="Velocidade Máxima"
                   placeholder="150"
-                  type="number"
+                  type="text"
                   error={errors.max_speed?.message}
                 />
               </div>
@@ -440,7 +440,7 @@ export function E34GProfileCreateForm() {
                   id="horimeter"
                   label="Horímetro (ms)"
                   placeholder="3600"
-                  type="number"
+                  type="text"
                   step="0.01"
                   error={errors.horimeter?.message}
                 />
@@ -451,7 +451,7 @@ export function E34GProfileCreateForm() {
                   id="ack"
                   label="Definir ack"
                   placeholder="30"
-                  type="number"
+                  type="text"
                   error={errors.ack?.message}
                 />
               </div>
@@ -530,7 +530,7 @@ export function E34GProfileCreateForm() {
                       id="angle_adjustment"
                       label="Ajuste de ângulo"
                       placeholder="45"
-                      type="number"
+                      type="text"
                       error={errors.angle_adjustment?.message}
                     />
                   </div>
@@ -599,7 +599,7 @@ export function E34GProfileCreateForm() {
                             id="ignition_by_voltage_t1"
                             label="VION (t1)"
                             placeholder="60"
-                            type="number"
+                            type="text"
                             step="0.01"
                             error={errors.ignition_by_voltage?.t1?.message}
                           />
@@ -608,7 +608,7 @@ export function E34GProfileCreateForm() {
                             id="ignition_by_voltage_t2"
                             label="VIOFF (t2)"
                             placeholder="180"
-                            type="number"
+                            type="text"
                             step="0.01"
                             error={errors.ignition_by_voltage?.t2?.message}
                           />
@@ -650,7 +650,7 @@ export function E34GProfileCreateForm() {
                           id="sensibility"
                           label="Ajuste de Sensibilidade"
                           placeholder="500"
-                          type="number"
+                          type="text"
                           error={errors.sensitivity_adjustment?.message}
                         />
                       </div>
