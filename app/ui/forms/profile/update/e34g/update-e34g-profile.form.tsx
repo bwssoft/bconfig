@@ -443,7 +443,7 @@ export function E34GProfileUpdateForm(props: Props) {
                 <Input
                   {...register("horimeter")}
                   id="horimeter"
-                  label="Horímetro (ms)"
+                  label="Horímetro (minutos)"
                   placeholder="3600"
                   type="number"
                   step="0.01"
