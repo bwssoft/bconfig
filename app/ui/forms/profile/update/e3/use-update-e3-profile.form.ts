@@ -82,7 +82,7 @@ const removePropByOptionalFunctions = <T>(schema: T) => {
 
 const schema = z.preprocess(removeEmptyValues, z
   .object({
-    name: z.string({ message: "O nome é orbigatório" }),
+    name: z.string({ message: "O nome é obrigatório" }),
     password: z.object({ old: password, new: password }).optional(),
     apn: z
       .object({
