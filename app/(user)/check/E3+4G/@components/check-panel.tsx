@@ -113,7 +113,7 @@ export function CheckConfigurationPanel(props: Props) {
               >
                 {checkResult
                   ? "Configuração Validada com sucesso"
-                  : "Confguração não validada"}
+                  : "Configuração não validada"}
               </DialogTitle>
               <div className="mt-2">
                 <p className="text-sm text-gray-500">
